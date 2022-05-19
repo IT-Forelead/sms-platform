@@ -19,6 +19,7 @@ object Dependencies {
     val derevo        = "0.13.0"
     val monocle       = "3.1.0"
     val tsec          = "0.4.0"
+    val catsRetry     = "3.1.0"
 
     val weaver = "0.7.11"
   }
@@ -65,6 +66,7 @@ object Dependencies {
     val redis4catsLog4cats = "dev.profunktor" %% "redis4cats-log4cats" % Versions.redis4cats
 
     val http4sJwtAuth  = "dev.profunktor"     %% "http4s-jwt-auth" % Versions.http4sJwtAuth
+    val catsRetry      = "com.github.cb372"   %% "cats-retry"      % Versions.catsRetry
     val cats           = "org.typelevel"      %% "cats-core"       % Versions.cats
     val catsEffect     = "org.typelevel"      %% "cats-effect"     % Versions.catsEffect
     val fs2            = "co.fs2"             %% "fs2-core"        % Versions.fs2
@@ -84,7 +86,7 @@ object Dependencies {
 
   val circeLibs: Seq[ModuleID] = Seq(circeCore, circeGeneric, circeParser, circeRefined)
 
-  val catsLibs: Seq[ModuleID] = Seq(cats, catsEffect)
+  val catsLibs: Seq[ModuleID] = Seq(cats, catsEffect, catsRetry)
 
   val http4sLibs: Seq[ModuleID] = Seq(http4sDsl, http4sServer, http4sClient, http4sCirce)
 
