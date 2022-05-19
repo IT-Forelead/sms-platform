@@ -1,0 +1,11 @@
+CREATE TYPE GENDER AS ENUM ('male', 'female');
+CREATE TYPE ROLE AS ENUM ('admin', 'user');
+
+CREATE TABLE IF NOT EXISTS users (
+  uuid UUID PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  email VARCHAR UNIQUE NOT NULL,
+  gender GENDER NOT NULL,
+  password VARCHAR NOT NULL,
+  role ROLE NOT NULL DEFAULT 'user'
+);
