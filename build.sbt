@@ -40,3 +40,5 @@ runServer := {
 runTests := {
   (tests / Test / test).value
 }
+
+Global / onLoad := (Global / onLoad).value.andThen(state => "project server" :: state)

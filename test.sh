@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sbt -mem 3000 "runTests"
+sbt -mem 3000 "project root" "runTests"
