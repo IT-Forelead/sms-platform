@@ -1,5 +1,5 @@
 object CompilerOptions {
-  val cOptions = Seq(
+  val cOptions: Seq[String] = Seq(
     "-Ymacro-annotations",
     "-encoding",
     "utf8",             // Option and arguments on same line
