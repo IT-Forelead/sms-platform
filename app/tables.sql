@@ -9,3 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR NOT NULL,
   role ROLE NOT NULL DEFAULT 'user'
 );
+
+INSERT INTO "users" ("uuid", "name", "email", "gender", "password", "role")
+VALUES ('c1039d34-425b-4f78-9a7f-893f5b4df478', 'Admin', 'saroyadmin@gmail.com', 'male',
+        '$s0$e0801$5JK3Ogs35C2h5htbXQoeEQ==$N7HgNieSnOajn1FuEB7l4PhC6puBSq+e1E8WUaSJcGY=', 'admin');
