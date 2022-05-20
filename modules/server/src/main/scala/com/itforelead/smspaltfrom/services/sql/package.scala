@@ -7,7 +7,7 @@ import skunk.data.{Arr, Type}
 import tsec.passwordhashers.PasswordHash
 import tsec.passwordhashers.jca.SCrypt
 import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, Tel}
-import com.itforelead.smspaltfrom.domain.types.UserName
+import com.itforelead.smspaltfrom.domain.types.{ContactName, UserName}
 import com.itforelead.smspaltfrom.domain.{Gender, Role}
 import com.itforelead.smspaltfrom.types.IsUUID
 import eu.timepit.refined.auto.autoUnwrap
@@ -27,6 +27,8 @@ package object sql {
   def identity[A: IsUUID]: Codec[A] = uuid.imap[A](IsUUID[A]._UUID.get)(IsUUID[A]._UUID.apply)
 
   val userName: Codec[UserName] = varchar.imap[UserName](name => UserName(NonEmptyString.unsafeFrom(name)))(_.value)
+
+  val contactName: Codec[ContactName] = varchar.imap[ContactName](name => ContactName(NonEmptyString.unsafeFrom(name)))(_.value)
 
   val passwordHash: Codec[PasswordHash[SCrypt]] = varchar.imap[PasswordHash[SCrypt]](PasswordHash[SCrypt])(_.toString)
 

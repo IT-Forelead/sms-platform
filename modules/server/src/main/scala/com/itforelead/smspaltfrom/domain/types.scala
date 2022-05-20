@@ -17,8 +17,14 @@ object types {
   @derive(decoder, encoder, show)
   @newtype case class UserName(value: NonEmptyString)
 
+  @derive(decoder, encoder, show)
+  @newtype case class ContactName(value: NonEmptyString)
+
   @derive(decoder, encoder, eqv, show, uuid)
   @newtype case class UserId(value: UUID)
+
+  @derive(decoder, encoder, eqv, show, uuid)
+  @newtype case class ContactId(value: UUID)
 
   @derive(decoder, encoder, eqv, show)
   @newtype case class EncryptedPassword(value: String)
