@@ -1,26 +1,36 @@
 import Dependencies._
 
-ThisBuild / organization := "uz"
-ThisBuild / scalaVersion := "2.13.8"
-ThisBuild / version      := "1.0"
+lazy val projectSettings = Seq(
+  version      := "1.0",
+  scalaVersion := "2.13.8",
+  organization := "IT-Forelead"
+)
 
 lazy val root = (project in file("."))
-  .settings(
-    name := "sms-platform"
-  )
   .aggregate(server, tests)
 
 lazy val server = (project in file("modules/server"))
+  .enablePlugins(DockerPlugin)
+  .enablePlugins(AshScriptPlugin)
+  .settings(projectSettings: _*)
   .settings(
-    name := "sms-platform",
+    name              := "sms-platform",
+    scalafmtOnCompile := true,
     libraryDependencies ++= coreLibraries,
     scalacOptions ++= CompilerOptions.cOptions,
-    coverageEnabled := true
+    Test / compile / coverageEnabled    := true,
+    Compile / compile / coverageEnabled := false
+  )
+  .settings(
+    Docker / packageName := "sms-platform",
+    dockerBaseImage      := "openjdk:11-jre-slim-buster",
+    dockerUpdateLatest   := true
   )
 
 lazy val tests = project
   .in(file("modules/tests"))
   .configs(IntegrationTest)
+  .settings(projectSettings: _*)
   .settings(
     name := "sms-platform-test-suite",
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
@@ -40,3 +50,5 @@ runServer := {
 runTests := {
   (tests / Test / test).value
 }
+
+Global / onLoad := (Global / onLoad).value.andThen(state => "project server" :: state)
