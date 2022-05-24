@@ -19,6 +19,7 @@ object UserSQL {
     Columns.contramap { case i ~ u ~ p =>
       i ~ u.name ~ u.email ~ u.gender ~ p ~ Role.USER
     }
+
   val decoder: Decoder[User ~ PasswordHash[SCrypt]] =
     Columns.map { case i ~ n ~ e ~ g ~ p ~ r =>
       User(i, n, e, g, r) ~ p

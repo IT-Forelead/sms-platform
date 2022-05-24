@@ -3,9 +3,9 @@ package smsplatform.utils
 import org.http4s.MediaType
 import org.scalacheck.Arbitrary
 import org.scalacheck.Gen._
-import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, FileName, Password}
+import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, FileName, Password, Tel}
 import com.itforelead.smspaltfrom.domain.{Gender, Role}
-import Generators.nonEmptyStringGen
+import Generators.{nonEmptyStringGen, numberGen}
 
 object Arbitraries {
 
@@ -33,5 +33,11 @@ object Arbitraries {
       s0 <- nonEmptyStringGen(5, 30)
       s1 <- oneOf(MediaType.allMediaTypes.flatMap(_.fileExtensions))
     } yield FileName.unsafeFrom(s"$s0.$s1")
+  )
+
+  implicit lazy val arbTel: Arbitrary[Tel] = Arbitrary(
+    for {
+      s0 <- numberGen(12)
+    } yield Tel.unsafeFrom(s"+$s0")
   )
 }
