@@ -6,7 +6,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.types.{Birthday, ContactId, CreatedAt, FirstName, LastName, UserId, UserName}
+import com.itforelead.smspaltfrom.domain.types.{ContactId, FirstName, LastName, UserId, UserName}
 import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, Role, User}
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.CreateContact
@@ -52,9 +52,7 @@ object Generators {
 
   val phoneGen: Gen[Tel] = arbitrary[Tel]
 
-  val birthdayGen: Gen[Birthday] = arbitrary[LocalDateTime].map(Birthday.apply)
-
-  val createdAtGen: Gen[CreatedAt] = arbitrary[LocalDateTime].map(CreatedAt.apply)
+  val timestampGen: Gen[LocalDateTime] = arbitrary[LocalDateTime]
 
   val passwordGen: Gen[Password] = arbitrary[Password]
 
@@ -80,10 +78,10 @@ object Generators {
   val contactGen: Gen[Contact] =
     for {
       id <- contactIdGen
-      cAt <- createdAtGen
+      cAt <- timestampGen
       fn <- firstnameGen
       ln <- lastnameGen
-      b <- birthdayGen
+      b <- timestampGen
       p <- phoneGen
     } yield Contact(id, cAt, fn, ln, b, p)
 
@@ -91,7 +89,7 @@ object Generators {
     for {
       fn <- firstnameGen
       ln <- lastnameGen
-      b <- birthdayGen
+      b <- timestampGen
       p <- phoneGen
     } yield CreateContact(fn, ln, b, p)
 

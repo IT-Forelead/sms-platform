@@ -36,7 +36,8 @@ lazy val tests = project
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     Defaults.itSettings,
     scalacOptions ++= CompilerOptions.cOptions,
-    libraryDependencies ++= testLibraries
+    libraryDependencies ++= testLibraries,
+    scalacOptions ++= CompilerOptions.cOptions
   )
   .dependsOn(server)
 

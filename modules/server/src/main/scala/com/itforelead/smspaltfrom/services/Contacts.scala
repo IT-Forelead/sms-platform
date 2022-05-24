@@ -3,7 +3,7 @@ package com.itforelead.smspaltfrom.services
 import cats.effect.{Resource, Sync}
 import cats.implicits._
 import com.itforelead.smspaltfrom.domain.Contact.CreateContact
-import com.itforelead.smspaltfrom.domain.types.{ContactId, CreatedAt}
+import com.itforelead.smspaltfrom.domain.types.ContactId
 import com.itforelead.smspaltfrom.domain.{Contact, ID}
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk._
@@ -12,6 +12,7 @@ import java.time.LocalDateTime
 
 trait Contacts[F[_]] {
   def create(form: CreateContact): F[Contact]
+  def contacts: F[List[Contact]]
 }
 
 object Contacts {
@@ -28,10 +29,12 @@ object Contacts {
           now <- Sync[F].delay(LocalDateTime.now())
           contact <- prepQueryUnique(
             insert,
-            Contact(id, CreatedAt(now), form.firstName, form.lastName, form.birthday, form.phone)
+            Contact(id, now, form.firstName, form.lastName, form.birthday, form.phone)
           )
         } yield contact
       }
 
+      override def contacts: F[List[Contact]] =
+        prepQueryList(select, Void)
     }
 }
