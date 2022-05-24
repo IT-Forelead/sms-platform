@@ -6,4 +6,5 @@ import com.itforelead.smspaltfrom.services.Contacts
 
 class ContactsStub[F[_]] extends Contacts[F] {
   override def create(userParam: CreateContact): F[Contact] = ???
+  override def contacts: F[List[Contact]] = ???
 }

@@ -10,7 +10,6 @@ import com.itforelead.smspaltfrom.types.uuid
 import io.circe.refined._
 import eu.timepit.refined.cats._
 
-import java.time.LocalDateTime
 import java.util.UUID
 import javax.crypto.Cipher
 
@@ -29,12 +28,6 @@ object types {
 
   @derive(decoder, encoder, eqv, show, uuid)
   @newtype case class ContactId(value: UUID)
-
-  @derive(decoder, encoder, show)
-  @newtype case class CreatedAt(value: LocalDateTime)
-
-  @derive(decoder, encoder, show)
-  @newtype case class Birthday(value: LocalDateTime)
 
   @derive(decoder, encoder, eqv, show)
   @newtype case class EncryptedPassword(value: String)
