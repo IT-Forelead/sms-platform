@@ -103,18 +103,18 @@ object Generators {
 
   val updateContactGen: Gen[UpdateContact] =
     for {
-      i <- contactIdGen
+      i  <- contactIdGen
       fn <- firstnameGen
       ln <- lastnameGen
-      b <- timestampGen
-      p <- phoneGen
+      b  <- timestampGen
+      p  <- phoneGen
     } yield UpdateContact(i, fn, ln, b, p)
 
   val smsTemplateGen: Gen[SMSTemplate] =
     for {
       id <- templateIdGen
-      c <- contentGen
-      a <- booleanGen
+      c  <- contentGen
+      a  <- booleanGen
     } yield SMSTemplate(id, c, a)
 
   val createSMSTemplateGen: Gen[CreateSMSTemplate] =
