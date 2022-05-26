@@ -7,6 +7,9 @@ lazy val projectSettings = Seq(
 )
 
 lazy val root = (project in file("."))
+  .settings(
+    name := "sms-platform"
+  )
   .aggregate(server, tests)
 
 lazy val server = (project in file("modules/server"))

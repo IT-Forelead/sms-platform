@@ -75,7 +75,6 @@ object Dependencies {
     val log4cats       = "org.typelevel"      %% "log4cats-slf4j"  % Versions.log4cats
     val logback        = "ch.qos.logback"      % "logback-classic" % Versions.logback
     val monocleCore    = "dev.optics"         %% "monocle-core"    % Versions.monocle
-
     // Test
     val log4catsNoOp      = "org.typelevel"       %% "log4cats-noop"      % Versions.log4cats
     val refinedScalacheck = "eu.timepit"          %% "refined-scalacheck" % Versions.refined

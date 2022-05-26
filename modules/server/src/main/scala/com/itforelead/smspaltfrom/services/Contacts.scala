@@ -8,14 +8,30 @@ import com.itforelead.smspaltfrom.domain.{Contact, ID}
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk._
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 trait Contacts[F[_]] {
   def create(form: CreateContact): F[Contact]
   def contacts: F[List[Contact]]
+
+  /** Function for find contacts born on this day for congrats
+    * @param birthday
+    *   contact's birthday
+    * @return
+    *   list of contacts
+    */
+  def findByBirthday(birthday: LocalDate): F[List[Contact]]
 }
 
 object Contacts {
+
+  /** @param session
+    *   skunk session for connection postgres
+    * @tparam F
+    *   effect type
+    * @return
+    *   [[Contacts]]
+    */
   def apply[F[_]: GenUUID: Sync](implicit
     session: Resource[F, Session[F]]
   ): Contacts[F] =
@@ -36,5 +52,14 @@ object Contacts {
 
       override def contacts: F[List[Contact]] =
         prepQueryList(select, Void)
+
+      /** Function for find contacts born on this day for congrats
+        * @param birthday
+        *   contact's birthday
+        * @return
+        *   list of contacts
+        */
+      override def findByBirthday(birthday: LocalDate): F[List[Contact]] =
+        prepQueryList(selectByBirthday, birthday)
     }
 }

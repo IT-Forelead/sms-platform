@@ -11,7 +11,7 @@ import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, Role, Us
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.CreateContact
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
 
 object Generators {
@@ -53,6 +53,7 @@ object Generators {
   val phoneGen: Gen[Tel] = arbitrary[Tel]
 
   val timestampGen: Gen[LocalDateTime] = arbitrary[LocalDateTime]
+  val dateGen: Gen[LocalDate]          = arbitrary[LocalDate]
 
   val passwordGen: Gen[Password] = arbitrary[Password]
 
@@ -77,20 +78,20 @@ object Generators {
 
   val contactGen: Gen[Contact] =
     for {
-      id <- contactIdGen
+      id  <- contactIdGen
       cAt <- timestampGen
-      fn <- firstnameGen
-      ln <- lastnameGen
-      b <- timestampGen
-      p <- phoneGen
+      fn  <- firstnameGen
+      ln  <- lastnameGen
+      b   <- dateGen
+      p   <- phoneGen
     } yield Contact(id, cAt, fn, ln, b, p)
 
   val createContactGen: Gen[CreateContact] =
     for {
       fn <- firstnameGen
       ln <- lastnameGen
-      b <- timestampGen
-      p <- phoneGen
+      b  <- dateGen
+      p  <- phoneGen
     } yield CreateContact(fn, ln, b, p)
 
   val userCredentialGen: Gen[Credentials] =

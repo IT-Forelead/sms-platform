@@ -20,6 +20,6 @@ CREATE TABLE IF NOT EXISTS contacts (
     created_at TIMESTAMP NOT NULL,
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
-    birthday TIMESTAMP NOT NULL,
+    birthday DATE NOT NULL,
     phone VARCHAR NOT NULL
 );
