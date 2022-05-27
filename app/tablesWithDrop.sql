@@ -1,5 +1,6 @@
 CREATE TYPE GENDER AS ENUM ('male', 'female');
 CREATE TYPE ROLE AS ENUM ('admin', 'user');
+CREATE TYPE STATUS AS ENUM ('sent', 'delivered', 'failed', 'unknown');
 
 CREATE TABLE IF NOT EXISTS users (
   uuid UUID PRIMARY KEY,
@@ -30,6 +31,15 @@ CREATE TABLE IF NOT EXISTS sms_templates (
     deleted BOOLEAN NOT NULL DEFAULT false
 );
 
+CREATE TABLE IF NOT EXISTS messages (
+    id UUID PRIMARY KEY,
+    contact_id UUID NOT NULL CONSTRAINT fk_contact_id REFERENCES contacts (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    sms_temp_id UUID NOT NULL CONSTRAINT fk_sms_temp_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    sent_date TIMESTAMP NOT NULL,
+    delivery_status STATUS NOT NULL
+);
+
 DROP TABLE users;
 DROP TABLE contacts;
 DROP TABLE sms_templates;
+DROP TABLE messages;

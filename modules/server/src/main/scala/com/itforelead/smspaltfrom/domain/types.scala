@@ -35,6 +35,9 @@ object types {
   @derive(decoder, encoder, eqv, show, uuid)
   @newtype case class TemplateId(value: UUID)
 
+  @derive(decoder, encoder, eqv, show, uuid)
+  @newtype case class MessageId(value: UUID)
+
   @derive(decoder, encoder, eqv, show)
   @newtype case class EncryptedPassword(value: String)
 
