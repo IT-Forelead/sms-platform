@@ -23,6 +23,6 @@ object SMSTemplateSql {
     sql"""INSERT INTO sms_templates VALUES ($encoder) returning *""".query(decoder)
 
   val select: Query[Void, SMSTemplate] =
-    sql"""SELECT * FROM sms_templates""".query(decoder)
+    sql"""SELECT * FROM sms_templates WHERE deleted = false""".query(decoder)
 
 }

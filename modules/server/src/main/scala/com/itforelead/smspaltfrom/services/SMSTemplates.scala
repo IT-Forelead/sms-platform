@@ -21,15 +21,10 @@ object SMSTemplates {
 
       import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql._
 
-      def create(form: CreateSMSTemplate): F[SMSTemplate] = {
-        for {
-          id <- ID.make[F, TemplateId]
-          sms <- prepQueryUnique(
-            insert,
-            SMSTemplate(id, form.text, form.active)
-          )
-        } yield sms
-      }
+      def create(form: CreateSMSTemplate): F[SMSTemplate] =
+        ID.make[F, TemplateId].flatMap { id =>
+          prepQueryUnique(insert, SMSTemplate(id, form.text, form.active))
+        }
 
       override def templates: F[List[SMSTemplate]] =
         prepQueryList(select, Void)
