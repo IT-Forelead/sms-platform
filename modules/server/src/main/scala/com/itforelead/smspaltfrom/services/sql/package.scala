@@ -7,7 +7,7 @@ import skunk.data.{Arr, Type}
 import tsec.passwordhashers.PasswordHash
 import tsec.passwordhashers.jca.SCrypt
 import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, Tel}
-import com.itforelead.smspaltfrom.domain.types.{FirstName, LastName, UserName}
+import com.itforelead.smspaltfrom.domain.types.{Content, FirstName, LastName, UserName}
 import com.itforelead.smspaltfrom.domain.{Gender, Role}
 import com.itforelead.smspaltfrom.types.IsUUID
 import eu.timepit.refined.auto.autoUnwrap
@@ -43,5 +43,7 @@ package object sql {
   val gender: Codec[Gender] = `enum`[Gender](_.value, Gender.find, Type("gender"))
 
   val role: Codec[Role] = `enum`[Role](_.value, Role.find, Type("role"))
+
+  val content: Codec[Content] = varchar.imap[Content](content => Content(NonEmptyString.unsafeFrom(content)))(_.value)
 
 }
