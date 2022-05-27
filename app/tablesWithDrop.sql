@@ -29,3 +29,7 @@ CREATE TABLE IF NOT EXISTS sms_templates (
     active BOOLEAN NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT false
 );
+
+DROP TABLE users;
+DROP TABLE contacts;
+DROP TABLE sms_templates;
