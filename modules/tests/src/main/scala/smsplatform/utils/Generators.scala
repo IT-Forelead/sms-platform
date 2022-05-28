@@ -6,10 +6,11 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.types.{ContactId, FirstName, LastName, UserId, UserName}
-import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, Role, User}
+import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, LastName, TemplateId, UserId, UserName}
+import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, Role, SMSTemplate, User}
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.CreateContact
+import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 
 import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
@@ -41,6 +42,9 @@ object Generators {
   val contactIdGen: Gen[ContactId] =
     idGen(ContactId.apply)
 
+  val templateIdGen: Gen[TemplateId] =
+    idGen(TemplateId.apply)
+
   val usernameGen: Gen[UserName] =
     arbitrary[NonEmptyString].map(UserName.apply)
 
@@ -49,6 +53,9 @@ object Generators {
 
   val lastnameGen: Gen[LastName] =
     arbitrary[NonEmptyString].map(LastName.apply)
+
+  val contentGen: Gen[Content] =
+    arbitrary[NonEmptyString].map(Content.apply)
 
   val phoneGen: Gen[Tel] = arbitrary[Tel]
 
@@ -93,6 +100,19 @@ object Generators {
       b  <- dateGen
       p  <- phoneGen
     } yield CreateContact(fn, ln, b, p)
+
+  val smsTemplateGen: Gen[SMSTemplate] =
+    for {
+      id <- templateIdGen
+      c <- contentGen
+      a <- booleanGen
+    } yield SMSTemplate(id, c, a)
+
+  val createSMSTemplateGen: Gen[CreateSMSTemplate] =
+    for {
+      c <- contentGen
+      a <- booleanGen
+    } yield CreateSMSTemplate(c, a)
 
   val userCredentialGen: Gen[Credentials] =
     for {

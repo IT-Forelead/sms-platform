@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     created_at TIMESTAMP NOT NULL,
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
-    birthday DATE NOT NULL,
+    birthday TIMESTAMP NOT NULL,
     phone VARCHAR NOT NULL
 );
 
@@ -39,3 +39,8 @@ CREATE TABLE IF NOT EXISTS messages (
     sent_date TIMESTAMP NOT NULL,
     delivery_status STATUS NOT NULL
 );
+
+DROP TABLE users;
+DROP TABLE contacts;
+DROP TABLE sms_templates;
+DROP TABLE messages;
