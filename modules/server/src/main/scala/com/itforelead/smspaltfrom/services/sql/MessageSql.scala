@@ -1,7 +1,7 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.Message
-import com.itforelead.smspaltfrom.domain.types.{ContactId, MessageId, TemplateId}
+import com.itforelead.smspaltfrom.domain.types.MessageId
 import com.itforelead.smspaltfrom.services.sql.ContactsSql.contactId
 import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.templateId
 import skunk._
@@ -9,7 +9,7 @@ import skunk.codec.all.timestamp
 import skunk.implicits._
 
 object MessageSql {
-  val messageId: Codec[MessageId]   = identity[MessageId]
+  val messageId: Codec[MessageId] = identity[MessageId]
 
   private val Columns = messageId ~ timestamp ~ contactId ~ templateId ~ timestamp ~ deliveryStatus
 
