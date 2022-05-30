@@ -1,5 +1,6 @@
 package com.itforelead.smspaltfrom.services.sql
 
+import com.itforelead.smspaltfrom.domain.Contact.UpdateContact
 import com.itforelead.smspaltfrom.domain.custom.refinements.Tel
 import com.itforelead.smspaltfrom.domain.types.{ContactId, FirstName, LastName}
 import com.itforelead.smspaltfrom.domain.{Contact, types}
@@ -28,5 +29,18 @@ object ContactsSql {
 
   val select: Query[Void, Contact] =
     sql"""SELECT * FROM contacts""".query(decoder)
+
+  val updateSql: Query[UpdateContact, Contact] =
+    sql"""UPDATE contacts
+         SET first_name = $firstName,
+         last_name = $lastName,
+         birthday = $timestamp,
+         phone = $tel
+         WHERE id = $contactId RETURNING *"""
+      .query(decoder)
+      .contramap[UpdateContact](c => c.firstName ~ c.lastName ~ c.birthday ~ c.phone ~ c.id)
+
+  val deleteSql: Command[ContactId] =
+    sql"""DELETE FROM contacts WHERE id = $contactId""".command
 
 }

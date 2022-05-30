@@ -2,8 +2,9 @@ package com.itforelead.smspaltfrom.routes
 
 import cats.MonadThrow
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.Contact.CreateContact
+import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.User
+import com.itforelead.smspaltfrom.domain.types.ContactId
 import com.itforelead.smspaltfrom.services.Contacts
 import org.http4s._
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
@@ -27,6 +28,16 @@ final case class ContactRoutes[F[_]: JsonDecoder: MonadThrow](
 
     case GET -> Root as _ =>
       contacts.contacts.flatMap(Ok(_))
+
+    case aR @ PUT -> Root as _ =>
+      aR.req.decodeR[UpdateContact] { from =>
+        contacts.update(from).flatMap(Ok(_))
+      }
+
+    case aR @ DELETE -> Root as _ =>
+      aR.req.decodeR[ContactId] { id =>
+        contacts.delete(id) >> NoContent()
+      }
   }
 
   def routes(authMiddleware: AuthMiddleware[F, User]): HttpRoutes[F] = Router(
