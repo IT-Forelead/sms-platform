@@ -3,7 +3,8 @@ package com.itforelead.smspaltfrom.routes
 import cats.MonadThrow
 import cats.implicits._
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
-import com.itforelead.smspaltfrom.domain.User
+import com.itforelead.smspaltfrom.domain.types.TemplateId
+import com.itforelead.smspaltfrom.domain.{SMSTemplate, User}
 import com.itforelead.smspaltfrom.services.SMSTemplates
 import org.http4s._
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
@@ -27,6 +28,16 @@ final case class SMSTemplateRoutes[F[_]: JsonDecoder: MonadThrow](
 
     case GET -> Root as _ =>
       templates.templates.flatMap(Ok(_))
+
+    case aR @ PUT -> Root as _ =>
+      aR.req.decodeR[SMSTemplate] { form =>
+        templates.update(form).flatMap(Ok(_))
+      }
+
+    case aR @ DELETE -> Root as _ =>
+      aR.req.decodeR[TemplateId] { id =>
+        templates.delete(id) >> NoContent()
+      }
   }
 
   def routes(authMiddleware: AuthMiddleware[F, User]): HttpRoutes[F] = Router(
