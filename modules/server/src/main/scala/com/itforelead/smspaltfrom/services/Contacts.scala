@@ -2,7 +2,7 @@ package com.itforelead.smspaltfrom.services
 
 import cats.effect.{Resource, Sync}
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.Contact.CreateContact
+import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.types.ContactId
 import com.itforelead.smspaltfrom.domain.{Contact, ID}
 import com.itforelead.smspaltfrom.effects.GenUUID
@@ -13,6 +13,8 @@ import java.time.LocalDateTime
 trait Contacts[F[_]] {
   def create(form: CreateContact): F[Contact]
   def contacts: F[List[Contact]]
+  def update(contact: UpdateContact): F[Contact]
+  def delete(id: ContactId): F[Unit]
 }
 
 object Contacts {
@@ -36,5 +38,11 @@ object Contacts {
 
       override def contacts: F[List[Contact]] =
         prepQueryList(select, Void)
+
+      override def update(contact: UpdateContact): F[Contact] =
+        prepQueryUnique(updateSql, contact)
+
+      override def delete(id: ContactId): F[Unit] =
+        prepCmd(deleteSql, id)
     }
 }
