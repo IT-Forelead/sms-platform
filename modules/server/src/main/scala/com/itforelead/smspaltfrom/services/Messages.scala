@@ -3,15 +3,17 @@ package com.itforelead.smspaltfrom.services
 import cats.effect.{Resource, Sync}
 import cats.implicits._
 import com.itforelead.smspaltfrom.domain.Message.CreateMessage
-import com.itforelead.smspaltfrom.domain.{ID, Message}
+import com.itforelead.smspaltfrom.domain.{DeliveryStatus, ID, Message}
 import com.itforelead.smspaltfrom.domain.types.MessageId
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk.Session
 
 import java.time.LocalDateTime
+import scala.tools.nsc.interactive.Pickler.TildeDecorator
 
 trait Messages[F[_]] {
   def create(msg: CreateMessage): F[Message]
+  def changeStatus(id: MessageId, status: DeliveryStatus): F[Message]
 }
 
 object Messages {
@@ -22,7 +24,7 @@ object Messages {
 
       import com.itforelead.smspaltfrom.services.sql.MessageSql._
 
-      def create(msg: CreateMessage): F[Message] = {
+      override def create(msg: CreateMessage): F[Message] = {
         for {
           id  <- ID.make[F, MessageId]
           now <- Sync[F].delay(LocalDateTime.now())
@@ -32,6 +34,9 @@ object Messages {
           )
         } yield message
       }
+
+      override def changeStatus(id: MessageId, status: DeliveryStatus): F[Message] =
+        prepQueryUnique(changeStatusSql, id ~ status)
 
     }
 }

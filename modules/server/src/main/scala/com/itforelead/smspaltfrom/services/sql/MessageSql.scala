@@ -1,6 +1,6 @@
 package com.itforelead.smspaltfrom.services.sql
 
-import com.itforelead.smspaltfrom.domain.Message
+import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Message}
 import com.itforelead.smspaltfrom.domain.types.MessageId
 import com.itforelead.smspaltfrom.services.sql.ContactsSql.contactId
 import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.templateId
@@ -22,6 +22,9 @@ object MessageSql {
     }
 
   val insert: Query[Message, Message] =
-    sql"""INSERT INTO messages VALUES ($encoder) returning *""".query(decoder)
+    sql"""INSERT INTO messages VALUES ($encoder) RETURNING *""".query(decoder)
+
+  val changeStatusSql: Query[MessageId ~ DeliveryStatus, Message] =
+    sql"""UPDATE messages SET delivery_status = $deliveryStatus WHERE id = $messageId RETURNING *""".query(decoder)
 
 }
