@@ -24,7 +24,7 @@ object MessageSql {
   val insert: Query[Message, Message] =
     sql"""INSERT INTO messages VALUES ($encoder) RETURNING *""".query(decoder)
 
-  val changeStatusSql: Query[MessageId ~ DeliveryStatus, Message] =
+  val changeStatusSql: Query[DeliveryStatus ~ MessageId, Message] =
     sql"""UPDATE messages SET delivery_status = $deliveryStatus WHERE id = $messageId RETURNING *""".query(decoder)
 
 }

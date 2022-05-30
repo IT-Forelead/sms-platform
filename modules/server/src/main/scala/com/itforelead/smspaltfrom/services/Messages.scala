@@ -7,9 +7,9 @@ import com.itforelead.smspaltfrom.domain.{DeliveryStatus, ID, Message}
 import com.itforelead.smspaltfrom.domain.types.MessageId
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk.Session
+import skunk.implicits.toIdOps
 
 import java.time.LocalDateTime
-import scala.tools.nsc.interactive.Pickler.TildeDecorator
 
 trait Messages[F[_]] {
   def create(msg: CreateMessage): F[Message]
@@ -36,7 +36,7 @@ object Messages {
       }
 
       override def changeStatus(id: MessageId, status: DeliveryStatus): F[Message] =
-        prepQueryUnique(changeStatusSql, id ~ status)
+        prepQueryUnique(changeStatusSql, status ~ id)
 
     }
 }
