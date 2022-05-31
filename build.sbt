@@ -44,8 +44,9 @@ lazy val tests = project
   )
   .dependsOn(server)
 
-val runTests  = inputKey[Unit]("Runs tests")
-val runServer = inputKey[Unit]("Runs server")
+val runItTests = inputKey[Unit]("Runs It tests")
+val runTests   = inputKey[Unit]("Runs tests")
+val runServer  = inputKey[Unit]("Runs server")
 
 runServer := {
   (server / Compile / run).evaluated
@@ -53,6 +54,10 @@ runServer := {
 
 runTests := {
   (tests / Test / test).value
+}
+
+runItTests := {
+  (tests / IntegrationTest / test).value
 }
 
 Global / onLoad := (Global / onLoad).value.andThen(state => "project server" :: state)
