@@ -30,4 +30,4 @@ jobs:
       - name: "Run with ${{ matrix.java }} 🚀"
         run: nix-shell --argstr jdk "${{ matrix.java }}" --run "sbt 'test;'"
       - name: "Testing 🤘"
-        run: nix-shell --argstr jdk "${{ matrix.java }}" --run "./it_test.sh"
+        run: nix-shell --argstr jdk "${{ matrix.java }}" --run "bash it_test.sh"
