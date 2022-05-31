@@ -9,7 +9,7 @@ import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, FileN
 import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, LastName, TemplateId, UserId, UserName}
 import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, Role, SMSTemplate, User}
 import Arbitraries._
-import com.itforelead.smspaltfrom.domain.Contact.CreateContact
+import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 
 import java.time.{LocalDate, LocalDateTime}
@@ -100,6 +100,15 @@ object Generators {
       b  <- dateGen
       p  <- phoneGen
     } yield CreateContact(fn, ln, b, p)
+
+  val updateContactGen: Gen[UpdateContact] =
+    for {
+      i <- contactIdGen
+      fn <- firstnameGen
+      ln <- lastnameGen
+      b <- timestampGen
+      p <- phoneGen
+    } yield UpdateContact(i, fn, ln, b, p)
 
   val smsTemplateGen: Gen[SMSTemplate] =
     for {

@@ -8,7 +8,7 @@ import derevo.derive
 import io.circe.refined._
 import eu.timepit.refined.cats._
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDateTime
 
 @derive(decoder, encoder, show)
 case class Contact(
@@ -16,11 +16,20 @@ case class Contact(
   createdAt: LocalDateTime,
   firstName: FirstName,
   lastName: LastName,
-  birthday: LocalDate,
+  birthday: LocalDateTime,
   phone: Tel
 )
 
 object Contact {
   @derive(decoder, encoder, show)
-  case class CreateContact(firstName: FirstName, lastName: LastName, birthday: LocalDate, phone: Tel)
+  case class CreateContact(firstName: FirstName, lastName: LastName, birthday: LocalDateTime, phone: Tel)
+
+  @derive(decoder, encoder, show)
+  case class UpdateContact(
+    id: ContactId,
+    firstName: FirstName,
+    lastName: LastName,
+    birthday: LocalDateTime,
+    phone: Tel
+  )
 }

@@ -25,4 +25,14 @@ object SMSTemplateSql {
   val select: Query[Void, SMSTemplate] =
     sql"""SELECT * FROM sms_templates WHERE deleted = false""".query(decoder)
 
+  val updateSql: Query[SMSTemplate, SMSTemplate] =
+    sql"""UPDATE sms_templates
+         SET text = $content, active = $bool
+         WHERE id = $templateId RETURNING *"""
+      .query(decoder)
+      .contramap[SMSTemplate](tmpl => tmpl.text ~ tmpl.active ~ tmpl.id)
+
+  val deleteSql: Command[TemplateId] =
+    sql"""UPDATE sms_templates SET deleted = true WHERE id = $templateId""".command
+
 }
