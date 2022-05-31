@@ -31,7 +31,7 @@ object Contacts {
           now <- Sync[F].delay(LocalDateTime.now())
           contact <- prepQueryUnique(
             insert,
-            Contact(id, now, form.firstName, form.lastName, form.birthday, form.phone)
+            Contact(id, now, form.firstName, form.lastName, form.gender, form.birthday, form.phone)
           )
         } yield contact
       }

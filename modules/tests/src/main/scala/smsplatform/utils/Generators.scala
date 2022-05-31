@@ -88,26 +88,29 @@ object Generators {
       cAt <- timestampGen
       fn <- firstnameGen
       ln <- lastnameGen
+      g <- genderGen
       b <- timestampGen
       p <- phoneGen
-    } yield Contact(id, cAt, fn, ln, b, p)
+    } yield Contact(id, cAt, fn, ln, g, b, p)
 
   val createContactGen: Gen[CreateContact] =
     for {
       fn <- firstnameGen
       ln <- lastnameGen
+      g <- genderGen
       b <- timestampGen
       p <- phoneGen
-    } yield CreateContact(fn, ln, b, p)
+    } yield CreateContact(fn, ln, g, b, p)
 
   val updateContactGen: Gen[UpdateContact] =
     for {
       i <- contactIdGen
       fn <- firstnameGen
       ln <- lastnameGen
+      g <- genderGen
       b <- timestampGen
       p <- phoneGen
-    } yield UpdateContact(i, fn, ln, b, p)
+    } yield UpdateContact(i, fn, ln, g, b, p)
 
   val smsTemplateGen: Gen[SMSTemplate] =
     for {

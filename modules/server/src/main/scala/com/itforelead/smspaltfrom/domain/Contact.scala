@@ -16,19 +16,27 @@ case class Contact(
   createdAt: LocalDateTime,
   firstName: FirstName,
   lastName: LastName,
+  gender: Gender,
   birthday: LocalDateTime,
   phone: Tel
 )
 
 object Contact {
   @derive(decoder, encoder, show)
-  case class CreateContact(firstName: FirstName, lastName: LastName, birthday: LocalDateTime, phone: Tel)
+  case class CreateContact(
+    firstName: FirstName,
+    lastName: LastName,
+    gender: Gender,
+    birthday: LocalDateTime,
+    phone: Tel
+  )
 
   @derive(decoder, encoder, show)
   case class UpdateContact(
     id: ContactId,
     firstName: FirstName,
     lastName: LastName,
+    gender: Gender,
     birthday: LocalDateTime,
     phone: Tel
   )
