@@ -35,8 +35,10 @@ CREATE TABLE IF NOT EXISTS contacts (
     created_at TIMESTAMP NOT NULL,
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
+    gender GENDER NOT NULL,
     birthday DATE NOT NULL,
-    phone VARCHAR NOT NULL
+    phone VARCHAR NOT NULL,
+    deleted BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS holidays (
