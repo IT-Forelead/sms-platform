@@ -12,7 +12,7 @@ import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
 
 object Generators {
@@ -60,6 +60,7 @@ object Generators {
   val phoneGen: Gen[Tel] = arbitrary[Tel]
 
   val timestampGen: Gen[LocalDateTime] = arbitrary[LocalDateTime]
+  val dateGen: Gen[LocalDate]          = arbitrary[LocalDate]
 
   val passwordGen: Gen[Password] = arbitrary[Password]
 
@@ -84,36 +85,36 @@ object Generators {
 
   val contactGen: Gen[Contact] =
     for {
-      id <- contactIdGen
+      id  <- contactIdGen
       cAt <- timestampGen
-      fn <- firstnameGen
-      ln <- lastnameGen
-      b <- timestampGen
-      p <- phoneGen
+      fn  <- firstnameGen
+      ln  <- lastnameGen
+      b   <- dateGen
+      p   <- phoneGen
     } yield Contact(id, cAt, fn, ln, b, p)
 
   val createContactGen: Gen[CreateContact] =
     for {
       fn <- firstnameGen
       ln <- lastnameGen
-      b <- timestampGen
-      p <- phoneGen
+      b  <- dateGen
+      p  <- phoneGen
     } yield CreateContact(fn, ln, b, p)
 
   val updateContactGen: Gen[UpdateContact] =
     for {
-      i <- contactIdGen
+      i  <- contactIdGen
       fn <- firstnameGen
       ln <- lastnameGen
-      b <- timestampGen
-      p <- phoneGen
+      b  <- timestampGen
+      p  <- phoneGen
     } yield UpdateContact(i, fn, ln, b, p)
 
   val smsTemplateGen: Gen[SMSTemplate] =
     for {
       id <- templateIdGen
-      c <- contentGen
-      a <- booleanGen
+      c  <- contentGen
+      a  <- booleanGen
     } yield SMSTemplate(id, c, a)
 
   val createSMSTemplateGen: Gen[CreateSMSTemplate] =

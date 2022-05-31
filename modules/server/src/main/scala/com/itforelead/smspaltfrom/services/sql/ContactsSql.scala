@@ -1,26 +1,24 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.Contact.UpdateContact
-import com.itforelead.smspaltfrom.domain.custom.refinements.Tel
-import com.itforelead.smspaltfrom.domain.types.{ContactId, FirstName, LastName}
-import com.itforelead.smspaltfrom.domain.{Contact, types}
+import com.itforelead.smspaltfrom.domain.Contact
+import com.itforelead.smspaltfrom.domain.types.ContactId
 import skunk._
-import skunk.codec.all.timestamp
+import skunk.codec.all.{date, timestamp}
 import skunk.implicits._
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 object ContactsSql {
   val contactId: Codec[ContactId] = identity[ContactId]
 
-  val columns: Codec[(((((ContactId, LocalDateTime), FirstName), LastName), LocalDateTime), Tel)] =
-    contactId ~ timestamp ~ firstName ~ lastName ~ timestamp ~ tel
+  val Columns = contactId ~ timestamp ~ firstName ~ lastName ~ date ~ tel
 
   val encoder: Encoder[Contact] =
-    columns.contramap(c => c.id ~ c.createdAt ~ c.firstName ~ c.lastName ~ c.birthday ~ c.phone)
+    Columns.contramap(c => c.id ~ c.createdAt ~ c.firstName ~ c.lastName ~ c.birthday ~ c.phone)
 
   val decoder: Decoder[Contact] =
-    columns.map { case id ~ createdAt ~ firstname ~ lastname ~ birthday ~ phone =>
+    Columns.map { case id ~ createdAt ~ firstname ~ lastname ~ birthday ~ phone =>
       Contact(id, createdAt, firstname, lastname, birthday, phone)
     }
 
@@ -42,5 +40,8 @@ object ContactsSql {
 
   val deleteSql: Command[ContactId] =
     sql"""DELETE FROM contacts WHERE id = $contactId""".command
+
+  val selectByBirthday: Query[LocalDate, Contact] =
+    sql"""SELECT * FROM contacts WHERE birthday = $date""".query(decoder)
 
 }

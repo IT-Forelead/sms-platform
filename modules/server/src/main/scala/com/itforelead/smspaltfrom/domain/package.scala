@@ -8,7 +8,7 @@ import io.circe.generic.semiauto.deriveEncoder
 import tsec.passwordhashers.PasswordHash
 import tsec.passwordhashers.jca.SCrypt
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 
 package object domain {
   implicit val tokenEq: Eq[JwtToken] = Eq.by(_.value)
@@ -18,6 +18,8 @@ package object domain {
   implicit val tokenEncoder: Encoder[JwtToken] = deriveEncoder
 
   implicit val javaTimeShow: Show[LocalDateTime] = Show[String].contramap[LocalDateTime](_.toString)
+
+  implicit val javaDateShow: Show[LocalDate] = Show[String].contramap[LocalDate](_.toString)
 
   implicit val passwordHashEncoder: Encoder[PasswordHash[SCrypt]] = Encoder.encodeString.contramap(_.toString)
   implicit val passwordHashDecoder: Decoder[PasswordHash[SCrypt]] = Decoder.decodeString.map(PasswordHash[SCrypt])

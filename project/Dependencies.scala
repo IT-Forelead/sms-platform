@@ -21,7 +21,8 @@ object Dependencies {
     val tsec          = "0.4.0"
     val catsRetry     = "3.1.0"
 
-    val weaver = "0.7.11"
+    val weaver        = "0.7.11"
+    val testContainer = "1.17.1"
   }
 
   object Libraries {
@@ -75,13 +76,13 @@ object Dependencies {
     val log4cats       = "org.typelevel"      %% "log4cats-slf4j"  % Versions.log4cats
     val logback        = "ch.qos.logback"      % "logback-classic" % Versions.logback
     val monocleCore    = "dev.optics"         %% "monocle-core"    % Versions.monocle
-
     // Test
     val log4catsNoOp      = "org.typelevel"       %% "log4cats-noop"      % Versions.log4cats
     val refinedScalacheck = "eu.timepit"          %% "refined-scalacheck" % Versions.refined
     val weaverCats        = "com.disneystreaming" %% "weaver-cats"        % Versions.weaver
     val weaverDiscipline  = "com.disneystreaming" %% "weaver-discipline"  % Versions.weaver
     val weaverScalaCheck  = "com.disneystreaming" %% "weaver-scalacheck"  % Versions.weaver
+    val testContainer     = "org.testcontainers"   % "postgresql"         % Versions.testContainer
   }
 
   val circeLibs: Seq[ModuleID] = Seq(circeCore, circeGeneric, circeParser, circeRefined)
@@ -117,6 +118,7 @@ object Dependencies {
     refinedScalacheck,
     weaverCats,
     weaverDiscipline,
-    weaverScalaCheck
+    weaverScalaCheck,
+    testContainer
   )
 }
