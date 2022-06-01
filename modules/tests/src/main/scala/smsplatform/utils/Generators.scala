@@ -106,7 +106,7 @@ object Generators {
       i  <- contactIdGen
       fn <- firstnameGen
       ln <- lastnameGen
-      b  <- timestampGen
+      b  <- dateGen
       p  <- phoneGen
     } yield UpdateContact(i, fn, ln, b, p)
 

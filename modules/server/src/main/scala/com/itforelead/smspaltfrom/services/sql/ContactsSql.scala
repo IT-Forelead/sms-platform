@@ -32,7 +32,7 @@ object ContactsSql {
     sql"""UPDATE contacts
          SET first_name = $firstName,
          last_name = $lastName,
-         birthday = $timestamp,
+         birthday = $date,
          phone = $tel
          WHERE id = $contactId RETURNING *"""
       .query(decoder)

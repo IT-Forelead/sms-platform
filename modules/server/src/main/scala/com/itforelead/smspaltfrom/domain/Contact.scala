@@ -29,7 +29,7 @@ object Contact {
     id: ContactId,
     firstName: FirstName,
     lastName: LastName,
-    birthday: LocalDateTime,
+    birthday: LocalDate,
     phone: Tel
   )
 }
