@@ -3,12 +3,8 @@ package com.itforelead.smspaltfrom.services.sql
 import com.itforelead.smspaltfrom.domain.Contact.UpdateContact
 import com.itforelead.smspaltfrom.domain.Contact
 import com.itforelead.smspaltfrom.domain.types.ContactId
-import com.itforelead.smspaltfrom.domain.custom.refinements.Tel
-import com.itforelead.smspaltfrom.domain.types.{ContactId, FirstName, LastName}
-import com.itforelead.smspaltfrom.domain.{Contact, Gender}
 import skunk._
-import skunk.codec.all.{date, timestamp}
-import skunk.codec.all.{bool, timestamp}
+import skunk.codec.all.{bool, date, timestamp}
 import skunk.implicits._
 
 import java.time.LocalDate
@@ -16,9 +12,7 @@ import java.time.LocalDate
 object ContactsSql {
   val contactId: Codec[ContactId] = identity[ContactId]
 
-  val Columns = contactId ~ timestamp ~ firstName ~ lastName ~ date ~ tel
-  val columns: Codec[(((((((ContactId, LocalDateTime), FirstName), LastName), Gender), LocalDateTime), Tel), Boolean)] =
-    contactId ~ timestamp ~ firstName ~ lastName ~ gender ~ timestamp ~ tel ~ bool
+  val Columns = contactId ~ timestamp ~ firstName ~ lastName ~ gender ~ date ~ tel ~ bool
 
   val encoder: Encoder[Contact] =
     Columns.contramap(c => c.id ~ c.createdAt ~ c.firstName ~ c.lastName ~ c.gender ~ c.birthday ~ c.phone ~ false)
