@@ -6,7 +6,7 @@ import io.circe.{Decoder, Encoder}
 sealed abstract class Who(val value: String)
 
 object Who {
-  case object ALL   extends Who("all")
+  case object ALL    extends Who("all")
   case object MALE   extends Who("male")
   case object FEMALE extends Who("female")
 
@@ -23,5 +23,3 @@ object Who {
   implicit val show: Show[Who]         = Show.show(_.value)
 
 }
-
-

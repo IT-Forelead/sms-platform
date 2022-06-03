@@ -43,16 +43,16 @@ CREATE TABLE IF NOT EXISTS contacts (
 
 CREATE TABLE IF NOT EXISTS holidays (
     id UUID PRIMARY KEY,
-    name: VARCHAR NOT NULL,
-    day: INT NOT NULL,
-    month: MONTH NOT NULL,
+    name VARCHAR NOT NULL,
+    day INT NOT NULL,
+    month MONTH NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS sms_templates (
     id UUID PRIMARY KEY,
-    holiday_id: UUID NOT NULL CONSTRAINT fk_holiday_id REFERENCES holidays (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    title: VARCHAR NOT NULL,
+    holiday_id UUID NOT NULL CONSTRAINT fk_holiday_id REFERENCES holidays (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    title VARCHAR NOT NULL,
     text VARCHAR NOT NULL,
     for_whom: WHO NOT NULL,
     active BOOLEAN NOT NULL,

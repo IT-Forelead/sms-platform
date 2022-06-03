@@ -60,7 +60,7 @@ object Generators {
   val phoneGen: Gen[Tel] = arbitrary[Tel]
 
   val timestampGen: Gen[LocalDateTime] = arbitrary[LocalDateTime]
-  val dateGen: Gen[LocalDate]          = arbitrary[LocalDate]
+  val dateGen: Gen[LocalDate]          = timestampGen.map(_.toLocalDate)
 
   val passwordGen: Gen[Password] = arbitrary[Password]
 
