@@ -7,17 +7,17 @@ sealed abstract class Month(val value: String)
 
 object Month {
   case object JANUARY   extends Month("january")
-  case object FEBRUARY extends Month("february")
-  case object MARCH extends Month("march")
-  case object APRIL extends Month("april")
-  case object MAY extends Month("may")
-  case object JUNE extends Month("june")
-  case object JULY extends Month("july")
-  case object AUGUST extends Month("august")
+  case object FEBRUARY  extends Month("february")
+  case object MARCH     extends Month("march")
+  case object APRIL     extends Month("april")
+  case object MAY       extends Month("may")
+  case object JUNE      extends Month("june")
+  case object JULY      extends Month("july")
+  case object AUGUST    extends Month("august")
   case object SEPTEMBER extends Month("september")
-  case object OCTOBER extends Month("october")
-  case object NOVEMBER extends Month("november")
-  case object DECEMBER extends Month("december")
+  case object OCTOBER   extends Month("october")
+  case object NOVEMBER  extends Month("november")
+  case object DECEMBER  extends Month("december")
 
   val months = List(
     JANUARY,

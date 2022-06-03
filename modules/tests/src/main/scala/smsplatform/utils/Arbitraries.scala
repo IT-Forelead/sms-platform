@@ -4,12 +4,13 @@ import org.http4s.MediaType
 import org.scalacheck.Arbitrary
 import org.scalacheck.Gen._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.{Gender, Role}
+import com.itforelead.smspaltfrom.domain.{Gender, GenderAccess, Role}
 import Generators.{nonEmptyStringGen, numberGen}
 
 object Arbitraries {
 
   implicit lazy val arbGender: Arbitrary[Gender] = Arbitrary(oneOf(Gender.genders))
+  implicit lazy val arbGenderAccess: Arbitrary[GenderAccess] = Arbitrary(oneOf(GenderAccess.genderAccess))
   implicit lazy val arbRole: Arbitrary[Role]     = Arbitrary(oneOf(Role.roles))
   implicit lazy val arbEmail: Arbitrary[EmailAddress] = Arbitrary(
     for {
