@@ -6,9 +6,9 @@ import skunk.codec.all._
 import skunk.data.{Arr, Type}
 import tsec.passwordhashers.PasswordHash
 import tsec.passwordhashers.jca.SCrypt
-import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, Tel}
-import com.itforelead.smspaltfrom.domain.types.{Content, FirstName, LastName, UserName}
-import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender, Role}
+import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, Tel}
+import com.itforelead.smspaltfrom.domain.types.{Content, FirstName, HolidayName, LastName, UserName}
+import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender, Month, Role}
 import com.itforelead.smspaltfrom.types.IsUUID
 import eu.timepit.refined.auto.autoUnwrap
 
@@ -34,15 +34,22 @@ package object sql {
   val lastName: Codec[LastName] =
     varchar.imap[LastName](lastname => LastName(NonEmptyString.unsafeFrom(lastname)))(_.value)
 
+  val holidayName: Codec[HolidayName] =
+    varchar.imap[HolidayName](name => HolidayName(NonEmptyString.unsafeFrom(name)))(_.value)
+
   val passwordHash: Codec[PasswordHash[SCrypt]] = varchar.imap[PasswordHash[SCrypt]](PasswordHash[SCrypt])(_.toString)
 
   val email: Codec[EmailAddress] = varchar.imap[EmailAddress](EmailAddress.unsafeFrom)(_.value)
 
   val tel: Codec[Tel] = varchar.imap[Tel](Tel.unsafeFrom)(_.value)
 
+  val dayOfMonth: Codec[DayOfMonth] = int4.imap[DayOfMonth](DayOfMonth.unsafeFrom)(_.value)
+
   val gender: Codec[Gender] = `enum`[Gender](_.value, Gender.find, Type("gender"))
 
   val role: Codec[Role] = `enum`[Role](_.value, Role.find, Type("role"))
+
+  val month: Codec[Month] = `enum`[Month](_.value, Month.find, Type("month"))
 
   val deliveryStatus: Codec[DeliveryStatus] =
     `enum`[DeliveryStatus](_.value, DeliveryStatus.find, Type("deliveryStatus"))

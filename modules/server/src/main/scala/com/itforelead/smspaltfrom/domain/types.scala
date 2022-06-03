@@ -24,6 +24,9 @@ object types {
   @newtype case class LastName(value: NonEmptyString)
 
   @derive(decoder, encoder, show)
+  @newtype case class HolidayName(value: NonEmptyString)
+
+  @derive(decoder, encoder, show)
   @newtype case class Content(value: NonEmptyString)
 
   @derive(decoder, encoder, eqv, show, uuid)
@@ -31,6 +34,9 @@ object types {
 
   @derive(decoder, encoder, eqv, show, uuid)
   @newtype case class ContactId(value: UUID)
+
+  @derive(decoder, encoder, eqv, show, uuid)
+  @newtype case class HolidayId(value: UUID)
 
   @derive(decoder, encoder, eqv, show, uuid)
   @newtype case class TemplateId(value: UUID)

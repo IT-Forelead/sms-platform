@@ -3,8 +3,8 @@ package smsplatform.utils
 import org.http4s.MediaType
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Gen._
-import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.{Gender, Role}
+import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
+import com.itforelead.smspaltfrom.domain.{Gender, Month, Role}
 import Generators.{nonEmptyStringGen, numberGen}
 
 import java.time.LocalDateTime
@@ -13,6 +13,7 @@ object Arbitraries {
 
   implicit lazy val arbGender: Arbitrary[Gender] = Arbitrary(oneOf(Gender.genders))
   implicit lazy val arbRole: Arbitrary[Role]     = Arbitrary(oneOf(Role.roles))
+  implicit lazy val arbMonth: Arbitrary[Month]   = Arbitrary(oneOf(Month.months))
   implicit lazy val arbLocalDateTime: Arbitrary[LocalDateTime]     = Arbitrary(
     for {
       year <- Gen.choose(1800, 2100)
@@ -50,5 +51,11 @@ object Arbitraries {
     for {
       s0 <- numberGen(12)
     } yield Tel.unsafeFrom(s"+$s0")
+  )
+
+  implicit lazy val arbDayOfMonth: Arbitrary[DayOfMonth] = Arbitrary(
+    for {
+      day <- Gen.choose(1, 28)
+    } yield DayOfMonth.unsafeFrom(day)
   )
 }
