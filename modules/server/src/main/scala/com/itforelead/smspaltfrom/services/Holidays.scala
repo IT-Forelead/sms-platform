@@ -22,7 +22,7 @@ trait Holidays[F[_]] {
     * @return
     *   list of holidays
     */
-  def contacts: F[List[Holiday]]
+  def holidays: F[List[Holiday]]
 
   /** Function for update holiday
     * @param holiday
@@ -77,7 +77,7 @@ object Holidays {
         * @return
         *   list of holidays
         */
-      override def contacts: F[List[Holiday]] =
+      override def holidays: F[List[Holiday]] =
         prepQueryList(select, Void)
 
       /** Function for update holiday

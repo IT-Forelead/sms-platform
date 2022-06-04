@@ -27,7 +27,7 @@ final case class HolidayRoutes[F[_]: JsonDecoder: MonadThrow](
       }
 
     case GET -> Root as _ =>
-      holidays.contacts.flatMap(Ok(_))
+      holidays.holidays.flatMap(Ok(_))
 
     case aR @ PUT -> Root as _ =>
       aR.req.decodeR[Holiday] { from =>

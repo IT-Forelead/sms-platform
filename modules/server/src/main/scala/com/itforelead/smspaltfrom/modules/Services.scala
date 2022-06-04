@@ -2,7 +2,7 @@ package com.itforelead.smspaltfrom.modules
 
 import cats.effect.{Resource, Sync}
 import com.itforelead.smspaltfrom.effects.GenUUID
-import com.itforelead.smspaltfrom.services.{Congratulator, Contacts, SMSTemplates, Users}
+import com.itforelead.smspaltfrom.services.{Congratulator, Contacts, Holidays, SMSTemplates, Users}
 import skunk.Session
 
 object Services {
@@ -11,6 +11,7 @@ object Services {
     new Services[F](
       users = Users[F],
       contacts = contacts,
+      holidays = Holidays[F],
       smsTemplates = SMSTemplates[F],
       congratulator = Congratulator.make[F](contacts)
     )
@@ -20,6 +21,7 @@ object Services {
 final class Services[F[_]] private (
   val users: Users[F],
   val contacts: Contacts[F],
+  val holidays: Holidays[F],
   val smsTemplates: SMSTemplates[F],
   val congratulator: Congratulator[F]
 )

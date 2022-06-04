@@ -52,7 +52,7 @@ package object sql {
   val month: Codec[Month] = `enum`[Month](_.value, Month.find, Type("month"))
 
   val deliveryStatus: Codec[DeliveryStatus] =
-    `enum`[DeliveryStatus](_.value, DeliveryStatus.find, Type("deliveryStatus"))
+    `enum`[DeliveryStatus](_.value, DeliveryStatus.find, Type("delivery_status"))
 
   val content: Codec[Content] = varchar.imap[Content](content => Content(NonEmptyString.unsafeFrom(content)))(_.value)
 
