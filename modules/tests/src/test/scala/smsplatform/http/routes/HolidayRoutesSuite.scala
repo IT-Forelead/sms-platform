@@ -19,7 +19,7 @@ object HolidayRoutesSuite extends HttpSuite {
 
   def holidays[F[_]: Sync](holiday: Holiday): Holidays[F] = new HolidaysStub[F] {
     override def create(form: CreateHoliday): F[Holiday] = Sync[F].delay(holiday)
-    override def contacts: F[List[Holiday]] = Sync[F].delay(List(holiday))
+    override def holidays: F[List[Holiday]] = Sync[F].delay(List(holiday))
     override def update(form: Holiday): F[Holiday] = Sync[F].delay(holiday)
     override def delete(id: HolidayId): F[Unit] = Sync[F].unit
   }

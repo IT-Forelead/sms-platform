@@ -13,7 +13,7 @@ object HolidaysSuite extends DBSuite {
     forall(createHolidayGen) { createHoliday =>
       for {
         holiday1 <- holidays.create(createHoliday)
-        holiday2 <- holidays.contacts
+        holiday2 <- holidays.holidays
       } yield assert(holiday2.contains(holiday1))
     }
   }
@@ -45,7 +45,7 @@ object HolidaysSuite extends DBSuite {
       for {
         holiday1 <- holidays.create(createHoliday)
         _        <- holidays.delete(holiday1.id)
-        holiday3 <- holidays.contacts
+        holiday3 <- holidays.holidays
       } yield assert(!holiday3.contains(holiday1))
     }
   }
