@@ -28,4 +28,11 @@ object Message {
     sentDate: LocalDateTime,
     deliveryStatus: DeliveryStatus
   )
+
+  @derive(decoder, encoder, show)
+  case class MessageWithContact(
+    message: Message,
+    contact: Contact,
+    template: SMSTemplate
+  )
 }

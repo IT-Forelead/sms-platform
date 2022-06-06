@@ -2,17 +2,19 @@ package com.itforelead.smspaltfrom.services
 
 import cats.effect.{Resource, Sync}
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.Message.CreateMessage
+import com.itforelead.smspaltfrom.domain.Message.{CreateMessage, MessageWithContact}
 import com.itforelead.smspaltfrom.domain.{DeliveryStatus, ID, Message}
-import com.itforelead.smspaltfrom.domain.types.MessageId
+import com.itforelead.smspaltfrom.domain.types.{ContactId, MessageId}
 import com.itforelead.smspaltfrom.effects.GenUUID
-import skunk.Session
+import skunk.{Session, Void}
 import skunk.implicits.toIdOps
 
 import java.time.LocalDateTime
 
 trait Messages[F[_]] {
   def create(msg: CreateMessage): F[Message]
+  def messages: F[List[MessageWithContact]]
+  def messagesByContactId(id: ContactId): F[List[MessageWithContact]]
   def changeStatus(id: MessageId, status: DeliveryStatus): F[Message]
 }
 
@@ -34,6 +36,12 @@ object Messages {
           )
         } yield message
       }
+
+      override def messages: F[List[MessageWithContact]] =
+        prepQueryList(select, Void)
+
+      override def messagesByContactId(id: ContactId): F[List[MessageWithContact]] =
+        prepQueryList(selectByContactId, id)
 
       override def changeStatus(id: MessageId, status: DeliveryStatus): F[Message] =
         prepQueryUnique(changeStatusSql, status ~ id)
