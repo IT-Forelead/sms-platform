@@ -3,7 +3,7 @@ package smsplatform.utils
 import org.http4s.MediaType
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Gen._
-import com.itforelead.smspaltfrom.domain.custom.refinements.{ DayOfMonth, EmailAddress, FileName, Password, Tel}
+import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
 import com.itforelead.smspaltfrom.domain.{Gender,GenderAccess, Month, Role}
 import Generators.{nonEmptyStringGen, numberGen}
 

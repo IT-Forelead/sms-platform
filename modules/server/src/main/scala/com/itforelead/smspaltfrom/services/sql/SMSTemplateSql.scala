@@ -1,7 +1,7 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.SMSTemplate
-import com.itforelead.smspaltfrom.domain.types.{HolidayId, TemplateCategoryId, TemplateId}
+import com.itforelead.smspaltfrom.domain.types.{TemplateCategoryId, TemplateId}
 import skunk._
 import skunk.codec.all.bool
 import skunk.implicits._

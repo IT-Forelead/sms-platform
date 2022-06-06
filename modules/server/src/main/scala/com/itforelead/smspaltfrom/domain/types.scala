@@ -39,9 +39,6 @@ object types {
   @newtype case class ContactId(value: UUID)
 
   @derive(decoder, encoder, eqv, show, uuid)
-  @newtype case class HolidayId(value: UUID)
-
-  @derive(decoder, encoder, eqv, show, uuid)
   @newtype case class TemplateId(value: UUID)
 
   @derive(decoder, encoder, eqv, show, uuid)

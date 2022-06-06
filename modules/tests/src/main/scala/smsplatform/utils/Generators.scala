@@ -14,7 +14,6 @@ import com.itforelead.smspaltfrom.domain.types.{
   HolidayName,
   LastName,
   TemplateCategoryId,
-  LastName,
   TemplateId,
   Title,
   UserId,
@@ -66,8 +65,6 @@ object Generators {
   val contactIdGen: Gen[ContactId] =
     idGen(ContactId.apply)
 
-  val holidayIdGen: Gen[HolidayId] =
-    idGen(HolidayId.apply)
 
   val templateIdGen: Gen[TemplateId] =
     idGen(TemplateId.apply)

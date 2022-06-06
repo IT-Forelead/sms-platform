@@ -2,11 +2,9 @@ package smsplatform.services
 
 import cats.effect.IO
 import com.itforelead.smspaltfrom.domain.types.TemplateCategoryId
-import com.itforelead.smspaltfrom.services.{SMSTemplates, Users}
-import eu.timepit.refined.auto.autoUnwrap
+import com.itforelead.smspaltfrom.services.SMSTemplates
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createSMSTemplateGen, createUserGen, smsTemplateGen, updateContactGen, updateSMSTemplateGen}
-import tsec.passwordhashers.jca.SCrypt
+import smsplatform.utils.Generators.createSMSTemplateGen
 
 import java.util.UUID
 
