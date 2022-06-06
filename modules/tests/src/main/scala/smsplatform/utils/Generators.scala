@@ -7,7 +7,7 @@ import org.scalacheck.Gen
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
 import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, TemplateCategoryId, TemplateCategoryName, TemplateId, Title, UserId, UserName}
-import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, GenderAccess, Holiday, Month, Role, SMSTemplate, User}
+import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, GenderAccess, Holiday, Month, Role, SMSTemplate, TemplateCategory, User}
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
@@ -153,6 +153,12 @@ object Generators {
       d <- dayOfMonthGen
       m <- monthGen
     } yield CreateHoliday(n, d, m)
+
+  val templateCategoryGen: Gen[TemplateCategory] =
+    for {
+      tcid <- templateCategoryIdGen
+      tcn <- templateCategoryNameGen
+    } yield TemplateCategory(tcid, tcn)
 
   val createTemplateCategoryGen: Gen[CreateTemplateCategory] =
     for {

@@ -21,8 +21,8 @@ object TemplateCategorySuite extends DBSuite {
   test("Update Template Category") { implicit postgres =>
     val templateCategories = TemplateCategories[IO]
     val gen = for {
-      t <- templateCategoryNameGen
       c <- createTemplateCategoryGen
+      t <- templateCategoryNameGen
     } yield (c, t)
     forall(gen) { case (createTemplateCategory, name) =>
       for {
