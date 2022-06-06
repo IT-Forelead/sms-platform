@@ -6,34 +6,13 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.types.{
-  ContactId,
-  Content,
-  FirstName,
-  HolidayId,
-  HolidayName,
-  LastName,
-  TemplateCategoryId,
-  TemplateId,
-  Title,
-  UserId,
-  UserName
-}
-import com.itforelead.smspaltfrom.domain.{
-  Contact,
-  Credentials,
-  Gender,
-  GenderAccess,
-  Holiday,
-  Month,
-  Role,
-  SMSTemplate,
-  User
-}
+import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, TemplateCategoryId, TemplateCategoryName, TemplateId, Title, UserId, UserName}
+import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, GenderAccess, Holiday, Month, Role, SMSTemplate, User}
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
 import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, UpdateSMSTemplate}
+import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 
 import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
@@ -65,9 +44,11 @@ object Generators {
   val contactIdGen: Gen[ContactId] =
     idGen(ContactId.apply)
 
-
   val templateIdGen: Gen[TemplateId] =
     idGen(TemplateId.apply)
+
+  val categoryTemplateIdGen: Gen[TemplateCategoryId] =
+    idGen(TemplateCategoryId.apply)
 
   val templateCategoryIdGen: Gen[TemplateCategoryId] =
     idGen(TemplateCategoryId.apply)
@@ -86,6 +67,9 @@ object Generators {
 
   val holidayNameGen: Gen[HolidayName] =
     arbitrary[NonEmptyString].map(HolidayName.apply)
+
+  val templateCategoryNameGen: Gen[TemplateCategoryName] =
+    arbitrary[NonEmptyString].map(TemplateCategoryName.apply)
 
   val contentGen: Gen[Content] =
     arbitrary[NonEmptyString].map(Content.apply)
@@ -169,6 +153,11 @@ object Generators {
       d <- dayOfMonthGen
       m <- monthGen
     } yield CreateHoliday(n, d, m)
+
+  val createTemplateCategoryGen: Gen[CreateTemplateCategory] =
+    for {
+      n <- templateCategoryNameGen
+    } yield CreateTemplateCategory(n)
 
   val smsTemplateGen: Gen[SMSTemplate] =
     for {

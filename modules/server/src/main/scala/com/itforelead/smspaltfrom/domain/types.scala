@@ -27,6 +27,9 @@ object types {
   @newtype case class HolidayName(value: NonEmptyString)
 
   @derive(decoder, encoder, show)
+  @newtype case class TemplateCategoryName(value: NonEmptyString)
+
+  @derive(decoder, encoder, show)
   @newtype case class Content(value: NonEmptyString)
 
   @derive(decoder, encoder, show)

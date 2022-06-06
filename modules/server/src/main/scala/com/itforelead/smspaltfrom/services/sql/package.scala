@@ -7,8 +7,16 @@ import skunk.data.{Arr, Type}
 import tsec.passwordhashers.PasswordHash
 import tsec.passwordhashers.jca.SCrypt
 import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, Tel}
-import com.itforelead.smspaltfrom.domain.types.{Content, FirstName, HolidayName, LastName, Title, UserName}
-import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender, Month, Role, GenderAccess}
+import com.itforelead.smspaltfrom.domain.types.{
+  Content,
+  FirstName,
+  HolidayName,
+  LastName,
+  TemplateCategoryName,
+  Title,
+  UserName
+}
+import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender, GenderAccess, Month, Role}
 import com.itforelead.smspaltfrom.types.IsUUID
 import eu.timepit.refined.auto.autoUnwrap
 
@@ -30,6 +38,11 @@ package object sql {
 
   val firstName: Codec[FirstName] =
     varchar.imap[FirstName](firstname => FirstName(NonEmptyString.unsafeFrom(firstname)))(_.value)
+
+  val templateCategoryName: Codec[TemplateCategoryName] =
+    varchar.imap[TemplateCategoryName](templateCategoryName =>
+      TemplateCategoryName(NonEmptyString.unsafeFrom(templateCategoryName))
+    )(_.value)
 
   val lastName: Codec[LastName] =
     varchar.imap[LastName](lastname => LastName(NonEmptyString.unsafeFrom(lastname)))(_.value)
