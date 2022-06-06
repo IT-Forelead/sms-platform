@@ -4,13 +4,15 @@ import eu.timepit.refined.api.{Refined, RefinedTypeOps}
 import eu.timepit.refined.boolean.And
 import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.string.{MatchesRegex, Uri, Url}
+import eu.timepit.refined.numeric.Interval.Closed
 
 package object refinements {
-  private type EmailPred     = MatchesRegex["^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\\.[a-zA-Z]+$"]
-  private type PasswordPred  = MatchesRegex["^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{6,32}$"]
-  private type FullNamePred  = MatchesRegex["^[a-zA-Z]{3,}(?:\\s[a-zA-Z]+)+$"]
-  private type FileNamePred  = MatchesRegex["^[\\w,\\s-]+\\.[A-Za-z0-z-]{1,}$"]
-  private type TelNumberPred = MatchesRegex["^[+][0-9]{12}$"]
+  private type EmailPred      = MatchesRegex["^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\\.[a-zA-Z]+$"]
+  private type PasswordPred   = MatchesRegex["^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{6,32}$"]
+  private type FullNamePred   = MatchesRegex["^[a-zA-Z]{3,}(?:\\s[a-zA-Z]+)+$"]
+  private type FileNamePred   = MatchesRegex["^[\\w,\\s-]+\\.[A-Za-z0-z-]{1,}$"]
+  private type TelNumberPred  = MatchesRegex["^[+][0-9]{12}$"]
+  private type DayOfMonthPred = Closed[1, 31]
 
   type FullName = String Refined FullNamePred
   object FullName extends RefinedTypeOps[FullName, String]
@@ -32,5 +34,8 @@ package object refinements {
 
   type Tel = String Refined TelNumberPred
   object Tel extends RefinedTypeOps[Tel, String]
+
+  type DayOfMonth = Int Refined DayOfMonthPred
+  object DayOfMonth extends RefinedTypeOps[DayOfMonth, Int]
 
 }

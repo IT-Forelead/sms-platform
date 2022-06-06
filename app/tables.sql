@@ -1,6 +1,6 @@
 CREATE TYPE GENDER AS ENUM ('male', 'female');
 CREATE TYPE ROLE AS ENUM ('admin', 'user');
-CREATE TYPE STATUS AS ENUM ('sent', 'delivered', 'failed', 'unknown');
+CREATE TYPE DELIVERY_STATUS AS ENUM ('sent', 'delivered', 'failed', 'unknown');
 CREATE TYPE GENDER_ACCESS AS ENUM ('all', 'male', 'female');
 CREATE TYPE MONTH AS ENUM (
     'january',
@@ -52,6 +52,12 @@ CREATE TABLE IF NOT EXISTS holidays
     deleted BOOLEAN NOT NULL DEFAULT false
 );
 
+CREATE TABLE IF NOT EXISTS holidays (
+    id UUID PRIMARY KEY,
+    name VARCHAR NOT NULL,
+    day INT NOT NULL,
+    month MONTH NOT NULL,
+
 CREATE TABLE IF NOT EXISTS template_categories
 (
     id      UUID PRIMARY KEY,
@@ -80,5 +86,5 @@ CREATE TABLE IF NOT EXISTS messages
     sms_temp_id     UUID      NOT NULL
         CONSTRAINT fk_sms_temp_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
     sent_date       TIMESTAMP NOT NULL,
-    delivery_status STATUS    NOT NULL
+    delivery_status DELIVERY_STATUS    NOT NULL
 );
