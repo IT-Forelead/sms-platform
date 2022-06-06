@@ -2,10 +2,9 @@ package com.itforelead.smspaltfrom.routes
 
 import cats.MonadThrow
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
-import com.itforelead.smspaltfrom.domain.types.{TemplateCategoryId, TemplateId}
-import com.itforelead.smspaltfrom.domain.{SMSTemplate, TemplateCategory, User}
+import com.itforelead.smspaltfrom.domain.types.TemplateCategoryId
+import com.itforelead.smspaltfrom.domain.{TemplateCategory, User}
 import com.itforelead.smspaltfrom.services.TemplateCategories
 import org.http4s._
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
