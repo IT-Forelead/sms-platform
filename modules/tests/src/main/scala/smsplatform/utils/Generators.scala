@@ -5,11 +5,12 @@ import eu.timepit.refined.types.string.NonEmptyString
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import com.itforelead.smspaltfrom.domain.User._
-import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, LastName, TemplateId, UserId, UserName}
-import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, Role, SMSTemplate, User}
+import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
+import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, TemplateId, UserId, UserName}
+import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, Holiday, Month, Role, SMSTemplate, User}
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
+import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 
 import java.time.{LocalDate, LocalDateTime}
@@ -42,6 +43,9 @@ object Generators {
   val contactIdGen: Gen[ContactId] =
     idGen(ContactId.apply)
 
+  val holidayIdGen: Gen[HolidayId] =
+    idGen(HolidayId.apply)
+
   val templateIdGen: Gen[TemplateId] =
     idGen(TemplateId.apply)
 
@@ -54,13 +58,18 @@ object Generators {
   val lastnameGen: Gen[LastName] =
     arbitrary[NonEmptyString].map(LastName.apply)
 
+  val holidayNameGen: Gen[HolidayName] =
+    arbitrary[NonEmptyString].map(HolidayName.apply)
+
   val contentGen: Gen[Content] =
     arbitrary[NonEmptyString].map(Content.apply)
 
   val phoneGen: Gen[Tel] = arbitrary[Tel]
 
+  val dayOfMonthGen: Gen[DayOfMonth] = arbitrary[DayOfMonth]
+
   val timestampGen: Gen[LocalDateTime] = arbitrary[LocalDateTime]
-  val dateGen: Gen[LocalDate]          = arbitrary[LocalDate]
+  val dateGen: Gen[LocalDate]          = timestampGen.map(_.toLocalDate)
 
   val passwordGen: Gen[Password] = arbitrary[Password]
 
@@ -73,6 +82,8 @@ object Generators {
   val genderGen: Gen[Gender] = arbitrary[Gender]
 
   val roleGen: Gen[Role] = arbitrary[Role]
+
+  val monthGen: Gen[Month] = arbitrary[Month]
 
   val userGen: Gen[User] =
     for {
@@ -112,6 +123,21 @@ object Generators {
       b  <- dateGen
       p  <- phoneGen
     } yield UpdateContact(i, fn, ln, g, b, p)
+
+  val holidayGen: Gen[Holiday] =
+    for {
+      id  <- holidayIdGen
+      n   <- holidayNameGen
+      d   <- dayOfMonthGen
+      m   <- monthGen
+    } yield Holiday(id, n, d, m)
+
+  val createHolidayGen: Gen[CreateHoliday] =
+    for {
+      n <- holidayNameGen
+      d <- dayOfMonthGen
+      m <- monthGen
+    } yield CreateHoliday(n, d, m)
 
   val smsTemplateGen: Gen[SMSTemplate] =
     for {

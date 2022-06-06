@@ -1,6 +1,6 @@
 CREATE TYPE GENDER AS ENUM ('male', 'female');
 CREATE TYPE ROLE AS ENUM ('admin', 'user');
-CREATE TYPE STATUS AS ENUM ('sent', 'delivered', 'failed', 'unknown');
+CREATE TYPE DELIVERY_STATUS AS ENUM ('sent', 'delivered', 'failed', 'unknown');
 CREATE TYPE WHO AS ENUM ('all', 'male', 'female');
 CREATE TYPE MONTH AS ENUM (
     'january',
@@ -43,16 +43,16 @@ CREATE TABLE IF NOT EXISTS contacts (
 
 CREATE TABLE IF NOT EXISTS holidays (
     id UUID PRIMARY KEY,
-    name: VARCHAR NOT NULL,
-    day: INT NOT NULL,
-    month: MONTH NOT NULL,
+    name VARCHAR NOT NULL,
+    day INT NOT NULL,
+    month MONTH NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS sms_templates (
     id UUID PRIMARY KEY,
-    holiday_id: UUID NOT NULL CONSTRAINT fk_holiday_id REFERENCES holidays (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    title: VARCHAR NOT NULL,
+    holiday_id UUID NOT NULL CONSTRAINT fk_holiday_id REFERENCES holidays (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    title VARCHAR NOT NULL,
     text VARCHAR NOT NULL,
     for_whom: WHO NOT NULL,
     active BOOLEAN NOT NULL,
@@ -65,5 +65,5 @@ CREATE TABLE IF NOT EXISTS messages (
     contact_id UUID NOT NULL CONSTRAINT fk_contact_id REFERENCES contacts (id) ON UPDATE CASCADE ON DELETE CASCADE,
     sms_temp_id UUID NOT NULL CONSTRAINT fk_sms_temp_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
     sent_date TIMESTAMP NOT NULL,
-    delivery_status STATUS NOT NULL
+    delivery_status DELIVERY_STATUS NOT NULL
 );
