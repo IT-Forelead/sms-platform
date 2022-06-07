@@ -21,11 +21,6 @@ final case class MessageRoutes[F[_]: JsonDecoder: MonadThrow](
   private[routes] val prefixPath = "/messages"
 
   private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of {
-    case aR @ POST -> Root as _ =>
-      aR.req.decodeR[CreateMessage] { form =>
-        messages.create(form).flatMap(Created(_))
-      }
-
     case GET -> Root as _ =>
       messages.messages.flatMap(Ok(_))
 

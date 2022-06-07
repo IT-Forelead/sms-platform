@@ -210,15 +210,6 @@ object Generators {
       ds  <- deliveryStatusGen
     } yield Message(id, cAt, cId, tId, sd, ds)
 
-  val createMessageGen: Gen[CreateMessage] =
-    for {
-      cAt <- timestampGen
-      cId <- contactIdGen
-      tId <- templateIdGen
-      sd  <- timestampGen
-      ds  <- deliveryStatusGen
-    } yield CreateMessage(cAt, cId, tId, sd, ds)
-
   val userCredentialGen: Gen[Credentials] =
     for {
       e <- emailGen
