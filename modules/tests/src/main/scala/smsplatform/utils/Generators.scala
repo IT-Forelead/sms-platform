@@ -6,10 +6,8 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, MessageId, TemplateId, UserId, UserName}
-import com.itforelead.smspaltfrom.domain.{Contact, Credentials, DeliveryStatus, Gender, Holiday, Message, Month, Role, SMSTemplate, User}
-import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, TemplateCategoryId, TemplateCategoryName, TemplateId, Title, UserId, UserName}
-import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, GenderAccess, Holiday, Month, Role, SMSTemplate, TemplateCategory, User}
+import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, MessageId, TemplateCategoryId, TemplateCategoryName, TemplateId, Title, UserId, UserName}
+import com.itforelead.smspaltfrom.domain.{Contact, Credentials, DeliveryStatus, Gender, GenderAccess, Holiday, Message, Month, Role, SMSTemplate, TemplateCategory, User}
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday

@@ -2,7 +2,15 @@ package com.itforelead.smspaltfrom.modules
 
 import cats.effect.{Resource, Sync}
 import com.itforelead.smspaltfrom.effects.GenUUID
-import com.itforelead.smspaltfrom.services.{Congratulator, Contacts, Holidays, Messages, SMSTemplates, TemplateCategories, Users}
+import com.itforelead.smspaltfrom.services.{
+  Congratulator,
+  Contacts,
+  Holidays,
+  Messages,
+  SMSTemplates,
+  TemplateCategories,
+  Users
+}
 import skunk.Session
 
 object Services {
