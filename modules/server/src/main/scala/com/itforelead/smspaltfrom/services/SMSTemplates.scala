@@ -25,7 +25,10 @@ object SMSTemplates {
 
       override def create(form: CreateSMSTemplate): F[SMSTemplate] =
         ID.make[F, TemplateId].flatMap { id =>
-          prepQueryUnique(insert, SMSTemplate(id, form.text, form.active))
+          prepQueryUnique(
+            insert,
+            SMSTemplate(id, form.templateCategoryId, form.title, form.text, form.genderAccess, form.active)
+          )
         }
 
       override def templates: F[List[SMSTemplate]] =

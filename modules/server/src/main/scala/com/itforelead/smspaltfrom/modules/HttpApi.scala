@@ -15,7 +15,14 @@ import pdi.jwt.JwtClaim
 import com.itforelead.smspaltfrom.config.LogConfig
 import com.itforelead.smspaltfrom.domain.User
 import com.itforelead.smspaltfrom.implicits.CirceDecoderOps
-import com.itforelead.smspaltfrom.routes.{AuthRoutes, ContactRoutes, HolidayRoutes, SMSTemplateRoutes, UserRoutes}
+import com.itforelead.smspaltfrom.routes.{
+  AuthRoutes,
+  ContactRoutes,
+  HolidayRoutes,
+  SMSTemplateRoutes,
+  TemplateCategoryRoutes,
+  UserRoutes
+}
 import com.itforelead.smspaltfrom.services.redis.RedisClient
 
 import scala.concurrent.duration.DurationInt
@@ -47,15 +54,17 @@ final class HttpApi[F[_]: Async: Logger] private (
     JwtAuthMiddleware[F, User](security.userJwtAuth.value, findUser)
 
   // Auth routes
-  private[this] val authRoutes     = AuthRoutes[F](security.auth).routes(usersMiddleware)
-  private[this] val userRoutes     = new UserRoutes[F].routes(usersMiddleware)
-  private[this] val contactRoutes  = new ContactRoutes[F](services.contacts).routes(usersMiddleware)
-  private[this] val holidayRoutes  = new HolidayRoutes[F](services.holidays).routes(usersMiddleware)
+  private[this] val authRoutes    = AuthRoutes[F](security.auth).routes(usersMiddleware)
+  private[this] val userRoutes    = new UserRoutes[F].routes(usersMiddleware)
+  private[this] val contactRoutes = new ContactRoutes[F](services.contacts).routes(usersMiddleware)
+  private[this] val holidayRoutes = new HolidayRoutes[F](services.holidays).routes(usersMiddleware)
+  private[this] val templateCategoryRoutes =
+    new TemplateCategoryRoutes[F](services.templateCategories).routes(usersMiddleware)
   private[this] val templateRoutes = new SMSTemplateRoutes[F](services.smsTemplates).routes(usersMiddleware)
 
   // Open routes
   private[this] val openRoutes: HttpRoutes[F] =
-    userRoutes <+> authRoutes <+> contactRoutes <+> holidayRoutes <+> templateRoutes
+    userRoutes <+> authRoutes <+> contactRoutes <+> holidayRoutes <+> templateCategoryRoutes <+> templateRoutes
 
   private[this] val routes: HttpRoutes[F] = Router(
     baseURL -> openRoutes
