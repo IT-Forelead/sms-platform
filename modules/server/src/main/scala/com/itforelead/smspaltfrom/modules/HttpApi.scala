@@ -19,6 +19,7 @@ import com.itforelead.smspaltfrom.routes.{
   AuthRoutes,
   ContactRoutes,
   HolidayRoutes,
+  MessageRoutes,
   SMSTemplateRoutes,
   TemplateCategoryRoutes,
   UserRoutes
@@ -57,6 +58,7 @@ final class HttpApi[F[_]: Async: Logger] private (
   private[this] val authRoutes    = AuthRoutes[F](security.auth).routes(usersMiddleware)
   private[this] val userRoutes    = new UserRoutes[F].routes(usersMiddleware)
   private[this] val contactRoutes = new ContactRoutes[F](services.contacts).routes(usersMiddleware)
+  private[this] val messageRoutes = new MessageRoutes[F](services.messages).routes(usersMiddleware)
   private[this] val holidayRoutes = new HolidayRoutes[F](services.holidays).routes(usersMiddleware)
   private[this] val templateCategoryRoutes =
     new TemplateCategoryRoutes[F](services.templateCategories).routes(usersMiddleware)
@@ -64,7 +66,7 @@ final class HttpApi[F[_]: Async: Logger] private (
 
   // Open routes
   private[this] val openRoutes: HttpRoutes[F] =
-    userRoutes <+> authRoutes <+> contactRoutes <+> holidayRoutes <+> templateCategoryRoutes <+> templateRoutes
+    userRoutes <+> authRoutes <+> contactRoutes <+> messageRoutes <+> holidayRoutes <+> templateCategoryRoutes <+> templateRoutes
 
   private[this] val routes: HttpRoutes[F] = Router(
     baseURL -> openRoutes
