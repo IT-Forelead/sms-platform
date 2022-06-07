@@ -2,7 +2,6 @@ package com.itforelead.smspaltfrom.routes
 
 import cats.MonadThrow
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.Message.CreateMessage
 import com.itforelead.smspaltfrom.domain.User
 import com.itforelead.smspaltfrom.domain.types.ContactId
 import com.itforelead.smspaltfrom.services.Messages
