@@ -6,11 +6,12 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, TemplateCategoryId, TemplateCategoryName, TemplateId, Title, UserId, UserName}
-import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, GenderAccess, Holiday, Month, Role, SMSTemplate, TemplateCategory, User}
+import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, MessageId, TemplateCategoryId, TemplateCategoryName, TemplateId, Title, UserId, UserName}
+import com.itforelead.smspaltfrom.domain.{Contact, Credentials, DeliveryStatus, Gender, GenderAccess, Holiday, Message, Month, Role, SMSTemplate, TemplateCategory, User}
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
+import com.itforelead.smspaltfrom.domain.Message.CreateMessage
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 
@@ -43,6 +44,9 @@ object Generators {
 
   val contactIdGen: Gen[ContactId] =
     idGen(ContactId.apply)
+
+  val messageIdGen: Gen[MessageId] =
+    idGen(MessageId.apply)
 
   val templateIdGen: Gen[TemplateId] =
     idGen(TemplateId.apply)
@@ -99,6 +103,8 @@ object Generators {
   val roleGen: Gen[Role] = arbitrary[Role]
 
   val monthGen: Gen[Month] = arbitrary[Month]
+
+  val deliveryStatusGen: Gen[DeliveryStatus] = arbitrary[DeliveryStatus]
 
   val userGen: Gen[User] =
     for {
@@ -183,6 +189,16 @@ object Generators {
       g    <- genderAccessGen
       a    <- booleanGen
     } yield CreateSMSTemplate(tcid, t, c, g, a)
+
+  val messageGen: Gen[Message] =
+    for {
+      id  <- messageIdGen
+      cAt <- timestampGen
+      cId <- contactIdGen
+      tId <- templateIdGen
+      sd  <- timestampGen
+      ds  <- deliveryStatusGen
+    } yield Message(id, cAt, cId, tId, sd, ds)
 
   val userCredentialGen: Gen[Credentials] =
     for {
