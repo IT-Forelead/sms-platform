@@ -37,13 +37,4 @@ object SMSTemplate {
     active: Boolean
   )
 
-  @derive(decoder, encoder, show)
-  case class UpdateSMSTemplate(
-    id: TemplateId,
-    templateCategoryId: TemplateCategoryId,
-    title: Title,
-    text: Content,
-    genderAccess: GenderAccess,
-    active: Boolean
-  )
 }

@@ -7,7 +7,7 @@ import com.itforelead.smspaltfrom.services.{Contacts, SMSTemplates, TemplateCate
 import smsplatform.services.ContactsSuite.{assert, test}
 import smsplatform.services.TemplateCategorySuite.{assert, test}
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createContactGen, createSMSTemplateGen, createTemplateCategoryGen, idGen, templateCategoryGen, templateCategoryIdGen, templateCategoryNameGen, titleGen, updateSMSTemplateGen}
+import smsplatform.utils.Generators.{createContactGen, createSMSTemplateGen, createTemplateCategoryGen, idGen, templateCategoryGen, templateCategoryIdGen, templateCategoryNameGen, titleGen}
 
 import java.util.UUID
 
