@@ -27,7 +27,13 @@ object types {
   @newtype case class HolidayName(value: NonEmptyString)
 
   @derive(decoder, encoder, show)
+  @newtype case class TemplateCategoryName(value: NonEmptyString)
+
+  @derive(decoder, encoder, show)
   @newtype case class Content(value: NonEmptyString)
+
+  @derive(decoder, encoder, show)
+  @newtype case class Title(value: NonEmptyString)
 
   @derive(decoder, encoder, eqv, show, uuid)
   @newtype case class UserId(value: UUID)
@@ -36,10 +42,13 @@ object types {
   @newtype case class ContactId(value: UUID)
 
   @derive(decoder, encoder, eqv, show, uuid)
-  @newtype case class HolidayId(value: UUID)
+  @newtype case class TemplateId(value: UUID)
 
   @derive(decoder, encoder, eqv, show, uuid)
-  @newtype case class TemplateId(value: UUID)
+  @newtype case class TemplateCategoryId(value: UUID)
+
+  @derive(decoder, encoder, eqv, show, uuid)
+  @newtype case class HolidayId(value: UUID)
 
   @derive(decoder, encoder, eqv, show, uuid)
   @newtype case class MessageId(value: UUID)

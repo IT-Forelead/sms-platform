@@ -47,13 +47,13 @@ object ContactsSuite extends DBSuite {
     forall(createContactGen) { createContact =>
       for {
         contact1 <- contacts.create(createContact)
-        contact2 <- contacts.delete(contact1.id)
+        _ <- contacts.delete(contact1.id)
         contact3 <- contacts.contacts
       } yield assert(!contact3.contains(contact1))
     }
   }
 
-  test("Find by birthday in Contact") { implicit postgres =>
+  test("Find Contact by birthday") { implicit postgres =>
     val contacts = Contacts[IO]
     forall(createContactGen) { createContact =>
       for {

@@ -4,7 +4,7 @@ import org.http4s.MediaType
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Gen._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender, Month, Role}
+import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender,GenderAccess, Month, Role}
 import Generators.{nonEmptyStringGen, numberGen}
 
 import java.time.LocalDateTime
@@ -12,6 +12,7 @@ import java.time.LocalDateTime
 object Arbitraries {
 
   implicit lazy val arbGender: Arbitrary[Gender] = Arbitrary(oneOf(Gender.genders))
+  implicit lazy val arbGenderAccess: Arbitrary[GenderAccess] = Arbitrary(oneOf(GenderAccess.genderAccess))
   implicit lazy val arbRole: Arbitrary[Role]     = Arbitrary(oneOf(Role.roles))
   implicit lazy val arbMonth: Arbitrary[Month]   = Arbitrary(oneOf(Month.months))
   implicit lazy val arbDeliveryStatus: Arbitrary[DeliveryStatus]   = Arbitrary(oneOf(DeliveryStatus.statuses))

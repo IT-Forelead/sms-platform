@@ -8,11 +8,14 @@ import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
 import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, MessageId, TemplateId, UserId, UserName}
 import com.itforelead.smspaltfrom.domain.{Contact, Credentials, DeliveryStatus, Gender, Holiday, Message, Month, Role, SMSTemplate, User}
+import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, TemplateCategoryId, TemplateCategoryName, TemplateId, Title, UserId, UserName}
+import com.itforelead.smspaltfrom.domain.{Contact, Credentials, Gender, GenderAccess, Holiday, Month, Role, SMSTemplate, TemplateCategory, User}
 import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
 import com.itforelead.smspaltfrom.domain.Message.CreateMessage
-import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
+import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, UpdateSMSTemplate}
+import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 
 import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
@@ -47,11 +50,17 @@ object Generators {
   val messageIdGen: Gen[MessageId] =
     idGen(MessageId.apply)
 
-  val holidayIdGen: Gen[HolidayId] =
-    idGen(HolidayId.apply)
-
   val templateIdGen: Gen[TemplateId] =
     idGen(TemplateId.apply)
+
+  val categoryTemplateIdGen: Gen[TemplateCategoryId] =
+    idGen(TemplateCategoryId.apply)
+
+  val templateCategoryIdGen: Gen[TemplateCategoryId] =
+    idGen(TemplateCategoryId.apply)
+
+  val holidayIdGen: Gen[HolidayId] =
+    idGen(HolidayId.apply)
 
   val usernameGen: Gen[UserName] =
     arbitrary[NonEmptyString].map(UserName.apply)
@@ -65,8 +74,14 @@ object Generators {
   val holidayNameGen: Gen[HolidayName] =
     arbitrary[NonEmptyString].map(HolidayName.apply)
 
+  val templateCategoryNameGen: Gen[TemplateCategoryName] =
+    arbitrary[NonEmptyString].map(TemplateCategoryName.apply)
+
   val contentGen: Gen[Content] =
     arbitrary[NonEmptyString].map(Content.apply)
+
+  val titleGen: Gen[Title] =
+    arbitrary[NonEmptyString].map(Title.apply)
 
   val phoneGen: Gen[Tel] = arbitrary[Tel]
 
@@ -84,6 +99,8 @@ object Generators {
   val filenameGen: Gen[FileName] = arbitrary[FileName]
 
   val genderGen: Gen[Gender] = arbitrary[Gender]
+
+  val genderAccessGen: Gen[GenderAccess] = arbitrary[GenderAccess]
 
   val roleGen: Gen[Role] = arbitrary[Role]
 
@@ -132,10 +149,10 @@ object Generators {
 
   val holidayGen: Gen[Holiday] =
     for {
-      id  <- holidayIdGen
-      n   <- holidayNameGen
-      d   <- dayOfMonthGen
-      m   <- monthGen
+      id <- holidayIdGen
+      n  <- holidayNameGen
+      d  <- dayOfMonthGen
+      m  <- monthGen
     } yield Holiday(id, n, d, m)
 
   val createHolidayGen: Gen[CreateHoliday] =
@@ -145,18 +162,45 @@ object Generators {
       m <- monthGen
     } yield CreateHoliday(n, d, m)
 
+  val templateCategoryGen: Gen[TemplateCategory] =
+    for {
+      tcid <- templateCategoryIdGen
+      tcn <- templateCategoryNameGen
+    } yield TemplateCategory(tcid, tcn)
+
+  val createTemplateCategoryGen: Gen[CreateTemplateCategory] =
+    for {
+      n <- templateCategoryNameGen
+    } yield CreateTemplateCategory(n)
+
   val smsTemplateGen: Gen[SMSTemplate] =
     for {
-      id <- templateIdGen
-      c  <- contentGen
-      a  <- booleanGen
-    } yield SMSTemplate(id, c, a)
+      id   <- templateIdGen
+      tcid <- templateCategoryIdGen
+      t    <- titleGen
+      c    <- contentGen
+      g    <- genderAccessGen
+      a    <- booleanGen
+    } yield SMSTemplate(id, tcid, t, c, g, a)
 
   val createSMSTemplateGen: Gen[CreateSMSTemplate] =
     for {
-      c <- contentGen
-      a <- booleanGen
-    } yield CreateSMSTemplate(c, a)
+      tcid <- templateCategoryIdGen
+      t    <- titleGen
+      c    <- contentGen
+      g    <- genderAccessGen
+      a    <- booleanGen
+    } yield CreateSMSTemplate(tcid, t, c, g, a)
+
+  val updateSMSTemplateGen: Gen[UpdateSMSTemplate] =
+    for {
+      id   <- templateIdGen
+      tcid <- templateCategoryIdGen
+      t    <- titleGen
+      c    <- contentGen
+      g    <- genderAccessGen
+      a    <- booleanGen
+    } yield UpdateSMSTemplate(id, tcid, t, c, g, a)
 
   val messageGen: Gen[Message] =
     for {
