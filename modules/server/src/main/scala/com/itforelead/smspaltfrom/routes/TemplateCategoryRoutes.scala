@@ -27,7 +27,7 @@ final case class TemplateCategoryRoutes[F[_]: JsonDecoder: MonadThrow](
       }
 
     case GET -> Root as _ =>
-      categories.templates.flatMap(Ok(_))
+      categories.templateCategories.flatMap(Ok(_))
 
     case aR @ PUT -> Root as _ =>
       aR.req.decodeR[TemplateCategory] { form =>

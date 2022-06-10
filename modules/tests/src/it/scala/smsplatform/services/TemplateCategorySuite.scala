@@ -13,7 +13,7 @@ object TemplateCategorySuite extends DBSuite {
     forall(createTemplateCategoryGen) { createTemplateCategory =>
       for {
         tmplcat1 <- templateCategories.create(createTemplateCategory)
-        tmplcat2 <- templateCategories.templates
+        tmplcat2 <- templateCategories.templateCategories
       } yield assert(tmplcat2.contains(tmplcat1))
     }
   }
@@ -43,7 +43,7 @@ object TemplateCategorySuite extends DBSuite {
       for {
         tmplcat1 <- templateCategories.create(createTemplateCategory)
         _        <- templateCategories.delete(tmplcat1.id)
-        tmplcat3 <- templateCategories.templates
+        tmplcat3 <- templateCategories.templateCategories
       } yield assert(!tmplcat3.contains(tmplcat1))
     }
   }

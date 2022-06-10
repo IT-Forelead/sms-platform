@@ -10,7 +10,7 @@ import cats.implicits._
 
 trait TemplateCategories[F[_]] {
   def create(form: CreateTemplateCategory): F[TemplateCategory]
-  def templates: F[List[TemplateCategory]]
+  def templateCategories: F[List[TemplateCategory]]
   def update(tmpl: TemplateCategory): F[TemplateCategory]
   def delete(id: TemplateCategoryId): F[Unit]
 }
@@ -32,7 +32,7 @@ object TemplateCategories {
         }
       }
 
-      override def templates: F[List[TemplateCategory]] =
+      override def templateCategories: F[List[TemplateCategory]] =
         prepQueryList(select, Void)
 
       override def update(tmpl: TemplateCategory): F[TemplateCategory] =
