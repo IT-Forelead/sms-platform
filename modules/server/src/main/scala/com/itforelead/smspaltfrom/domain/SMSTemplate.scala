@@ -1,6 +1,6 @@
 package com.itforelead.smspaltfrom.domain
 
-import com.itforelead.smspaltfrom.domain.types.{Content, TemplateCategoryId, TemplateCategoryName, TemplateId, Title}
+import com.itforelead.smspaltfrom.domain.types._
 import derevo.cats.show
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive

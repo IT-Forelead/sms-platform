@@ -20,9 +20,20 @@ object SMSTemplateRoutesSuite extends HttpSuite {
 
   def smsTemplates[F[_]: Sync](from: SMSTemplate): SMSTemplates[F] = new SMSTemplatesStub[F] {
     override def create(form: CreateSMSTemplate): F[SMSTemplate] = Sync[F].delay(from)
-    override def templates: F[List[SMSTemplateWithCatName]] = Sync[F].delay(List(SMSTemplateWithCatName(id = from.id, templateCategoryId = from.templateCategoryId, title = from.title, text = from.text, genderAccess = from.genderAccess, categoryName = TemplateCategoryName(NonEmptyString.unsafeFrom("email")))))
+    override def templates: F[List[SMSTemplateWithCatName]] = Sync[F].delay(
+      List(
+        SMSTemplateWithCatName(
+          id = from.id,
+          templateCategoryId = from.templateCategoryId,
+          title = from.title,
+          text = from.text,
+          genderAccess = from.genderAccess,
+          categoryName = TemplateCategoryName(NonEmptyString.unsafeFrom("email"))
+        )
+      )
+    )
     override def update(form: SMSTemplate): F[SMSTemplate] = Sync[F].delay(from)
-    override def delete(id: TemplateId): F[Unit] = Sync[F].unit
+    override def delete(id: TemplateId): F[Unit]           = Sync[F].unit
   }
 
   test("create sms template") {
@@ -44,8 +55,8 @@ object SMSTemplateRoutesSuite extends HttpSuite {
 
   test("get sms templates") {
     val gen = for {
-      u  <- userGen
-      s  <- smsTemplateGen
+      u <- userGen
+      s <- smsTemplateGen
     } yield (u, s)
 
     forall(gen) { case (user, template) =>
@@ -77,9 +88,9 @@ object SMSTemplateRoutesSuite extends HttpSuite {
 
   test("delete sms template") {
     val gen = for {
-      u  <- userGen
-      s  <- smsTemplateGen
-      i  <- templateIdGen
+      u <- userGen
+      s <- smsTemplateGen
+      i <- templateIdGen
     } yield (u, s, i)
 
     forall(gen) { case (user, template, templateId) =>
