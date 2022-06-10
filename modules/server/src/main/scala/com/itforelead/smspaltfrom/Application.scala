@@ -3,8 +3,8 @@ package com.itforelead.smspaltfrom
 import cats.effect.std.Supervisor
 import cats.effect.{IO, IOApp, Resource}
 import com.itforelead.smspaltfrom.config.ConfigLoader
-import com.itforelead.smspaltfrom.modules.{HttpApi, Security, Services}
-import com.itforelead.smspaltfrom.resources.{AppResources, MkHttpServer}
+import com.itforelead.smspaltfrom.modules.Services
+import com.itforelead.smspaltfrom.resources.MkHttpServer
 import dev.profunktor.redis4cats.log4cats._
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.{Logger, SelfAwareStructuredLogger}
