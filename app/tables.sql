@@ -68,7 +68,6 @@ CREATE TABLE IF NOT EXISTS sms_templates
     title                VARCHAR       NOT NULL,
     text                 VARCHAR       NOT NULL,
     gender_access        GENDER_ACCESS NOT NULL,
-    active               BOOLEAN       NOT NULL,
     deleted              BOOLEAN       NOT NULL DEFAULT false
 );
 

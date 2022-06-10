@@ -20,8 +20,6 @@ object SMSTemplateSuite extends DBSuite {
       c <- createTemplateCategoryGen
       t <- createSMSTemplateGen
     } yield (c, t)
-
-
     forall(gen) { case (c, createTemplate) =>
         for {
           templateCategory <- templateCategories.create(c)
@@ -50,7 +48,6 @@ object SMSTemplateSuite extends DBSuite {
             title = title,
             text = template1.text,
             genderAccess = template1.genderAccess,
-            active = template1.active
           )
         )
       } yield assert.same(template2.title, title)

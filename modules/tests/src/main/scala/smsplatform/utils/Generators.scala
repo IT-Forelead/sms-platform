@@ -178,8 +178,7 @@ object Generators {
       t    <- titleGen
       c    <- contentGen
       g    <- genderAccessGen
-      a    <- booleanGen
-    } yield SMSTemplate(id, tcid, t, c, g, a)
+    } yield SMSTemplate(id, tcid, t, c, g)
 
   val createSMSTemplateGen: Gen[CreateSMSTemplate] =
     for {
@@ -187,8 +186,7 @@ object Generators {
       t    <- titleGen
       c    <- contentGen
       g    <- genderAccessGen
-      a    <- booleanGen
-    } yield CreateSMSTemplate(tcid, t, c, g, a)
+    } yield CreateSMSTemplate(tcid, t, c, g)
 
   val messageGen: Gen[Message] =
     for {

@@ -10,16 +10,14 @@ object SMSTemplateSql {
   val templateId: Codec[TemplateId]                 = identity[TemplateId]
   val templateCategoryId: Codec[TemplateCategoryId] = identity[TemplateCategoryId]
 
-  private val Columns = templateId ~ templateCategoryId ~ title ~ content ~ genderAccess ~ bool ~ bool
+  private val Columns = templateId ~ templateCategoryId ~ title ~ content ~ genderAccess ~ bool
 
   val encoder: Encoder[SMSTemplate] =
-    Columns.contramap(sms =>
-      sms.id ~ sms.templateCategoryId ~ sms.title ~ sms.text ~ sms.genderAccess ~ sms.active ~ false
-    )
+    Columns.contramap(sms => sms.id ~ sms.templateCategoryId ~ sms.title ~ sms.text ~ sms.genderAccess ~ false)
 
   val decoder: Decoder[SMSTemplate] =
-    Columns.map { case id ~ templateCategoryId ~ title ~ text ~ genderAccess ~ active ~ _ =>
-      SMSTemplate(id, templateCategoryId, title, text, genderAccess, active)
+    Columns.map { case id ~ templateCategoryId ~ title ~ text ~ genderAccess ~ _ =>
+      SMSTemplate(id, templateCategoryId, title, text, genderAccess)
     }
 
   val insert: Query[SMSTemplate, SMSTemplate] =
@@ -33,13 +31,10 @@ object SMSTemplateSql {
          SET template_category_id = $templateCategoryId,
              title = $title,
              text = $content,
-             gender_access = $genderAccess,
-             active = $bool
+             gender_access = $genderAccess
          WHERE id = $templateId RETURNING *"""
       .query(decoder)
-      .contramap[SMSTemplate](tmpl =>
-        tmpl.templateCategoryId ~ tmpl.title ~ tmpl.text ~ tmpl.genderAccess ~ tmpl.active ~ tmpl.id
-      )
+      .contramap[SMSTemplate](tmpl => tmpl.templateCategoryId ~ tmpl.title ~ tmpl.text ~ tmpl.genderAccess ~ tmpl.id)
 
   val deleteSql: Command[TemplateId] =
     sql"""UPDATE sms_templates SET deleted = true WHERE id = $templateId""".command

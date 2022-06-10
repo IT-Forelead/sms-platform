@@ -23,8 +23,7 @@ case class SMSTemplate(
   templateCategoryId: TemplateCategoryId,
   title: Title,
   text: Content,
-  genderAccess: GenderAccess,
-  active: Boolean = false
+  genderAccess: GenderAccess
 )
 
 object SMSTemplate {
@@ -33,8 +32,7 @@ object SMSTemplate {
     templateCategoryId: TemplateCategoryId,
     title: Title,
     text: Content,
-    genderAccess: GenderAccess,
-    active: Boolean
+    genderAccess: GenderAccess
   )
 
 }
