@@ -7,6 +7,8 @@ import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.circe.mapEncoder
 import com.itforelead.smspaltfrom.domain.custom.RedisStaticKeys.TemplateIdCache
 import com.itforelead.smspaltfrom.domain.custom.exception.TemplateNotFound
+import com.itforelead.smspaltfrom.domain.{ID, SMSTemplate}
+import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, SMSTemplateWithCatName}
 import com.itforelead.smspaltfrom.domain.types.TemplateId
 import com.itforelead.smspaltfrom.domain.{ID, SMSTemplate}
 import com.itforelead.smspaltfrom.effects.GenUUID
@@ -18,7 +20,7 @@ import scala.concurrent.duration.DurationInt
 trait SMSTemplates[F[_]] {
   def create(form: CreateSMSTemplate): F[SMSTemplate]
   def find(templateId: TemplateId): F[Option[SMSTemplate]]
-  def templates: F[List[SMSTemplate]]
+  def templates: F[List[SMSTemplateWithCatName]]
   def update(tmpl: SMSTemplate): F[SMSTemplate]
   def delete(id: TemplateId): F[Unit]
   def activate(id: TemplateId): F[Unit]
@@ -45,7 +47,7 @@ object SMSTemplates {
       override def find(templateId: TemplateId): F[Option[SMSTemplate]] =
         prepOptQuery(findById, templateId)
 
-      override def templates: F[List[SMSTemplate]] =
+      override def templates: F[List[SMSTemplateWithCatName]] =
         prepQueryAll(select)
 
       override def update(tmpl: SMSTemplate): F[SMSTemplate] =

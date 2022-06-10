@@ -1,8 +1,7 @@
 package com.itforelead.smspaltfrom.services.sql
 
-import com.itforelead.smspaltfrom.domain.{SMSTemplate, TemplateCategory}
-import com.itforelead.smspaltfrom.domain.types.{TemplateCategoryId, TemplateId}
-import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.{decoder, templateCategoryId, templateId}
+import com.itforelead.smspaltfrom.domain.TemplateCategory
+import com.itforelead.smspaltfrom.domain.types.TemplateCategoryId
 import skunk._
 import skunk.codec.all.bool
 import skunk.implicits._

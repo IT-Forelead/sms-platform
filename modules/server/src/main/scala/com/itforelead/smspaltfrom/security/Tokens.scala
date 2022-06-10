@@ -5,7 +5,6 @@ import cats.syntax.all._
 import com.itforelead.smspaltfrom.effects.GenUUID
 import dev.profunktor.auth.jwt._
 import eu.timepit.refined.auto._
-import io.circe.syntax._
 import pdi.jwt._
 import com.itforelead.smspaltfrom.implicits.GenericTypeOps
 import com.itforelead.smspaltfrom.types.{JwtAccessTokenKeyConfig, TokenExpiration}

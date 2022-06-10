@@ -20,7 +20,7 @@ object SMSTemplateSuite extends DBSuite {
         templateCategory <- templateCategories.create(c)
         template1        <- templates.create(createTemplate.copy(templateCategoryId = templateCategory.id))
         template2        <- templates.templates
-      } yield assert(template2.contains(template1))
+      } yield assert(template2.exists(tc => tc.id == template1.id))
     }
   }
 

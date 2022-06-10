@@ -1,6 +1,6 @@
 package com.itforelead.smspaltfrom.domain
 
-import com.itforelead.smspaltfrom.domain.types.{Content, TemplateCategoryId, TemplateId, Title}
+import com.itforelead.smspaltfrom.domain.types._
 import derevo.cats.show
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
@@ -23,4 +23,13 @@ object SMSTemplate {
     gender: Gender
   )
 
+  @derive(decoder, encoder, show)
+  case class SMSTemplateWithCatName(
+    id: TemplateId,
+    templateCategoryId: TemplateCategoryId,
+    title: Title,
+    text: Content,
+    genderAccess: GenderAccess,
+    categoryName: TemplateCategoryName
+  )
 }

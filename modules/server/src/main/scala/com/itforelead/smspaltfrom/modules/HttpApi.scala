@@ -13,7 +13,6 @@ import org.http4s.server.middleware._
 import org.typelevel.log4cats.Logger
 import pdi.jwt.JwtClaim
 import com.itforelead.smspaltfrom.config.LogConfig
-import com.itforelead.smspaltfrom.domain.User
 import com.itforelead.smspaltfrom.implicits.CirceDecoderOps
 import com.itforelead.smspaltfrom.routes.{
   AuthRoutes,
