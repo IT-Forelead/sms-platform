@@ -38,6 +38,11 @@ final case class SMSTemplateRoutes[F[_]: JsonDecoder: MonadThrow](
       aR.req.decodeR[TemplateId] { id =>
         templates.delete(id) >> NoContent()
       }
+
+    case aR @ PUT -> Root / "activate" as _ =>
+      aR.req.decodeR[TemplateId] { id =>
+        templates.activate(id) >> Accepted()
+      }
   }
 
   def routes(authMiddleware: AuthMiddleware[F, User]): HttpRoutes[F] = Router(

@@ -1,19 +1,18 @@
 package smsplatform.utils
 
+import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
+import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
+import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
+import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
+import com.itforelead.smspaltfrom.domain.User._
+import com.itforelead.smspaltfrom.domain._
+import com.itforelead.smspaltfrom.domain.custom.refinements._
+import com.itforelead.smspaltfrom.domain.types._
 import eu.timepit.refined.scalacheck.string._
 import eu.timepit.refined.types.string.NonEmptyString
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import com.itforelead.smspaltfrom.domain.User._
-import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
-import com.itforelead.smspaltfrom.domain.types.{ContactId, Content, FirstName, HolidayId, HolidayName, LastName, MessageId, TemplateCategoryId, TemplateCategoryName, TemplateId, Title, UserId, UserName}
-import com.itforelead.smspaltfrom.domain.{Contact, Credentials, DeliveryStatus, Gender, GenderAccess, Holiday, Message, Month, Role, SMSTemplate, TemplateCategory, User}
-import Arbitraries._
-import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
-import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
-import com.itforelead.smspaltfrom.domain.Message.CreateMessage
-import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
-import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
+import smsplatform.utils.Arbitraries._
 
 import java.time.{LocalDate, LocalDateTime}
 import java.util.UUID
@@ -98,8 +97,6 @@ object Generators {
 
   val genderGen: Gen[Gender] = arbitrary[Gender]
 
-  val genderAccessGen: Gen[GenderAccess] = arbitrary[GenderAccess]
-
   val roleGen: Gen[Role] = arbitrary[Role]
 
   val monthGen: Gen[Month] = arbitrary[Month]
@@ -163,7 +160,7 @@ object Generators {
   val templateCategoryGen: Gen[TemplateCategory] =
     for {
       tcid <- templateCategoryIdGen
-      tcn <- templateCategoryNameGen
+      tcn  <- templateCategoryNameGen
     } yield TemplateCategory(tcid, tcn)
 
   val createTemplateCategoryGen: Gen[CreateTemplateCategory] =
@@ -177,7 +174,7 @@ object Generators {
       tcid <- templateCategoryIdGen
       t    <- titleGen
       c    <- contentGen
-      g    <- genderAccessGen
+      g    <- genderGen
     } yield SMSTemplate(id, tcid, t, c, g)
 
   val createSMSTemplateGen: Gen[CreateSMSTemplate] =
@@ -185,7 +182,7 @@ object Generators {
       tcid <- templateCategoryIdGen
       t    <- titleGen
       c    <- contentGen
-      g    <- genderAccessGen
+      g    <- genderGen
     } yield CreateSMSTemplate(tcid, t, c, g)
 
   val messageGen: Gen[Message] =

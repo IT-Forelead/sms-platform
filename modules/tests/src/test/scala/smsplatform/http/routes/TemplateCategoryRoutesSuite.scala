@@ -11,14 +11,8 @@ import org.http4s.Method.{DELETE, GET, POST, PUT}
 import org.http4s.Status
 import org.http4s.client.dsl.io._
 import org.http4s.implicits.http4sLiteralsSyntax
-
 import smsplatform.stub_services.TemplateCategoriesStub
-import smsplatform.utils.Generators.{
-  createTemplateCategoryGen,
-  templateCategoryGen,
-  templateIdGen,
-  userGen
-}
+import smsplatform.utils.Generators.{createTemplateCategoryGen, templateCategoryGen, templateIdGen, userGen}
 import smsplatform.utils.HttpSuite
 
 object TemplateCategoryRoutesSuite extends HttpSuite {

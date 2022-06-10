@@ -5,7 +5,7 @@ import com.itforelead.smspaltfrom.Application.logger
 import com.itforelead.smspaltfrom.domain.Holiday
 import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
 import com.itforelead.smspaltfrom.domain.types.HolidayId
-import com.itforelead.smspaltfrom.routes.{ContactRoutes, HolidayRoutes, deriveEntityEncoder}
+import com.itforelead.smspaltfrom.routes.{HolidayRoutes, deriveEntityEncoder}
 import com.itforelead.smspaltfrom.services.Holidays
 import org.http4s.Method.{DELETE, GET, POST, PUT}
 import org.http4s.Status
@@ -19,9 +19,9 @@ object HolidayRoutesSuite extends HttpSuite {
 
   def holidays[F[_]: Sync](holiday: Holiday): Holidays[F] = new HolidaysStub[F] {
     override def create(form: CreateHoliday): F[Holiday] = Sync[F].delay(holiday)
-    override def holidays: F[List[Holiday]] = Sync[F].delay(List(holiday))
-    override def update(form: Holiday): F[Holiday] = Sync[F].delay(holiday)
-    override def delete(id: HolidayId): F[Unit] = Sync[F].unit
+    override def holidays: F[List[Holiday]]              = Sync[F].delay(List(holiday))
+    override def update(form: Holiday): F[Holiday]       = Sync[F].delay(holiday)
+    override def delete(id: HolidayId): F[Unit]          = Sync[F].unit
   }
 
   test("create holiday") {
@@ -43,8 +43,8 @@ object HolidayRoutesSuite extends HttpSuite {
 
   test("get holiday") {
     val gen = for {
-      u  <- userGen
-      h  <- holidayGen
+      u <- userGen
+      h <- holidayGen
     } yield (u, h)
 
     forall(gen) { case (user, holiday) =>
@@ -76,9 +76,9 @@ object HolidayRoutesSuite extends HttpSuite {
 
   test("delete contact") {
     val gen = for {
-      u  <- userGen
-      h  <- holidayGen
-      i  <- holidayIdGen
+      u <- userGen
+      h <- holidayGen
+      i <- holidayIdGen
     } yield (u, h, i)
 
     forall(gen) { case (user, holiday, holidayId) =>

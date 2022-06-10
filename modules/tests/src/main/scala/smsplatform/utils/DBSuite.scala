@@ -2,6 +2,7 @@ package smsplatform.utils
 
 import cats.effect.{IO, Resource}
 import cats.implicits._
+import com.itforelead.smspaltfrom.services.redis.RedisClient
 import natchez.Trace.Implicits.noop
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
@@ -11,6 +12,7 @@ import skunk._
 import skunk.codec.all.text
 import skunk.implicits._
 import skunk.util.Typer
+import smsplatform.stub_services.RedisClientMock
 import weaver.scalacheck.{CheckConfig, Checkers}
 import weaver.{Expectations, IOSuite}
 
@@ -18,6 +20,8 @@ import scala.io.Source
 
 trait DBSuite extends IOSuite with Checkers {
   type Res = Resource[IO, Session[IO]]
+
+  val RedisClient: RedisClient[IO] = RedisClientMock[IO]
 
   lazy val imageName: String = "postgres:12"
   lazy val container: PostgreSQLContainer[Nothing] = new PostgreSQLContainer(

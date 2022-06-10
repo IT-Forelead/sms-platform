@@ -1,13 +1,17 @@
 <configuration>
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+            </pattern>
         </encoder>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="STDOUT" />
-    </root>
+    <logger name="org.http4s.client.middleware" level="DEBUG"/>
+    <logger name="org.http4s.server.middleware" level="DEBUG"/>
+    <logger name="com.itforelead.smspaltfrom" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
-    <logger name="http4s"/>
 </configuration>

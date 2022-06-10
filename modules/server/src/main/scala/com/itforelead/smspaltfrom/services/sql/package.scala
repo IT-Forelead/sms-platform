@@ -1,23 +1,15 @@
 package com.itforelead.smspaltfrom.services
 
+import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, Tel}
+import com.itforelead.smspaltfrom.domain.types._
+import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender, Month, Role}
+import com.itforelead.smspaltfrom.types.IsUUID
 import eu.timepit.refined.types.string.NonEmptyString
 import skunk.Codec
 import skunk.codec.all._
 import skunk.data.{Arr, Type}
 import tsec.passwordhashers.PasswordHash
 import tsec.passwordhashers.jca.SCrypt
-import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, Tel}
-import com.itforelead.smspaltfrom.domain.types.{
-  Content,
-  FirstName,
-  HolidayName,
-  LastName,
-  TemplateCategoryName,
-  Title,
-  UserName
-}
-import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender, GenderAccess, Month, Role}
-import com.itforelead.smspaltfrom.types.IsUUID
 import eu.timepit.refined.auto.autoUnwrap
 
 import java.util.UUID
@@ -59,8 +51,6 @@ package object sql {
   val dayOfMonth: Codec[DayOfMonth] = int4.imap[DayOfMonth](DayOfMonth.unsafeFrom)(_.value)
 
   val gender: Codec[Gender] = `enum`[Gender](_.value, Gender.find, Type("gender"))
-
-  val genderAccess: Codec[GenderAccess] = `enum`[GenderAccess](_.value, GenderAccess.find, Type("gender_access"))
 
   val role: Codec[Role] = `enum`[Role](_.value, Role.find, Type("role"))
 

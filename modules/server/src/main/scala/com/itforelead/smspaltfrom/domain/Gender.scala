@@ -6,10 +6,11 @@ import io.circe.{Decoder, Encoder}
 sealed abstract class Gender(val value: String)
 
 object Gender {
+  case object ALL    extends Gender("all")
   case object MALE   extends Gender("male")
   case object FEMALE extends Gender("female")
 
-  val genders = List(MALE, FEMALE)
+  val genders: List[Gender] = List(MALE, FEMALE, ALL)
 
   def find(value: String): Option[Gender] =
     genders.find(_.value == value.toLowerCase)
