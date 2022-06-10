@@ -27,7 +27,7 @@ object SMSTemplates {
         ID.make[F, TemplateId].flatMap { id =>
           prepQueryUnique(
             insert,
-            SMSTemplate(id, form.templateCategoryId, form.title, form.text, form.genderAccess, form.active)
+            SMSTemplate(id, form.templateCategoryId, form.title, form.text, form.genderAccess)
           )
         }
 

@@ -1,11 +1,10 @@
 package smsplatform.services
 
 import cats.effect.IO
-import com.itforelead.smspaltfrom.services.{Contacts, Users}
+import com.itforelead.smspaltfrom.services.Users
 import eu.timepit.refined.auto.autoUnwrap
-import smsplatform.services.ContactsSuite.{assert, test}
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createContactGen, createUserGen}
+import smsplatform.utils.Generators.createUserGen
 import tsec.passwordhashers.jca.SCrypt
 
 object UsersSuite extends DBSuite {

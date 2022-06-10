@@ -12,7 +12,7 @@ import Arbitraries._
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
 import com.itforelead.smspaltfrom.domain.Message.CreateMessage
-import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, UpdateSMSTemplate}
+import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 
 import java.time.{LocalDate, LocalDateTime}
@@ -178,8 +178,7 @@ object Generators {
       t    <- titleGen
       c    <- contentGen
       g    <- genderAccessGen
-      a    <- booleanGen
-    } yield SMSTemplate(id, tcid, t, c, g, a)
+    } yield SMSTemplate(id, tcid, t, c, g)
 
   val createSMSTemplateGen: Gen[CreateSMSTemplate] =
     for {
@@ -187,18 +186,7 @@ object Generators {
       t    <- titleGen
       c    <- contentGen
       g    <- genderAccessGen
-      a    <- booleanGen
-    } yield CreateSMSTemplate(tcid, t, c, g, a)
-
-  val updateSMSTemplateGen: Gen[UpdateSMSTemplate] =
-    for {
-      id   <- templateIdGen
-      tcid <- templateCategoryIdGen
-      t    <- titleGen
-      c    <- contentGen
-      g    <- genderAccessGen
-      a    <- booleanGen
-    } yield UpdateSMSTemplate(id, tcid, t, c, g, a)
+    } yield CreateSMSTemplate(tcid, t, c, g)
 
   val messageGen: Gen[Message] =
     for {

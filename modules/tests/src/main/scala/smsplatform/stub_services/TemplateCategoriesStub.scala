@@ -7,7 +7,7 @@ import com.itforelead.smspaltfrom.services.TemplateCategories
 
 class TemplateCategoriesStub[F[_]] extends TemplateCategories[F] {
   override def create(param: CreateTemplateCategory): F[TemplateCategory] = ???
-  override def templates: F[List[TemplateCategory]] = ???
+  override def templateCategories: F[List[TemplateCategory]] = ???
   override def update(param: TemplateCategory): F[TemplateCategory] = ???
   override def delete(id: TemplateCategoryId): F[Unit] = ???
 }

@@ -26,7 +26,7 @@ object TemplateCategoryRoutesSuite extends HttpSuite {
   def TemplateCategories[F[_]: Sync](from: TemplateCategory): TemplateCategories[F] = new TemplateCategoriesStub[F] {
     override def create(form: CreateTemplateCategory): F[TemplateCategory] = Sync[F].delay(from)
 
-    override def templates: F[List[TemplateCategory]] = Sync[F].delay(List(from))
+    override def templateCategories: F[List[TemplateCategory]] = Sync[F].delay(List(from))
 
     override def update(form: TemplateCategory): F[TemplateCategory] = Sync[F].delay(from)
 
