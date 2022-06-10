@@ -1,15 +1,11 @@
 package smsplatform.services
 
 import cats.effect.IO
-import com.itforelead.smspaltfrom.domain.{SMSTemplate, TemplateCategory}
-import com.itforelead.smspaltfrom.domain.types.TemplateCategoryId
-import com.itforelead.smspaltfrom.services.{Contacts, SMSTemplates, TemplateCategories}
-import smsplatform.services.ContactsSuite.{assert, test}
-import smsplatform.services.TemplateCategorySuite.{assert, test}
+import com.itforelead.smspaltfrom.domain.SMSTemplate
+import com.itforelead.smspaltfrom.services.{SMSTemplates, TemplateCategories}
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createContactGen, createSMSTemplateGen, createTemplateCategoryGen, idGen, templateCategoryGen, templateCategoryIdGen, templateCategoryNameGen, titleGen}
+import smsplatform.utils.Generators.{createSMSTemplateGen, createTemplateCategoryGen, titleGen}
 
-import java.util.UUID
 
 object SMSTemplateSuite extends DBSuite {
 
@@ -25,7 +21,7 @@ object SMSTemplateSuite extends DBSuite {
           templateCategory <- templateCategories.create(c)
           template1 <- templates.create(createTemplate.copy(templateCategoryId = templateCategory.id))
           template2 <- templates.templates
-        } yield assert(template2.contains(template1))
+        } yield assert(template2.exists(tc => tc.id == template1.id))
     }
   }
 

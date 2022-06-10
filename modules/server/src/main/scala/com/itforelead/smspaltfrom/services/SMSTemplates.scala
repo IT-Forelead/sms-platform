@@ -3,14 +3,14 @@ package com.itforelead.smspaltfrom.services
 import cats.effect.{Resource, Sync}
 import cats.implicits._
 import com.itforelead.smspaltfrom.domain.{ID, SMSTemplate}
-import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
+import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, SMSTemplateWithCatName}
 import com.itforelead.smspaltfrom.domain.types.TemplateId
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk.{Session, Void}
 
 trait SMSTemplates[F[_]] {
   def create(form: CreateSMSTemplate): F[SMSTemplate]
-  def templates: F[List[SMSTemplate]]
+  def templates: F[List[SMSTemplateWithCatName]]
   def update(tmpl: SMSTemplate): F[SMSTemplate]
   def delete(id: TemplateId): F[Unit]
 }
@@ -31,7 +31,7 @@ object SMSTemplates {
           )
         }
 
-      override def templates: F[List[SMSTemplate]] =
+      override def templates: F[List[SMSTemplateWithCatName]] =
         prepQueryList(select, Void)
 
       override def update(tmpl: SMSTemplate): F[SMSTemplate] =
