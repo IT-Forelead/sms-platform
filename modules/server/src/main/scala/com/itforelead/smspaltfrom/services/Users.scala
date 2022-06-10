@@ -12,7 +12,7 @@ import tsec.passwordhashers.jca.SCrypt
 import com.itforelead.smspaltfrom.domain.custom.exception.EmailInUse
 import com.itforelead.smspaltfrom.domain.custom.refinements.EmailAddress
 import com.itforelead.smspaltfrom.domain.types.UserId
-import com.itforelead.smspaltfrom.domain.{ID, User}
+import com.itforelead.smspaltfrom.domain.ID
 import com.itforelead.smspaltfrom.effects.GenUUID
 import com.itforelead.smspaltfrom.services.sql.UserSQL._
 

@@ -12,5 +12,6 @@ object CompilerOptions {
     "-language:postfixOps",
     "-Yrangepos",
     "-Wconf:cat=unused:info"
+//    "-Ywarn-unused:imports"
   )
 }

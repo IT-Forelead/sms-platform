@@ -5,14 +5,11 @@ import cats.syntax.all._
 import dev.profunktor.auth.jwt._
 import eu.timepit.refined.auto._
 import pdi.jwt._
-import skunk.Session
 import com.itforelead.smspaltfrom.config.AppConfig
-import com.itforelead.smspaltfrom.domain.User
 import com.itforelead.smspaltfrom.domain.types.UserJwtAuth
-import com.itforelead.smspaltfrom.resources.AppResources
-import com.itforelead.smspaltfrom.security.{Crypto, JwtExpire, Tokens}
+import com.itforelead.smspaltfrom.security.{JwtExpire, Tokens}
 import com.itforelead.smspaltfrom.services.redis.RedisClient
-import com.itforelead.smspaltfrom.services.{Auth, Users, UsersAuth}
+import com.itforelead.smspaltfrom.services.{Auth, Users}
 object Security {
   def apply[F[_]: Sync](
     cfg: AppConfig,

@@ -1,6 +1,7 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.SMSTemplate
+import com.itforelead.smspaltfrom.domain.SMSTemplate.SMSTemplateWithCatName
 import com.itforelead.smspaltfrom.domain.types.{TemplateCategoryId, TemplateId}
 import skunk._
 import skunk.codec.all.bool
@@ -12,6 +13,9 @@ object SMSTemplateSql {
 
   private val Columns = templateId ~ templateCategoryId ~ title ~ content ~ genderAccess ~ bool
 
+  private val ColumnsWithCatName =
+    templateId ~ templateCategoryId ~ title ~ content ~ genderAccess ~ bool ~ templateCategoryName
+
   val encoder: Encoder[SMSTemplate] =
     Columns.contramap(sms => sms.id ~ sms.templateCategoryId ~ sms.title ~ sms.text ~ sms.genderAccess ~ false)
 
@@ -20,11 +24,18 @@ object SMSTemplateSql {
       SMSTemplate(id, templateCategoryId, title, text, genderAccess)
     }
 
+  val decSMSTemplateWithCatName: Decoder[SMSTemplateWithCatName] =
+    ColumnsWithCatName.map { case id ~ templateCategoryId ~ title ~ text ~ genderAccess ~ _ ~ templateCategoryName =>
+      SMSTemplateWithCatName(id, templateCategoryId, title, text, genderAccess, templateCategoryName)
+    }
+
   val insert: Query[SMSTemplate, SMSTemplate] =
     sql"""INSERT INTO sms_templates VALUES ($encoder) returning *""".query(decoder)
 
-  val select: Query[Void, SMSTemplate] =
-    sql"""SELECT * FROM sms_templates WHERE deleted = false""".query(decoder)
+  val select: Query[Void, SMSTemplateWithCatName] =
+    sql"""SELECT sms_templates.*, template_categories.name FROM sms_templates
+         INNER JOIN template_categories ON template_categories.id = sms_templates.template_category_id
+         WHERE sms_templates.deleted = false""".query(decSMSTemplateWithCatName)
 
   val updateSql: Query[SMSTemplate, SMSTemplate] =
     sql"""UPDATE sms_templates
