@@ -29,7 +29,7 @@ object SMSTemplate {
     templateCategoryId: TemplateCategoryId,
     title: Title,
     text: Content,
-    genderAccess: GenderAccess,
+    genderAccess: Gender,
     categoryName: TemplateCategoryName
   )
 }

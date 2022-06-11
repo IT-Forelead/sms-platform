@@ -3,12 +3,10 @@ package com.itforelead.smspaltfrom.services
 import cats.data.OptionT
 import cats.effect.{Resource, Sync}
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
+import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, SMSTemplateWithCatName}
 import com.itforelead.smspaltfrom.domain.circe.mapEncoder
 import com.itforelead.smspaltfrom.domain.custom.RedisStaticKeys.TemplateIdCache
 import com.itforelead.smspaltfrom.domain.custom.exception.TemplateNotFound
-import com.itforelead.smspaltfrom.domain.{ID, SMSTemplate}
-import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, SMSTemplateWithCatName}
 import com.itforelead.smspaltfrom.domain.types.TemplateId
 import com.itforelead.smspaltfrom.domain.{ID, SMSTemplate}
 import com.itforelead.smspaltfrom.effects.GenUUID
