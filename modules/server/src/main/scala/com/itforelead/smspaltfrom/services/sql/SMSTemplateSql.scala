@@ -14,7 +14,7 @@ object SMSTemplateSql {
   private val Columns = templateId ~ templateCategoryId ~ title ~ content ~ gender ~ bool
 
   private val ColumnsWithCatName =
-    templateId ~ templateCategoryId ~ title ~ content ~ genderAccess ~ bool ~ templateCategoryName
+    templateId ~ templateCategoryId ~ title ~ content ~ gender ~ bool ~ templateCategoryName
 
   val encoder: Encoder[SMSTemplate] =
     Columns.contramap(sms => sms.id ~ sms.templateCategoryId ~ sms.title ~ sms.text ~ sms.gender ~ false)
