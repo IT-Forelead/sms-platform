@@ -2,7 +2,7 @@ package smsplatform.http.routes
 
 import cats.effect.{IO, Sync}
 import com.itforelead.smspaltfrom.Application.logger
-import com.itforelead.smspaltfrom.domain.{Contact, types}
+import com.itforelead.smspaltfrom.domain.Contact
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.types.ContactId
 import com.itforelead.smspaltfrom.routes.{ContactRoutes, deriveEntityEncoder}
@@ -12,16 +12,16 @@ import org.http4s.Status
 import org.http4s.client.dsl.io._
 import org.http4s.implicits.http4sLiteralsSyntax
 import smsplatform.stub_services.ContactsStub
-import smsplatform.utils.Generators.{contactGen, contactIdGen, createContactGen, updateContactGen, userGen}
+import smsplatform.utils.Generators._
 import smsplatform.utils.HttpSuite
 
 object ContactRoutesSuite extends HttpSuite {
 
   def contacts[F[_]: Sync](contact: Contact): Contacts[F] = new ContactsStub[F] {
     override def create(form: CreateContact): F[Contact] = Sync[F].delay(contact)
-    override def contacts: F[List[Contact]] = Sync[F].delay(List(contact))
+    override def contacts: F[List[Contact]]              = Sync[F].delay(List(contact))
     override def update(form: UpdateContact): F[Contact] = Sync[F].delay(contact)
-    override def delete(id: ContactId): F[Unit] = Sync[F].unit
+    override def delete(id: ContactId): F[Unit]          = Sync[F].unit
   }
 
   test("create contact") {
@@ -43,8 +43,8 @@ object ContactRoutesSuite extends HttpSuite {
 
   test("get contacts") {
     val gen = for {
-      u  <- userGen
-      c  <- contactGen
+      u <- userGen
+      c <- contactGen
     } yield (u, c)
 
     forall(gen) { case (user, contact) =>
@@ -76,9 +76,9 @@ object ContactRoutesSuite extends HttpSuite {
 
   test("delete contact") {
     val gen = for {
-      u  <- userGen
-      c  <- contactGen
-      i  <- contactIdGen
+      u <- userGen
+      c <- contactGen
+      i <- contactIdGen
     } yield (u, c, i)
 
     forall(gen) { case (user, contact, contactId) =>

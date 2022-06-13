@@ -2,17 +2,16 @@ package smsplatform.http.routes
 
 import cats.effect.IO
 import cats.implicits._
+import com.itforelead.smspaltfrom.routes.UserRoutes
 import org.http4s.Method.GET
 import org.http4s.client.dsl.io._
 import org.http4s.headers.Authorization
 import org.http4s.implicits.http4sLiteralsSyntax
 import org.http4s.{AuthScheme, Credentials, Status}
-import com.itforelead.smspaltfrom.routes.UserRoutes
 import smsplatform.stub_services.AuthMock
 import smsplatform.utils.Generators._
 import smsplatform.utils.HttpSuite
 
-import scala.concurrent.duration.DurationInt
 import scala.concurrent.duration.DurationInt
 
 object UserRoutesSuite extends HttpSuite {

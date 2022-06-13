@@ -3,7 +3,11 @@ package com.itforelead.smspaltfrom.modules
 import cats.data.OptionT
 import cats.effect._
 import cats.syntax.all._
+import com.itforelead.smspaltfrom.config.LogConfig
 import com.itforelead.smspaltfrom.domain.User
+import com.itforelead.smspaltfrom.implicits.CirceDecoderOps
+import com.itforelead.smspaltfrom.routes._
+import com.itforelead.smspaltfrom.services.redis.RedisClient
 import dev.profunktor.auth.JwtAuthMiddleware
 import dev.profunktor.auth.jwt.JwtToken
 import org.http4s._
@@ -12,18 +16,6 @@ import org.http4s.server.Router
 import org.http4s.server.middleware._
 import org.typelevel.log4cats.Logger
 import pdi.jwt.JwtClaim
-import com.itforelead.smspaltfrom.config.LogConfig
-import com.itforelead.smspaltfrom.implicits.CirceDecoderOps
-import com.itforelead.smspaltfrom.routes.{
-  AuthRoutes,
-  ContactRoutes,
-  HolidayRoutes,
-  MessageRoutes,
-  SMSTemplateRoutes,
-  TemplateCategoryRoutes,
-  UserRoutes
-}
-import com.itforelead.smspaltfrom.services.redis.RedisClient
 
 import scala.concurrent.duration.DurationInt
 

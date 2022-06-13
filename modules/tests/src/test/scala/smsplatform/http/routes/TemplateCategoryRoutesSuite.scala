@@ -7,18 +7,12 @@ import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 import com.itforelead.smspaltfrom.domain.types.TemplateCategoryId
 import com.itforelead.smspaltfrom.routes.{TemplateCategoryRoutes, deriveEntityEncoder}
 import com.itforelead.smspaltfrom.services.TemplateCategories
-import org.http4s.Method.{DELETE, GET, POST, PUT}
+import org.http4s.Method._
 import org.http4s.Status
 import org.http4s.client.dsl.io._
 import org.http4s.implicits.http4sLiteralsSyntax
-
 import smsplatform.stub_services.TemplateCategoriesStub
-import smsplatform.utils.Generators.{
-  createTemplateCategoryGen,
-  templateCategoryGen,
-  templateIdGen,
-  userGen
-}
+import smsplatform.utils.Generators._
 import smsplatform.utils.HttpSuite
 
 object TemplateCategoryRoutesSuite extends HttpSuite {

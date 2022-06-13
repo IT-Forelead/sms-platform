@@ -27,7 +27,7 @@ object SMSTemplateRoutesSuite extends HttpSuite {
           templateCategoryId = from.templateCategoryId,
           title = from.title,
           text = from.text,
-          genderAccess = from.genderAccess,
+          genderAccess = from.gender,
           categoryName = TemplateCategoryName(NonEmptyString.unsafeFrom("email"))
         )
       )

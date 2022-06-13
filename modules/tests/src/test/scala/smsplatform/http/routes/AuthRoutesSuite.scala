@@ -2,22 +2,23 @@ package smsplatform.http.routes
 
 import cats.effect.{IO, Sync}
 import cats.implicits._
-import eu.timepit.refined.auto.autoUnwrap
-import org.http4s.Method.{GET, POST}
-import org.http4s.{AuthScheme, Credentials, Status}
-import org.http4s.client.dsl.io._
-import org.http4s.headers.Authorization
-import org.http4s.implicits.http4sLiteralsSyntax
-import tsec.passwordhashers.PasswordHash
-import tsec.passwordhashers.jca.SCrypt
 import com.itforelead.smspaltfrom.domain.User
 import com.itforelead.smspaltfrom.domain.User.{CreateUser, UserWithPassword}
 import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, Password}
 import com.itforelead.smspaltfrom.routes.{AuthRoutes, deriveEntityEncoder}
 import com.itforelead.smspaltfrom.services.Users
+import eu.timepit.refined.auto.autoUnwrap
+import org.http4s.Method.{GET, POST}
+import org.http4s.client.dsl.io._
+import org.http4s.headers.Authorization
+import org.http4s.implicits.http4sLiteralsSyntax
+import org.http4s.{AuthScheme, Credentials, Status}
 import smsplatform.stub_services.{AuthMock, UsersStub}
-import smsplatform.utils.HttpSuite
 import smsplatform.utils.Generators.{booleanGen, createUserGen, userCredentialGen, userGen}
+import smsplatform.utils.HttpSuite
+import tsec.passwordhashers.PasswordHash
+import tsec.passwordhashers.jca.SCrypt
+
 import scala.concurrent.duration.DurationInt
 
 object AuthRoutesSuite extends HttpSuite {

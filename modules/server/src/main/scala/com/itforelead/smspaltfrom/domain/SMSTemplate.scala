@@ -11,7 +11,7 @@ case class SMSTemplate(
   templateCategoryId: TemplateCategoryId,
   title: Title,
   text: Content,
-  genderAccess: GenderAccess
+  gender: Gender
 )
 
 object SMSTemplate {
@@ -20,7 +20,7 @@ object SMSTemplate {
     templateCategoryId: TemplateCategoryId,
     title: Title,
     text: Content,
-    genderAccess: GenderAccess
+    gender: Gender
   )
 
   @derive(decoder, encoder, show)
@@ -29,7 +29,7 @@ object SMSTemplate {
     templateCategoryId: TemplateCategoryId,
     title: Title,
     text: Content,
-    genderAccess: GenderAccess,
+    genderAccess: Gender,
     categoryName: TemplateCategoryName
   )
 }

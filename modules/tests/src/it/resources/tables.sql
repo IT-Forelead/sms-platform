@@ -1,8 +1,6 @@
-CREATE TYPE GENDER AS ENUM ('male', 'female');
+CREATE TYPE GENDER AS ENUM ('all', 'male', 'female');
 CREATE TYPE ROLE AS ENUM ('admin', 'user');
 CREATE TYPE DELIVERY_STATUS AS ENUM ('sent', 'delivered', 'failed', 'unknown');
-
-CREATE TYPE GENDER_ACCESS AS ENUM ('all', 'male', 'female');
 
 CREATE TYPE MONTH AS ENUM (
     'january',
@@ -61,9 +59,6 @@ CREATE TABLE IF NOT EXISTS template_categories
     deleted BOOLEAN NOT NULL DEFAULT false
 );
 
-INSERT INTO "template_categories" ("id", "name")
-VALUES ('c1039d34-425b-4f78-9a7f-893f5b4ac478', 'dog''ilgan gun');
-
 CREATE TABLE IF NOT EXISTS sms_templates
 (
     id                   UUID PRIMARY KEY,
@@ -71,7 +66,7 @@ CREATE TABLE IF NOT EXISTS sms_templates
         CONSTRAINT fk_template_category_id REFERENCES template_categories (id) ON UPDATE CASCADE ON DELETE CASCADE,
     title                VARCHAR       NOT NULL,
     text                 VARCHAR       NOT NULL,
-    gender_access        GENDER_ACCESS NOT NULL,
+    gender_access        GENDER        NOT NULL,
     deleted              BOOLEAN       NOT NULL DEFAULT false
 );
 
