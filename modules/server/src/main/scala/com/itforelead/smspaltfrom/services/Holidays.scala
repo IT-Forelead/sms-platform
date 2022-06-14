@@ -68,7 +68,7 @@ object Holidays {
           id <- ID.make[F, HolidayId]
           holiday <- prepQueryUnique(
             insert,
-            Holiday(id, form.name, form.day, form.month)
+            Holiday(id, form.name, form.day, form.month, form.smsWomenId, form.smsMenId, form.smsAllId)
           )
         } yield holiday
       }

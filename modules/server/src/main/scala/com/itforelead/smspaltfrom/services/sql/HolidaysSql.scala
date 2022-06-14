@@ -9,14 +9,15 @@ import skunk.implicits._
 object HolidaysSql {
   val holidayId: Codec[HolidayId] = identity[HolidayId]
 
-  val Columns = holidayId ~ holidayName ~ dayOfMonth ~ month ~ bool
+  private val Columns =
+    holidayId ~ holidayName ~ dayOfMonth ~ month ~ SMSTemplateSql.templateId.opt ~ SMSTemplateSql.templateId.opt ~ SMSTemplateSql.templateId.opt ~ bool
 
   val encoder: Encoder[Holiday] =
-    Columns.contramap(c => c.id ~ c.name ~ c.day ~ c.month ~ false)
+    Columns.contramap(c => c.id ~ c.name ~ c.day ~ c.month ~ c.smsWomenId ~ c.smsMenId ~ c.smsAllId ~ false)
 
   val decoder: Decoder[Holiday] =
-    Columns.map { case id ~ name ~ day ~ month ~ _ =>
-      Holiday(id, name, day, month)
+    Columns.map { case id ~ name ~ day ~ month ~ smsWomenId ~ smsMenId ~ smsAllId ~ _ =>
+      Holiday(id, name, day, month, smsWomenId, smsMenId, smsAllId)
     }
 
   val insert: Query[Holiday, Holiday] =
@@ -29,10 +30,13 @@ object HolidaysSql {
     sql"""UPDATE holidays
          SET name = $holidayName,
          day = $dayOfMonth,
-         month = $month
+         month = $month,
+         sms_women_id = $smsWomenId.opt,
+         sms_men_id = $smsMenId.opt,
+         sms_all_id = $smsAllId.opt
          WHERE id = $holidayId RETURNING *"""
       .query(decoder)
-      .contramap[Holiday](h => h.name ~ h.day ~ h.month ~ h.id)
+      .contramap[Holiday](h => h.name ~ h.day ~ h.month ~ h.smsWomenId ~ h.smsMenId ~ h.smsAllId ~ h.id)
 
   val deleteSql: Command[HolidayId] =
     sql"""UPDATE holidays SET deleted = true WHERE id = $holidayId""".command

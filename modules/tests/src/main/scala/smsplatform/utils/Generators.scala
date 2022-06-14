@@ -12,6 +12,7 @@ import eu.timepit.refined.scalacheck.string._
 import eu.timepit.refined.types.string.NonEmptyString
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
+import org.scalacheck.Gen.option
 import smsplatform.utils.Arbitraries._
 
 import java.time.{LocalDate, LocalDateTime}
@@ -148,14 +149,20 @@ object Generators {
       n  <- holidayNameGen
       d  <- dayOfMonthGen
       m  <- monthGen
-    } yield Holiday(id, n, d, m)
+      sw <- option(templateIdGen)
+      sm <- option(templateIdGen)
+      sa <- option(templateIdGen)
+    } yield Holiday(id, n, d, m, sw, sm, sa)
 
   val createHolidayGen: Gen[CreateHoliday] =
     for {
       n <- holidayNameGen
       d <- dayOfMonthGen
       m <- monthGen
-    } yield CreateHoliday(n, d, m)
+      sw <- option(templateIdGen)
+      sm <- option(templateIdGen)
+      sa <- option(templateIdGen)
+    } yield CreateHoliday(n, d, m, sw, sm, sa)
 
   val templateCategoryGen: Gen[TemplateCategory] =
     for {
