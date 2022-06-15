@@ -1,7 +1,7 @@
 package smsplatform.utils
 
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
-import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
+import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 import com.itforelead.smspaltfrom.domain.User._
@@ -88,6 +88,8 @@ object Generators {
   val timestampGen: Gen[LocalDateTime] = arbitrary[LocalDateTime]
   val dateGen: Gen[LocalDate]          = timestampGen.map(_.toLocalDate)
 
+  val templateIdOptionGen: Gen[Option[TemplateId]] = option(templateIdGen)
+
   val passwordGen: Gen[Password] = arbitrary[Password]
 
   val booleanGen: Gen[Boolean] = arbitrary[Boolean]
@@ -151,18 +153,14 @@ object Generators {
       m  <- monthGen
       sw <- option(templateIdGen)
       sm <- option(templateIdGen)
-      sa <- option(templateIdGen)
-    } yield Holiday(id, n, d, m, sw, sm, sa)
+    } yield Holiday(id, n, d, m, sw, sm)
 
   val createHolidayGen: Gen[CreateHoliday] =
     for {
       n <- holidayNameGen
       d <- dayOfMonthGen
       m <- monthGen
-      sw <- option(templateIdGen)
-      sm <- option(templateIdGen)
-      sa <- option(templateIdGen)
-    } yield CreateHoliday(n, d, m, sw, sm, sa)
+    } yield CreateHoliday(n, d, m)
 
   val templateCategoryGen: Gen[TemplateCategory] =
     for {

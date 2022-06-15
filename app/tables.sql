@@ -71,8 +71,6 @@ CREATE TABLE IF NOT EXISTS holidays
         CONSTRAINT fk_sms_template_w_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
     sms_men_id   UUID    NULL
         CONSTRAINT fk_sms_template_m_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    sms_all_id   UUID    NULL
-        CONSTRAINT fk_sms_template_a_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
     deleted      BOOLEAN NOT NULL DEFAULT false
 );
 

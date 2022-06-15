@@ -1,7 +1,7 @@
 package com.itforelead.smspaltfrom.domain
 
 import com.itforelead.smspaltfrom.domain.custom.refinements.DayOfMonth
-import com.itforelead.smspaltfrom.domain.types.{HolidayId, HolidayName,TemplateId}
+import com.itforelead.smspaltfrom.domain.types.{HolidayId, HolidayName, TemplateId}
 import derevo.cats.show
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
@@ -14,9 +14,8 @@ case class Holiday(
   name: HolidayName,
   day: DayOfMonth,
   month: Month,
-  smsWomenId: Option[TemplateId],
-  smsMenId: Option[TemplateId],
-  smsAllId: Option[TemplateId]
+  smsWomenId: Option[TemplateId] = None,
+  smsMenId: Option[TemplateId] = None
 )
 
 object Holiday {
@@ -24,9 +23,13 @@ object Holiday {
   case class CreateHoliday(
     name: HolidayName,
     day: DayOfMonth,
-    month: Month,
+    month: Month
+  )
+
+  @derive(decoder, encoder, show)
+  case class UpdateTemplateInHoliday(
+    id: HolidayId,
     smsWomenId: Option[TemplateId],
-    smsMenId: Option[TemplateId],
-    smsAllId: Option[TemplateId]
+    smsMenId: Option[TemplateId]
   )
 }

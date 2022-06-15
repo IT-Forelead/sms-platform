@@ -60,8 +60,8 @@ object HolidayRoutesSuite extends HttpSuite {
   test("update holiday") {
     val gen = for {
       u  <- userGen
-      uh <- holidayGen
       h  <- holidayGen
+      uh <- holidayGen
     } yield (u, h, uh)
 
     forall(gen) { case (user, holiday, updateHoliday) =>
