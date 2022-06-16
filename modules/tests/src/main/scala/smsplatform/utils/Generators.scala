@@ -1,7 +1,7 @@
 package smsplatform.utils
 
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
-import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateTemplateInHoliday}
+import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 import com.itforelead.smspaltfrom.domain.User._
@@ -161,6 +161,14 @@ object Generators {
       d <- dayOfMonthGen
       m <- monthGen
     } yield CreateHoliday(n, d, m)
+
+  val updateHolidayGen: Gen[UpdateHoliday] =
+    for {
+      i <- holidayIdGen
+      n <- holidayNameGen
+      d <- dayOfMonthGen
+      m <- monthGen
+    } yield UpdateHoliday(i, n, d, m)
 
   val templateCategoryGen: Gen[TemplateCategory] =
     for {

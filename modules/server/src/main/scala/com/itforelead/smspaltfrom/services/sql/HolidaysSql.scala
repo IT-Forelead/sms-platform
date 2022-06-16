@@ -1,7 +1,7 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.Holiday
-import com.itforelead.smspaltfrom.domain.Holiday.UpdateTemplateInHoliday
+import com.itforelead.smspaltfrom.domain.Holiday.{UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.types.HolidayId
 import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.templateId
 import skunk._
@@ -36,16 +36,14 @@ object HolidaysSql {
       .query(decoder)
       .contramap[UpdateTemplateInHoliday](h => h.smsWomenId ~ h.smsMenId ~ h.id)
 
-  val updateSql: Query[Holiday, Holiday] =
+  val updateSql: Query[UpdateHoliday, Holiday] =
     sql"""UPDATE holidays
          SET name = $holidayName,
          day = $dayOfMonth,
-         month = $month,
-         sms_women_id = ${templateId.opt},
-         sms_men_id = ${templateId.opt}
+         month = $month
          WHERE id = $holidayId RETURNING *"""
       .query(decoder)
-      .contramap[Holiday](h => h.name ~ h.day ~ h.month ~ h.smsWomenId ~ h.smsMenId ~ h.id)
+      .contramap[UpdateHoliday](h => h.name ~ h.day ~ h.month ~ h.id)
 
   val deleteSql: Command[HolidayId] =
     sql"""UPDATE holidays SET deleted = true WHERE id = $holidayId""".command

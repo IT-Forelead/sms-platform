@@ -27,6 +27,14 @@ object Holiday {
   )
 
   @derive(decoder, encoder, show)
+  case class UpdateHoliday(
+    id: HolidayId,
+    name: HolidayName,
+    day: DayOfMonth,
+    month: Month
+  )
+
+  @derive(decoder, encoder, show)
   case class UpdateTemplateInHoliday(
     id: HolidayId,
     smsWomenId: Option[TemplateId],

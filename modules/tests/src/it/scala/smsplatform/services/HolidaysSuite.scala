@@ -2,11 +2,12 @@ package smsplatform.services
 
 import cats.effect.IO
 import cats.implicits.catsSyntaxOptionId
-import com.itforelead.smspaltfrom.domain.Holiday.UpdateTemplateInHoliday
+import com.itforelead.smspaltfrom.domain.Holiday.{UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.Holiday
-import com.itforelead.smspaltfrom.services.{Holidays, SMSTemplates}
+import com.itforelead.smspaltfrom.services.{Holidays, SMSTemplates, TemplateCategories}
+import smsplatform.services.SMSTemplateSuite.RedisClient
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createHolidayGen, holidayNameGen, templateIdOptionGen}
+import smsplatform.utils.Generators.{createHolidayGen, createSMSTemplateGen, createTemplateCategoryGen, holidayNameGen}
 
 object HolidaysSuite extends DBSuite {
 
@@ -31,7 +32,7 @@ object HolidaysSuite extends DBSuite {
       for {
         holiday1 <- holidays.create(createHoliday)
         holiday2 <- holidays.update(
-          Holiday(
+          UpdateHoliday(
             id = holiday1.id,
             name = name,
             day = holiday1.day,
@@ -44,24 +45,30 @@ object HolidaysSuite extends DBSuite {
 
   test("Update TemplateID in Holiday") { implicit postgres =>
     val holidays  = Holidays[IO]
+    val templates = SMSTemplates[IO](RedisClient)
+    val templateCategories = TemplateCategories[IO]
 
     val gen = for {
       c <- createHolidayGen
-      u1 <- templateIdOptionGen
-      u2 <- templateIdOptionGen
-    } yield (c, u1, u2)
+      tc <- createTemplateCategoryGen
+      t1 <- createSMSTemplateGen
+      t2 <- createSMSTemplateGen
+    } yield (c, tc, t1, t2)
 
-    forall(gen) { case (createHoliday, templateIdOption1, templateIdOption2) =>
+    forall(gen) { case (createHoliday, createTmplCat, createTemplate1, createTemplate2) =>
       for {
         holiday1 <- holidays.create(createHoliday)
+        tmplCategory <- templateCategories.create(createTmplCat)
+        template1 <- templates.create(createTemplate1.copy(templateCategoryId = tmplCategory.id))
+        template2 <- templates.create(createTemplate2.copy(templateCategoryId = tmplCategory.id))
         holiday2 <- holidays.updateTemplateInHoliday(
           UpdateTemplateInHoliday(
             id = holiday1.id,
-            smsWomenId = templateIdOption1,
-            smsMenId = templateIdOption2
+            smsWomenId = template1.id.some,
+            smsMenId = template2.id.some
           )
         )
-      } yield assert.same((holiday2.smsMenId, templateIdOption2), (holiday2.smsWomenId, templateIdOption1))
+      } yield assert(holiday2.smsMenId.contains(template2.id) && holiday2.smsWomenId.contains(template1.id))
     }
   }
 
