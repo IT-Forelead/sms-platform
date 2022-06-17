@@ -33,9 +33,9 @@ object SMSTemplateSql {
     sql"""INSERT INTO sms_templates VALUES ($encoder) returning *""".query(decoder)
 
   val select: Query[Void, SMSTemplateWithCatName] =
-    sql"""SELECT sms_templates.*, template_categories.name FROM sms_templates
-         INNER JOIN template_categories ON template_categories.id = sms_templates.template_category_id
-         WHERE sms_templates.deleted = false""".query(decSMSTemplateWithCatName)
+    sql"""SELECT t.*, tc.name FROM sms_templates t
+         INNER JOIN template_categories tc ON tc.id = t.template_category_id AND tc.deleted = false
+         WHERE t.deleted = false""".query(decSMSTemplateWithCatName)
 
   val findById: Query[TemplateId, SMSTemplate] =
     sql"""SELECT * FROM sms_templates WHERE id = $templateId AND deleted = false""".query(decoder)

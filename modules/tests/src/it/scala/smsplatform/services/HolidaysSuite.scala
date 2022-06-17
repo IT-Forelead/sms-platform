@@ -3,9 +3,7 @@ package smsplatform.services
 import cats.effect.IO
 import cats.implicits.catsSyntaxOptionId
 import com.itforelead.smspaltfrom.domain.Holiday.{UpdateHoliday, UpdateTemplateInHoliday}
-import com.itforelead.smspaltfrom.domain.Holiday
 import com.itforelead.smspaltfrom.services.{Holidays, SMSTemplates, TemplateCategories}
-import smsplatform.services.SMSTemplateSuite.RedisClient
 import smsplatform.utils.DBSuite
 import smsplatform.utils.Generators.{createHolidayGen, createSMSTemplateGen, createTemplateCategoryGen, holidayNameGen}
 
@@ -44,12 +42,12 @@ object HolidaysSuite extends DBSuite {
   }
 
   test("Update TemplateID in Holiday") { implicit postgres =>
-    val holidays  = Holidays[IO]
-    val templates = SMSTemplates[IO](RedisClient)
+    val holidays           = Holidays[IO]
+    val templates          = SMSTemplates[IO](RedisClient)
     val templateCategories = TemplateCategories[IO]
 
     val gen = for {
-      c <- createHolidayGen
+      c  <- createHolidayGen
       tc <- createTemplateCategoryGen
       t1 <- createSMSTemplateGen
       t2 <- createSMSTemplateGen
@@ -57,10 +55,10 @@ object HolidaysSuite extends DBSuite {
 
     forall(gen) { case (createHoliday, createTmplCat, createTemplate1, createTemplate2) =>
       for {
-        holiday1 <- holidays.create(createHoliday)
+        holiday1     <- holidays.create(createHoliday)
         tmplCategory <- templateCategories.create(createTmplCat)
-        template1 <- templates.create(createTemplate1.copy(templateCategoryId = tmplCategory.id))
-        template2 <- templates.create(createTemplate2.copy(templateCategoryId = tmplCategory.id))
+        template1    <- templates.create(createTemplate1.copy(templateCategoryId = tmplCategory.id))
+        template2    <- templates.create(createTemplate2.copy(templateCategoryId = tmplCategory.id))
         holiday2 <- holidays.updateTemplateInHoliday(
           UpdateTemplateInHoliday(
             id = holiday1.id,

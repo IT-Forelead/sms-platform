@@ -12,15 +12,19 @@ object Services {
     redis: RedisClient[F]
   )(implicit session: Resource[F, Session[F]]): Services[F] = {
     val contacts     = Contacts[F]
+    val settings     = SystemSettings[F]
     val smsTemplates = SMSTemplates[F](redis)
+    val messages     = Messages[F]
+
     new Services[F](
       users = Users[F],
       contacts = contacts,
-      messages = Messages[F],
       holidays = Holidays[F],
+      messages = messages,
       smsTemplates = smsTemplates,
+      systemSettings = settings,
       templateCategories = TemplateCategories[F],
-      congratulator = Congratulator.make[F](contacts, smsTemplates, redis)
+      congratulator = Congratulator.make[F](contacts, smsTemplates, messages, redis)
     )
   }
 }
@@ -31,6 +35,7 @@ final class Services[F[_]] private (
   val messages: Messages[F],
   val holidays: Holidays[F],
   val smsTemplates: SMSTemplates[F],
+  val systemSettings: SystemSettings[F],
   val templateCategories: TemplateCategories[F],
   val congratulator: Congratulator[F]
 )
