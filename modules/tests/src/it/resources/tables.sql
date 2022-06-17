@@ -85,3 +85,14 @@ CREATE TABLE IF NOT EXISTS messages
     sent_date       TIMESTAMP       NOT NULL,
     delivery_status DELIVERY_STATUS NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS system_settings
+(
+    sms_women_id UUID    NULL
+        CONSTRAINT fk_sms_template_w_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    sms_men_id   UUID    NULL
+        CONSTRAINT fk_sms_template_m_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    auto_send_b  BOOLEAN NOT NULL DEFAULT false,
+    auto_send_h  BOOLEAN NOT NULL DEFAULT false,
+    dark_mode    BOOLEAN NOT NULL DEFAULT false
+);

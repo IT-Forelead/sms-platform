@@ -53,11 +53,12 @@ final class HttpApi[F[_]: Async: Logger] private (
   private[this] val holidayRoutes = new HolidayRoutes[F](services.holidays).routes(usersMiddleware)
   private[this] val templateCategoryRoutes =
     new TemplateCategoryRoutes[F](services.templateCategories).routes(usersMiddleware)
-  private[this] val templateRoutes = new SMSTemplateRoutes[F](services.smsTemplates).routes(usersMiddleware)
+  private[this] val templateRoutes      = new SMSTemplateRoutes[F](services.smsTemplates).routes(usersMiddleware)
+  private[this] val systemSettingRoutes = new SystemSettingRoutes[F](services.systemSettings).routes(usersMiddleware)
 
   // Open routes
   private[this] val openRoutes: HttpRoutes[F] =
-    userRoutes <+> authRoutes <+> contactRoutes <+> messageRoutes <+> holidayRoutes <+> templateCategoryRoutes <+> templateRoutes
+    userRoutes <+> authRoutes <+> contactRoutes <+> messageRoutes <+> holidayRoutes <+> templateCategoryRoutes <+> templateRoutes <+> systemSettingRoutes
 
   private[this] val routes: HttpRoutes[F] = Router(
     baseURL -> openRoutes
