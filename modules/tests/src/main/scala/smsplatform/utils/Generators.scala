@@ -155,6 +155,15 @@ object Generators {
       sm <- option(templateIdGen)
     } yield Holiday(id, n, d, m, sw, sm)
 
+  val systemSettingsGen: Gen[SystemSetting] =
+    for {
+      sw <- option(templateIdGen)
+      sm <- option(templateIdGen)
+      asb <- booleanGen
+      ash <-booleanGen
+      dth <-booleanGen
+    } yield SystemSetting(sw, sm, asb, ash, dth)
+
   val createHolidayGen: Gen[CreateHoliday] =
     for {
       n <- holidayNameGen
