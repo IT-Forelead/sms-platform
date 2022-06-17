@@ -1,7 +1,7 @@
 package smsplatform.utils
 
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
-import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
+import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 import com.itforelead.smspaltfrom.domain.User._
@@ -12,6 +12,7 @@ import eu.timepit.refined.scalacheck.string._
 import eu.timepit.refined.types.string.NonEmptyString
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
+import org.scalacheck.Gen.option
 import smsplatform.utils.Arbitraries._
 
 import java.time.{LocalDate, LocalDateTime}
@@ -87,6 +88,8 @@ object Generators {
   val timestampGen: Gen[LocalDateTime] = arbitrary[LocalDateTime]
   val dateGen: Gen[LocalDate]          = timestampGen.map(_.toLocalDate)
 
+  val templateIdOptionGen: Gen[Option[TemplateId]] = option(templateIdGen)
+
   val passwordGen: Gen[Password] = arbitrary[Password]
 
   val booleanGen: Gen[Boolean] = arbitrary[Boolean]
@@ -148,7 +151,9 @@ object Generators {
       n  <- holidayNameGen
       d  <- dayOfMonthGen
       m  <- monthGen
-    } yield Holiday(id, n, d, m)
+      sw <- option(templateIdGen)
+      sm <- option(templateIdGen)
+    } yield Holiday(id, n, d, m, sw, sm)
 
   val createHolidayGen: Gen[CreateHoliday] =
     for {
@@ -156,6 +161,14 @@ object Generators {
       d <- dayOfMonthGen
       m <- monthGen
     } yield CreateHoliday(n, d, m)
+
+  val updateHolidayGen: Gen[UpdateHoliday] =
+    for {
+      i <- holidayIdGen
+      n <- holidayNameGen
+      d <- dayOfMonthGen
+      m <- monthGen
+    } yield UpdateHoliday(i, n, d, m)
 
   val templateCategoryGen: Gen[TemplateCategory] =
     for {

@@ -1,7 +1,9 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.Holiday
+import com.itforelead.smspaltfrom.domain.Holiday.{UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.types.HolidayId
+import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.templateId
 import skunk._
 import skunk.codec.all.bool
 import skunk.implicits._
@@ -9,14 +11,15 @@ import skunk.implicits._
 object HolidaysSql {
   val holidayId: Codec[HolidayId] = identity[HolidayId]
 
-  val Columns = holidayId ~ holidayName ~ dayOfMonth ~ month ~ bool
+  private val Columns =
+    holidayId ~ holidayName ~ dayOfMonth ~ month ~ templateId.opt ~ templateId.opt ~ bool
 
   val encoder: Encoder[Holiday] =
-    Columns.contramap(c => c.id ~ c.name ~ c.day ~ c.month ~ false)
+    Columns.contramap(c => c.id ~ c.name ~ c.day ~ c.month ~ c.smsWomenId ~ c.smsMenId ~ false)
 
   val decoder: Decoder[Holiday] =
-    Columns.map { case id ~ name ~ day ~ month ~ _ =>
-      Holiday(id, name, day, month)
+    Columns.map { case id ~ name ~ day ~ month ~ smsWomenId ~ smsMenId ~ _ =>
+      Holiday(id, name, day, month, smsWomenId, smsMenId)
     }
 
   val insert: Query[Holiday, Holiday] =
@@ -25,14 +28,22 @@ object HolidaysSql {
   val select: Query[Void, Holiday] =
     sql"""SELECT * FROM holidays WHERE deleted = false""".query(decoder)
 
-  val updateSql: Query[Holiday, Holiday] =
+  val updateTemplateInHolidaySql: Query[UpdateTemplateInHoliday, Holiday] =
+    sql"""UPDATE holidays
+         SET sms_women_id = ${templateId.opt},
+         sms_men_id = ${templateId.opt}
+         WHERE id = $holidayId RETURNING *"""
+      .query(decoder)
+      .contramap[UpdateTemplateInHoliday](h => h.smsWomenId ~ h.smsMenId ~ h.id)
+
+  val updateSql: Query[UpdateHoliday, Holiday] =
     sql"""UPDATE holidays
          SET name = $holidayName,
          day = $dayOfMonth,
          month = $month
          WHERE id = $holidayId RETURNING *"""
       .query(decoder)
-      .contramap[Holiday](h => h.name ~ h.day ~ h.month ~ h.id)
+      .contramap[UpdateHoliday](h => h.name ~ h.day ~ h.month ~ h.id)
 
   val deleteSql: Command[HolidayId] =
     sql"""UPDATE holidays SET deleted = true WHERE id = $holidayId""".command

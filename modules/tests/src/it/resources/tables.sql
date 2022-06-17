@@ -43,15 +43,6 @@ CREATE TABLE IF NOT EXISTS contacts
     deleted    BOOLEAN   NOT NULL DEFAULT false
 );
 
-CREATE TABLE IF NOT EXISTS holidays
-(
-    id      UUID PRIMARY KEY,
-    name    VARCHAR NOT NULL,
-    day     INT     NOT NULL,
-    month   MONTH   NOT NULL,
-    deleted BOOLEAN NOT NULL DEFAULT false
-);
-
 CREATE TABLE IF NOT EXISTS template_categories
 (
     id      UUID PRIMARY KEY,
@@ -62,12 +53,25 @@ CREATE TABLE IF NOT EXISTS template_categories
 CREATE TABLE IF NOT EXISTS sms_templates
 (
     id                   UUID PRIMARY KEY,
-    template_category_id UUID          NOT NULL
+    template_category_id UUID    NOT NULL
         CONSTRAINT fk_template_category_id REFERENCES template_categories (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    title                VARCHAR       NOT NULL,
-    text                 VARCHAR       NOT NULL,
-    gender_access        GENDER        NOT NULL,
-    deleted              BOOLEAN       NOT NULL DEFAULT false
+    title                VARCHAR NOT NULL,
+    text                 VARCHAR NOT NULL,
+    gender_access        GENDER  NOT NULL,
+    deleted              BOOLEAN NOT NULL DEFAULT false
+);
+
+CREATE TABLE IF NOT EXISTS holidays
+(
+    id           UUID PRIMARY KEY,
+    name         VARCHAR NOT NULL,
+    day          INT     NOT NULL,
+    month        MONTH   NOT NULL,
+    sms_women_id UUID    NULL
+        CONSTRAINT fk_sms_template_w_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    sms_men_id   UUID    NULL
+        CONSTRAINT fk_sms_template_m_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    deleted      BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS messages

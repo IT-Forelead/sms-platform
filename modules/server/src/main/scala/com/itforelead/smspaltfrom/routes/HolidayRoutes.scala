@@ -2,7 +2,7 @@ package com.itforelead.smspaltfrom.routes
 
 import cats.MonadThrow
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
+import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.{Holiday, User}
 import com.itforelead.smspaltfrom.domain.types.HolidayId
 import com.itforelead.smspaltfrom.services.Holidays
@@ -30,8 +30,13 @@ final case class HolidayRoutes[F[_]: JsonDecoder: MonadThrow](
       holidays.holidays.flatMap(Ok(_))
 
     case aR @ PUT -> Root as _ =>
-      aR.req.decodeR[Holiday] { from =>
+      aR.req.decodeR[UpdateHoliday] { from =>
         holidays.update(from).flatMap(Ok(_))
+      }
+
+    case aR @ PUT -> Root / "update-template" as _ =>
+      aR.req.decodeR[UpdateTemplateInHoliday] { from =>
+        holidays.updateTemplateInHoliday(from).flatMap(Ok(_))
       }
 
     case aR @ DELETE -> Root as _ =>

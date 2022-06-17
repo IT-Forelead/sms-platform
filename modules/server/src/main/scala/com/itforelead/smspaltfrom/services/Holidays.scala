@@ -3,7 +3,7 @@ package com.itforelead.smspaltfrom.services
 import cats.effect.{Resource, Sync}
 import cats.implicits._
 import com.itforelead.smspaltfrom.domain.{Holiday, ID}
-import com.itforelead.smspaltfrom.domain.Holiday.CreateHoliday
+import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.types.HolidayId
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk._
@@ -30,7 +30,15 @@ trait Holidays[F[_]] {
     * @return
     *   updated holiday
     */
-  def update(holiday: Holiday): F[Holiday]
+  def update(holiday: UpdateHoliday): F[Holiday]
+
+  /** Function for update holiday
+    * @param holiday
+    *   holiday
+    * @return
+    *   updated templateId of holiday
+    */
+  def updateTemplateInHoliday(holiday: UpdateTemplateInHoliday): F[Holiday]
 
   /** Function for delete holiday
     * @param id
@@ -86,8 +94,17 @@ object Holidays {
         * @return
         *   updated holiday
         */
-      override def update(holiday: Holiday): F[Holiday] =
+      override def update(holiday: UpdateHoliday): F[Holiday] =
         prepQueryUnique(updateSql, holiday)
+
+      /** Function for update holiday
+        * @param holiday
+        *   holiday
+        * @return
+        *   updated templateId of holiday
+        */
+      override def updateTemplateInHoliday(holiday: UpdateTemplateInHoliday): F[Holiday] =
+        prepQueryUnique(updateTemplateInHolidaySql, holiday)
 
       /** Function for delete holiday
         * @param id
