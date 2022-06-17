@@ -12,16 +12,16 @@ import skunk.implicits._
 object MessageSql {
   val messageId: Codec[MessageId] = identity[MessageId]
 
-  private val Columns = messageId ~ timestamp ~ contactId ~ templateId ~ timestamp ~ deliveryStatus
+  private val Columns = messageId ~ contactId ~ templateId ~ timestamp ~ deliveryStatus
 
   private val MessageColumns = MessageSql.decoder ~ ContactsSql.decoder ~ SMSTemplateSql.decoder
 
   val encoder: Encoder[Message] =
-    Columns.contramap(m => m.id ~ m.createdAt ~ m.contactId ~ m.templateId ~ m.sentDate ~ m.deliveryStatus)
+    Columns.contramap(m => m.id ~ m.contactId ~ m.templateId ~ m.sentDate ~ m.deliveryStatus)
 
   val decoder: Decoder[Message] =
-    Columns.map { case id ~ createdAt ~ contactId ~ templateId ~ sentDate ~ deliveryStatus =>
-      Message(id, createdAt, contactId, templateId, sentDate, deliveryStatus)
+    Columns.map { case id ~ contactId ~ templateId ~ sentDate ~ deliveryStatus =>
+      Message(id, contactId, templateId, sentDate, deliveryStatus)
     }
 
   val decMessageWithContact: Decoder[MessageWithContact] =

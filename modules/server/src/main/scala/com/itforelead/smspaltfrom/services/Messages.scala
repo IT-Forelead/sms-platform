@@ -3,13 +3,11 @@ package com.itforelead.smspaltfrom.services
 import cats.effect.{Resource, Sync}
 import cats.implicits._
 import com.itforelead.smspaltfrom.domain.Message.{CreateMessage, MessageWithContact}
-import com.itforelead.smspaltfrom.domain.{DeliveryStatus, ID, Message}
 import com.itforelead.smspaltfrom.domain.types.{ContactId, MessageId}
+import com.itforelead.smspaltfrom.domain.{DeliveryStatus, ID, Message}
 import com.itforelead.smspaltfrom.effects.GenUUID
-import skunk.{Session, Void}
 import skunk.implicits.toIdOps
-
-import java.time.LocalDateTime
+import skunk.{Session, Void}
 
 trait Messages[F[_]] {
   def create(msg: CreateMessage): F[Message]
@@ -26,16 +24,13 @@ object Messages {
 
       import com.itforelead.smspaltfrom.services.sql.MessageSql._
 
-      override def create(msg: CreateMessage): F[Message] = {
-        for {
-          id  <- ID.make[F, MessageId]
-          now <- Sync[F].delay(LocalDateTime.now())
-          message <- prepQueryUnique(
+      override def create(msg: CreateMessage): F[Message] =
+        ID.make[F, MessageId].flatMap { id =>
+          prepQueryUnique(
             insert,
-            Message(id, now, msg.contactId, msg.templateId, msg.sentDate, msg.deliveryStatus)
+            Message(id, msg.contactId, msg.templateId, msg.sentDate, msg.deliveryStatus)
           )
-        } yield message
-      }
+        }
 
       override def messages: F[List[MessageWithContact]] =
         prepQueryList(select, Void)

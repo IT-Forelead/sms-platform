@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 @derive(decoder, encoder, show)
 case class Message(
   id: MessageId,
-  createdAt: LocalDateTime,
   contactId: ContactId,
   templateId: TemplateId,
   sentDate: LocalDateTime,
@@ -20,7 +19,6 @@ case class Message(
 object Message {
   @derive(decoder, encoder, show)
   case class CreateMessage(
-    createdAt: LocalDateTime,
     contactId: ContactId,
     templateId: TemplateId,
     sentDate: LocalDateTime,

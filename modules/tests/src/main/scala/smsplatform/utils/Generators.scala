@@ -1,7 +1,7 @@
 package smsplatform.utils
 
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
-import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday, UpdateTemplateInHoliday}
+import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday}
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 import com.itforelead.smspaltfrom.domain.User._
@@ -201,12 +201,11 @@ object Generators {
   val messageGen: Gen[Message] =
     for {
       id  <- messageIdGen
-      cAt <- timestampGen
       cId <- contactIdGen
       tId <- templateIdGen
       sd  <- timestampGen
       ds  <- deliveryStatusGen
-    } yield Message(id, cAt, cId, tId, sd, ds)
+    } yield Message(id, cId, tId, sd, ds)
 
   val userCredentialGen: Gen[Credentials] =
     for {
