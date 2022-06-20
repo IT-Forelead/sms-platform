@@ -2,12 +2,11 @@ package smsplatform.services
 
 import cats.effect.IO
 import cats.implicits.catsSyntaxOptionId
-import com.itforelead.smspaltfrom.domain.Holiday.{UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.domain.SystemSetting
 import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
-import com.itforelead.smspaltfrom.services.{Holidays, SMSTemplates, SystemSettings, TemplateCategories}
+import com.itforelead.smspaltfrom.services.{SMSTemplates, SystemSettings, TemplateCategories}
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{booleanGen, createHolidayGen, createSMSTemplateGen, createTemplateCategoryGen, holidayNameGen, updateSystemSettingsGen}
+import smsplatform.utils.Generators.{createSMSTemplateGen, createTemplateCategoryGen}
 
 object SettingsSuite extends DBSuite {
 
@@ -27,9 +26,9 @@ object SettingsSuite extends DBSuite {
   }
 
   test("Update Template of Birthday") { implicit postgres =>
-    val templates          = SMSTemplates[IO](RedisClient)
+    val templates          = SMSTemplates[IO]
     val templateCategories = TemplateCategories[IO]
-    val settings = SystemSettings[IO]
+    val settings           = SystemSettings[IO]
 
     val gen = for {
       tc <- createTemplateCategoryGen
@@ -42,7 +41,7 @@ object SettingsSuite extends DBSuite {
         tmplCategory <- templateCategories.create(createTmplCat)
         template1    <- templates.create(createTemplate1.copy(templateCategoryId = tmplCategory.id))
         template2    <- templates.create(createTemplate2.copy(templateCategoryId = tmplCategory.id))
-        settings1    <- settings.updateTemplateOfBirthday(
+        settings1 <- settings.updateTemplateOfBirthday(
           UpdateTemplateOfBirthday(
             smsMenId = template2.id.some,
             smsWomenId = template1.id.some
