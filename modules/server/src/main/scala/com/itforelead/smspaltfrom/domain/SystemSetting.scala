@@ -7,9 +7,24 @@ import derevo.derive
 
 @derive(decoder, encoder, show)
 case class SystemSetting(
-  smsWomenId: Option[TemplateId],
-  smsMenId: Option[TemplateId],
   autoSendBirthday: Boolean,
   autoSendHoliday: Boolean,
-  darkTheme: Boolean
+  darkTheme: Boolean,
+  smsMenId: Option[TemplateId] = None,
+  smsWomenId: Option[TemplateId] = None
 )
+
+object SystemSetting {
+  @derive(decoder, encoder, show)
+  case class UpdateSetting(
+    autoSendBirthday: Boolean,
+    autoSendHoliday: Boolean,
+    darkTheme: Boolean
+  )
+
+  @derive(decoder, encoder, show)
+  case class UpdateTemplateOfBirthday(
+    smsMenId: Option[TemplateId] = None,
+    smsWomenId: Option[TemplateId] = None
+  )
+}

@@ -2,6 +2,7 @@ package com.itforelead.smspaltfrom.routes
 
 import cats.MonadThrow
 import cats.implicits._
+import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
 import com.itforelead.smspaltfrom.domain.{SystemSetting, User}
 import com.itforelead.smspaltfrom.services.SystemSettings
 import org.http4s._
@@ -16,7 +17,7 @@ final case class SystemSettingRoutes[F[_]: JsonDecoder: MonadThrow](
 )(implicit logger: Logger[F])
     extends Http4sDsl[F] {
 
-  private[routes] val prefixPath = "/system-settings"
+  private[routes] val prefixPath = "/setting"
 
   private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of {
 
@@ -26,6 +27,11 @@ final case class SystemSettingRoutes[F[_]: JsonDecoder: MonadThrow](
     case aR @ PUT -> Root as _ =>
       aR.req.decodeR[SystemSetting] { from =>
         systemSettings.update(from).flatMap(Ok(_))
+      }
+
+    case aR @ PUT -> Root / "update-template" as _ =>
+      aR.req.decodeR[UpdateTemplateOfBirthday] { from =>
+        systemSettings.updateTemplateOfBirthday(from).flatMap(Ok(_))
       }
 
   }

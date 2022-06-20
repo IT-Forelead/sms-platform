@@ -2,8 +2,9 @@ package com.itforelead.smspaltfrom.services
 
 import cats.effect.{Resource, Sync}
 import com.itforelead.smspaltfrom.domain.SystemSetting
+import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
 import com.itforelead.smspaltfrom.effects.GenUUID
-import com.itforelead.smspaltfrom.services.sql.SystemSettingSql.{select, updateSql}
+import com.itforelead.smspaltfrom.services.sql.SystemSettingSql.{select, updateSql, updateTemplatesSql}
 import skunk.{Session, Void}
 
 trait SystemSettings[F[_]] {
@@ -23,6 +24,15 @@ trait SystemSettings[F[_]] {
     *   updated system setting
     */
   def update(settings: SystemSetting): F[SystemSetting]
+
+  /** Function for update templates of birthday
+    *
+    * @param templates
+    *   of system settings
+    * @return
+    *   updated system setting
+    */
+  def updateTemplateOfBirthday(templates: UpdateTemplateOfBirthday): F[SystemSetting]
 
 }
 
@@ -49,5 +59,15 @@ object SystemSettings {
         */
       override def update(settings: SystemSetting): F[SystemSetting] =
         prepQueryUnique(updateSql, settings)
+
+      /** Function for update templates of birthday
+        *
+        * @param templates
+        *   of system settings
+        * @return
+        *   updated system setting
+        */
+      override def updateTemplateOfBirthday(templates: UpdateTemplateOfBirthday): F[SystemSetting] =
+        prepQueryUnique(updateTemplatesSql, templates)
     }
 }
