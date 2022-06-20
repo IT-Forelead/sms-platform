@@ -4,12 +4,13 @@ import cats.effect.Async
 import cats.implicits._
 import ciris._
 import ciris.refined.refTypeConfigDecoder
+import com.itforelead.smspaltfrom.domain.custom.refinements.UriAddress
+import com.itforelead.smspaltfrom.types._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.net.UserPortNumber
 import eu.timepit.refined.types.numeric.PosInt
 import eu.timepit.refined.types.string.NonEmptyString
-import com.itforelead.smspaltfrom.domain.custom.refinements.UriAddress
-import com.itforelead.smspaltfrom.types._
+import org.http4s.Uri
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -42,11 +43,19 @@ object ConfigLoader {
     env("JWT_TOKEN_EXPIRATION").as[FiniteDuration].map(TokenExpiration.apply)
   ).parMapN(JwtConfig.apply)
 
+  def messageBroker: ConfigValue[Effect, BrokerConfig] = (
+    env("MESSAGE_BROKER_API").as[Uri],
+    env("MESSAGE_BROKER_USERNAME").as[NonEmptyString],
+    env("MESSAGE_BROKER_PASSWORD").as[NonEmptyString].secret,
+    env("MESSAGE_BROKER_ENABLED").as[Boolean]
+  ).parMapN(BrokerConfig.apply)
+
   def load[F[_]: Async]: F[AppConfig] = (
     jwtConfig,
     databaseConfig,
     redisConfig,
     httpServerConfig,
-    httpLogConfig
+    httpLogConfig,
+    messageBroker
   ).parMapN(AppConfig.apply).load[F]
 }

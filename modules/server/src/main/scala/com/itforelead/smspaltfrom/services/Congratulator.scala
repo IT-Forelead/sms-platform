@@ -22,7 +22,8 @@ object Congratulator {
     contacts: Contacts[F],
     smsTemplates: SMSTemplates[F],
     messages: Messages[F],
-    settings: SystemSettings[F]
+    settings: SystemSettings[F],
+    messageBroker: MessageBroker[F]
   ): Congratulator[F] =
     new Congratulator[F] {
       override def start: F[Unit] =
@@ -69,12 +70,7 @@ object Congratulator {
 
       private def send(contact: Contact, text: String, message: Message): F[Unit] =
         messages.changeStatus(message.id, status = DeliveryStatus.DELIVERED) >>
-          Logger[F].info(
-            s"""Congratulation message sent to [ ${contact.phone} ],
-              message text [
-                $text
-              ] """
-          )
+          messageBroker.send(message.id, contact.phone, text)
 
     }
 
