@@ -9,7 +9,7 @@ import smsplatform.utils.Generators.{createSMSTemplateGen, createTemplateCategor
 object SMSTemplateSuite extends DBSuite {
 
   test("Create SMS Template") { implicit postgres =>
-    val templates          = SMSTemplates[IO](RedisClient)
+    val templates          = SMSTemplates[IO]
     val templateCategories = TemplateCategories[IO]
     val gen = for {
       c <- createTemplateCategoryGen
@@ -25,7 +25,7 @@ object SMSTemplateSuite extends DBSuite {
   }
 
   test("Update SMS Template") { implicit postgres =>
-    val smsTemplates       = SMSTemplates[IO](RedisClient)
+    val smsTemplates       = SMSTemplates[IO]
     val templateCategories = TemplateCategories[IO]
     val gen = for {
       t  <- createTemplateCategoryGen
@@ -50,7 +50,7 @@ object SMSTemplateSuite extends DBSuite {
   }
 
   test("Delete SMS Template") { implicit postgres =>
-    val smsTemplates       = SMSTemplates[IO](RedisClient)
+    val smsTemplates       = SMSTemplates[IO]
     val templateCategories = TemplateCategories[IO]
     val gen = for {
       t <- createTemplateCategoryGen

@@ -19,7 +19,8 @@ object SystemSettingRoutesSuite extends HttpSuite {
   def systemSettings[F[_]: Sync](systemSettings: SystemSetting): SystemSettings[F] = new SystemSettingsStub[F] {
     override def settings: F[Option[SystemSetting]]            = Sync[F].delay(Option(systemSettings))
     override def update(form: SystemSetting): F[SystemSetting] = Sync[F].delay(systemSettings)
-    override def updateTemplateOfBirthday(form: UpdateTemplateOfBirthday): F[SystemSetting] = Sync[F].delay(systemSettings)
+    override def updateTemplateOfBirthday(form: UpdateTemplateOfBirthday): F[SystemSetting] =
+      Sync[F].delay(systemSettings)
   }
 
   test("get setting") {
@@ -31,7 +32,7 @@ object SystemSettingRoutesSuite extends HttpSuite {
     forall(gen) { case (user, settings) =>
       for {
         token <- authToken(user)
-        req    = GET(uri"/settings").putHeaders(token)
+        req    = GET(uri"/setting").putHeaders(token)
         routes = SystemSettingRoutes[IO](systemSettings(settings)).routes(usersMiddleware)
         res <- expectHttpStatus(routes, req)(Status.Ok)
       } yield res
@@ -49,7 +50,7 @@ object SystemSettingRoutesSuite extends HttpSuite {
     forall(gen) { case (user, settings, updateSetting) =>
       for {
         token <- authToken(user)
-        req    = PUT(updateSetting, uri"/settings").putHeaders(token)
+        req    = PUT(updateSetting, uri"/setting").putHeaders(token)
         routes = SystemSettingRoutes[IO](systemSettings(settings)).routes(usersMiddleware)
         res <- expectHttpBodyAndStatus(routes, req)(settings, Status.Ok)
       } yield res
@@ -67,7 +68,7 @@ object SystemSettingRoutesSuite extends HttpSuite {
     forall(gen) { case (user, settings, updateSetting) =>
       for {
         token <- authToken(user)
-        req    = PUT(updateSetting, uri"/settings/update-template").putHeaders(token)
+        req    = PUT(updateSetting, uri"/setting/update-template").putHeaders(token)
         routes = SystemSettingRoutes[IO](systemSettings(settings)).routes(usersMiddleware)
         res <- expectHttpBodyAndStatus(routes, req)(settings, Status.Ok)
       } yield res
