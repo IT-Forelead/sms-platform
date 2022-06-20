@@ -14,8 +14,6 @@ object MessageSql {
 
   private val Columns = messageId ~ contactId ~ templateId ~ timestamp ~ deliveryStatus
 
-  private val MessageColumns = MessageSql.decoder ~ ContactsSql.decoder ~ SMSTemplateSql.decoder
-
   val encoder: Encoder[Message] =
     Columns.contramap(m => m.id ~ m.contactId ~ m.templateId ~ m.sentDate ~ m.deliveryStatus)
 
@@ -23,6 +21,8 @@ object MessageSql {
     Columns.map { case id ~ contactId ~ templateId ~ sentDate ~ deliveryStatus =>
       Message(id, contactId, templateId, sentDate, deliveryStatus)
     }
+
+  private val MessageColumns = decoder ~ ContactsSql.decoder ~ SMSTemplateSql.decoder
 
   val decMessageWithContact: Decoder[MessageWithContact] =
     MessageColumns.map { case message ~ contact ~ template =>
