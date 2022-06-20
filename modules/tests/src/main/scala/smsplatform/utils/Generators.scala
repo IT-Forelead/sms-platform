@@ -3,6 +3,7 @@ package smsplatform.utils
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday}
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
+import com.itforelead.smspaltfrom.domain.SystemSetting.{UpdateSetting, UpdateTemplateOfBirthday}
 import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain._
@@ -157,12 +158,25 @@ object Generators {
 
   val systemSettingsGen: Gen[SystemSetting] =
     for {
-      sw <- option(templateIdGen)
+      asb <- booleanGen
+      ash <- booleanGen
+      dth <- booleanGen
       sm <- option(templateIdGen)
+      sw <- option(templateIdGen)
+    } yield SystemSetting(asb, ash, dth, sm, sw)
+
+  val updateSystemSettingsGen: Gen[UpdateSetting] =
+    for {
       asb <- booleanGen
       ash <-booleanGen
       dth <-booleanGen
-    } yield SystemSetting(sw, sm, asb, ash, dth)
+    } yield UpdateSetting(asb, ash, dth)
+
+  val updateTemplateOfBirthdayGen: Gen[UpdateTemplateOfBirthday] =
+    for {
+      sm <- option(templateIdGen)
+      sw <- option(templateIdGen)
+    } yield UpdateTemplateOfBirthday(sm, sw)
 
   val createHolidayGen: Gen[CreateHoliday] =
     for {
