@@ -1,20 +1,23 @@
 package com.itforelead.smspaltfrom.modules
 
-import cats.effect.{Resource, Sync}
+import cats.effect.{Async, Resource, Sync}
+import com.itforelead.smspaltfrom.config.BrokerConfig
 import com.itforelead.smspaltfrom.effects.GenUUID
 import com.itforelead.smspaltfrom.services._
-import com.itforelead.smspaltfrom.services.redis.RedisClient
+import org.http4s.client.Client
 import org.typelevel.log4cats.Logger
 import skunk.Session
 
 object Services {
-  def apply[F[_]: Sync: GenUUID: Logger](
-    redis: RedisClient[F]
+  def apply[F[_]: Async: GenUUID: Logger](
+    brokerConfig: BrokerConfig,
+    httpClient: Client[F]
   )(implicit session: Resource[F, Session[F]]): Services[F] = {
-    val contacts     = Contacts[F]
-    val settings     = SystemSettings[F]
-    val smsTemplates = SMSTemplates[F]
-    val messages     = Messages[F]
+    val contacts      = Contacts[F]
+    val settings      = SystemSettings[F]
+    val smsTemplates  = SMSTemplates[F]
+    val messages      = Messages[F]
+    val messageBroker = MessageBroker[F](httpClient, brokerConfig)
 
     new Services[F](
       users = Users[F],
@@ -24,7 +27,7 @@ object Services {
       smsTemplates = smsTemplates,
       systemSettings = settings,
       templateCategories = TemplateCategories[F],
-      congratulator = Congratulator.make[F](contacts, smsTemplates, messages, settings)
+      congratulator = Congratulator.make[F](contacts, smsTemplates, messages, settings, messageBroker)
     )
   }
 }
