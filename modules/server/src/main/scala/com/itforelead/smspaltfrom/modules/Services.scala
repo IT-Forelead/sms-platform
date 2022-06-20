@@ -13,7 +13,7 @@ object Services {
   )(implicit session: Resource[F, Session[F]]): Services[F] = {
     val contacts     = Contacts[F]
     val settings     = SystemSettings[F]
-    val smsTemplates = SMSTemplates[F](redis)
+    val smsTemplates = SMSTemplates[F]
     val messages     = Messages[F]
 
     new Services[F](
@@ -24,7 +24,7 @@ object Services {
       smsTemplates = smsTemplates,
       systemSettings = settings,
       templateCategories = TemplateCategories[F],
-      congratulator = Congratulator.make[F](contacts, smsTemplates, messages, redis)
+      congratulator = Congratulator.make[F](contacts, smsTemplates, messages, settings)
     )
   }
 }

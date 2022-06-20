@@ -3,13 +3,11 @@ package com.itforelead.smspaltfrom.services
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.implicits.{catsSyntaxFlatMapOps, toFlatMapOps, toFunctorOps, toTraverseOps}
+import com.itforelead.smspaltfrom.domain.Gender.{ALL, FEMALE, MALE}
 import com.itforelead.smspaltfrom.domain.Message.CreateMessage
-import com.itforelead.smspaltfrom.domain.circe._
-import com.itforelead.smspaltfrom.domain.custom.RedisStaticKeys.TemplateIdCache
+import com.itforelead.smspaltfrom.domain.custom.exception.GenderIncorrect
 import com.itforelead.smspaltfrom.domain.types.{ContactId, TemplateId}
-import com.itforelead.smspaltfrom.domain.{Contact, DeliveryStatus, Gender, Message, SMSTemplate}
-import com.itforelead.smspaltfrom.implicits.CirceDecoderOps
-import com.itforelead.smspaltfrom.services.redis.RedisClient
+import com.itforelead.smspaltfrom.domain.{Contact, DeliveryStatus, Gender, Message, SMSTemplate, SystemSetting}
 import eu.timepit.refined.auto._
 import org.typelevel.log4cats.Logger
 
@@ -24,23 +22,28 @@ object Congratulator {
     contacts: Contacts[F],
     smsTemplates: SMSTemplates[F],
     messages: Messages[F],
-    redis: RedisClient[F]
+    settings: SystemSettings[F]
   ): Congratulator[F] =
     new Congratulator[F] {
       override def start: F[Unit] =
-        OptionT(redis.get(TemplateIdCache))
-          .map(_.as[Map[Gender, TemplateId]])
+        OptionT(settings.settings)
           .cataF(
             Logger[F].debug("Has not selected template id"),
             findAndSend
           )
 
-      private def findAndSend(ids: Map[Gender, TemplateId]): F[Unit] =
+      def retrieveTemplateId(setting: SystemSetting): Gender => Option[TemplateId] = {
+        case MALE   => setting.smsMenId
+        case FEMALE => setting.smsWomenId
+        case ALL    => throw GenderIncorrect(ALL)
+      }
+
+      private def findAndSend(setting: SystemSetting): F[Unit] =
         contacts
           .findByBirthday(LocalDate.now())
           .flatMap { contacts =>
             contacts.traverse { contact =>
-              OptionT(ids.get(contact.gender).flatTraverse(smsTemplates.find))
+              OptionT(retrieveTemplateId(setting)(contact.gender).flatTraverse(smsTemplates.find))
                 .map(template => template.id -> prepare(template, contact))
                 .cataF(
                   Logger[F].debug(s"Has not selected template id for gender [ ${contact.gender} ]"),

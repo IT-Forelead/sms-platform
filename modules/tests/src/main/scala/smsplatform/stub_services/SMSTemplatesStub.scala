@@ -11,5 +11,4 @@ class SMSTemplatesStub[F[_]] extends SMSTemplates[F] {
   override def update(param: SMSTemplate): F[SMSTemplate]           = ???
   override def delete(id: TemplateId): F[Unit]                      = ???
   override def find(templateId: TemplateId): F[Option[SMSTemplate]] = ???
-  override def activate(id: TemplateId): F[Unit]                    = ???
 }

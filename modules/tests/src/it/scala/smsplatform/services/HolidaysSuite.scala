@@ -43,7 +43,7 @@ object HolidaysSuite extends DBSuite {
 
   test("Update TemplateID in Holiday") { implicit postgres =>
     val holidays           = Holidays[IO]
-    val templates          = SMSTemplates[IO](RedisClient)
+    val templates          = SMSTemplates[IO]
     val templateCategories = TemplateCategories[IO]
 
     val gen = for {
