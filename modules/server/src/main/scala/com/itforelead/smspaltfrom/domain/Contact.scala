@@ -41,3 +41,4 @@ object Contact {
     phone: Tel
   )
 }
+
