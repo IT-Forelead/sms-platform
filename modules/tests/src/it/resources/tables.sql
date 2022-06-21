@@ -77,7 +77,6 @@ CREATE TABLE IF NOT EXISTS holidays
 CREATE TABLE IF NOT EXISTS messages
 (
     id              UUID PRIMARY KEY,
-    created_at      TIMESTAMP       NOT NULL,
     contact_id      UUID            NOT NULL
         CONSTRAINT fk_contact_id REFERENCES contacts (id) ON UPDATE CASCADE ON DELETE CASCADE,
     sms_temp_id     UUID            NOT NULL

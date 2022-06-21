@@ -43,6 +43,8 @@ object ContactsSql {
     sql"""UPDATE contacts SET deleted = true WHERE id = $contactId""".command
 
   val selectByBirthday: Query[LocalDate, Contact] =
-    sql"""SELECT * FROM contacts WHERE birthday = $date""".query(decoder)
+    sql"""SELECT * FROM contacts
+        WHERE DATE_PART('day', birthday) = date_part('day', $date) AND
+        DATE_PART('month', birthday) = date_part('month',  $date)""".query(decoder).contramap(d => d ~ d)
 
 }

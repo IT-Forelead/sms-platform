@@ -2,7 +2,7 @@ package com.itforelead.smspaltfrom.services
 
 import cats.data.OptionT
 import cats.effect.Sync
-import cats.implicits.{catsSyntaxFlatMapOps, toFlatMapOps, toFunctorOps, toTraverseOps}
+import cats.implicits.{catsSyntaxApplicativeError, catsSyntaxFlatMapOps, toFlatMapOps, toFunctorOps, toTraverseOps}
 import com.itforelead.smspaltfrom.domain.Gender.{ALL, FEMALE, MALE}
 import com.itforelead.smspaltfrom.domain.Message.CreateMessage
 import com.itforelead.smspaltfrom.domain.custom.exception.GenderIncorrect
@@ -65,8 +65,8 @@ object Congratulator {
 
       private def prepare(template: SMSTemplate, contact: Contact): String =
         template.text.value
-          .replace("[firstName]", contact.firstName.value)
-          .replace("[lastName]", contact.firstName.value)
+          .replace("[FIRSTNAME]", contact.firstName.value)
+          .replace("[LASTNAME]", contact.lastName.value)
 
       private def send(contact: Contact, text: String, message: Message): F[Unit] =
         messages.changeStatus(message.id, status = DeliveryStatus.DELIVERED) >>
