@@ -33,7 +33,10 @@ object MessageSql {
     sql"""INSERT INTO messages VALUES ($encoder) RETURNING *""".query(decoder)
 
   val select: Query[Void, MessageWithContact] =
-    sql"""SELECT * FROM messages""".query(decMessageWithContact)
+    sql"""SELECT messages.*, contacts.*, sms_templates.* FROM messages
+          INNER JOIN contacts ON contacts.id = messages.contact_id
+          INNER JOIN sms_templates ON sms_templates.id = messages.sms_temp_id
+       """.query(decMessageWithContact)
 
   val selectByContactId: Query[ContactId, MessageWithContact] =
     sql"""SELECT * FROM messages WHERE contact_id = $contactId""".query(decMessageWithContact)
