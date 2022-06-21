@@ -20,7 +20,14 @@ services:
       JWT_TOKEN_EXPIRATION: ${JWT_TOKEN_EXPIRATION}
       ADMIN_USER_TOKEN: ${ADMIN_USER_TOKEN}
       PASSWORD_SALT: ${PASSWORD_SALT}
+      MESSAGE_BROKER_API: ${MESSAGE_BROKER_API}
+      MESSAGE_BROKER_USERNAME: ${MESSAGE_BROKER_USERNAME}
+      MESSAGE_BROKER_PASSWORD: ${MESSAGE_BROKER_PASSWORD}
+      MESSAGE_BROKER_ENABLED: ${MESSAGE_BROKER_ENABLED}
       APP_ENV: ${APP_ENV}
+    volumes:
+      - "/srv/sms_platform/logs:/srv/sms_platform/logs"
+
   postgres:
     restart: always
     image: postgres:12
