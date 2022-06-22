@@ -2,12 +2,12 @@ package com.itforelead.smspaltfrom.services
 
 import cats.data.OptionT
 import cats.effect.Sync
-import cats.implicits.{catsSyntaxApplicativeError, catsSyntaxFlatMapOps, toFlatMapOps, toFunctorOps, toTraverseOps}
-import com.itforelead.smspaltfrom.domain.Gender.{ALL, FEMALE, MALE}
+import cats.implicits._
+import com.itforelead.smspaltfrom.domain.Gender._
 import com.itforelead.smspaltfrom.domain.Message.CreateMessage
+import com.itforelead.smspaltfrom.domain._
 import com.itforelead.smspaltfrom.domain.custom.exception.GenderIncorrect
 import com.itforelead.smspaltfrom.domain.types.{ContactId, TemplateId}
-import com.itforelead.smspaltfrom.domain.{Contact, DeliveryStatus, Gender, Message, SMSTemplate, SystemSetting}
 import eu.timepit.refined.auto._
 import org.typelevel.log4cats.Logger
 
@@ -20,6 +20,7 @@ trait Congratulator[F[_]] {
 object Congratulator {
   def make[F[_]: Sync: Logger](
     contacts: Contacts[F],
+    holidays: Holidays[F],
     smsTemplates: SMSTemplates[F],
     messages: Messages[F],
     settings: SystemSettings[F],
@@ -27,13 +28,37 @@ object Congratulator {
   ): Congratulator[F] =
     new Congratulator[F] {
       override def start: F[Unit] =
-        OptionT(settings.settings)
+        startSendHolidays >>
+          OptionT(settings.settings)
+            .cataF(
+              Logger[F].debug("Setting not found!"),
+              findAndSend
+            )
+
+      private def startSendHolidays: F[Unit] =
+        for {
+          holidaysList <- holidays.holidaysOfToday
+          contactsList <- contacts.contacts
+          _ <- holidaysList.flatTraverse { holiday =>
+            contactsList.traverse { contact =>
+              prepareTextAndSend(contact)(OptionT(holiday.smsMenId.flatTraverse(smsTemplates.find))) >>
+                prepareTextAndSend(contact)(OptionT(holiday.smsWomenId.flatTraverse(smsTemplates.find)))
+            }
+          }
+        } yield ()
+
+      private def prepareTextAndSend(contact: Contact): OptionT[F, SMSTemplate] => F[Unit] =
+        _.map(template => template.id -> prepare(template, contact))
           .cataF(
-            Logger[F].debug("Has not selected template id"),
-            findAndSend
+            Logger[F].debug(s"Has not selected template id for gender [ ${contact.gender} ]"),
+            { case (templateId, text) =>
+              createMessage(contact.id, templateId).flatMap { message =>
+                send(contact, text, message)
+              }
+            }
           )
 
-      def retrieveTemplateId(setting: SystemSetting): Gender => Option[TemplateId] = {
+      private def retrieveTemplateId(setting: SystemSetting): Gender => Option[TemplateId] = {
         case MALE   => setting.smsMenId
         case FEMALE => setting.smsWomenId
         case ALL    => throw GenderIncorrect(ALL)
@@ -44,16 +69,9 @@ object Congratulator {
           .findByBirthday(LocalDate.now())
           .flatMap { contacts =>
             contacts.traverse { contact =>
-              OptionT(retrieveTemplateId(setting)(contact.gender).flatTraverse(smsTemplates.find))
-                .map(template => template.id -> prepare(template, contact))
-                .cataF(
-                  Logger[F].debug(s"Has not selected template id for gender [ ${contact.gender} ]"),
-                  { case (templateId, text) =>
-                    createMessage(contact.id, templateId).flatMap { message =>
-                      send(contact, text, message)
-                    }
-                  }
-                )
+              prepareTextAndSend(contact)(
+                OptionT(retrieveTemplateId(setting)(contact.gender).flatTraverse(smsTemplates.find))
+              )
             }
           }
           .void

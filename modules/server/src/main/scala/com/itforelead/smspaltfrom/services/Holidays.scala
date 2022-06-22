@@ -47,6 +47,11 @@ trait Holidays[F[_]] {
     *   unit
     */
   def delete(id: HolidayId): F[Unit]
+
+  /** @return
+    *   Today's holidays
+    */
+  def holidaysOfToday: F[List[Holiday]]
 }
 
 object Holidays {
@@ -114,5 +119,8 @@ object Holidays {
         */
       override def delete(id: HolidayId): F[Unit] =
         prepCmd(deleteSql, id)
+
+      override def holidaysOfToday: F[List[Holiday]] =
+        prepQueryAll(selectHolidaysOfToday)
     }
 }

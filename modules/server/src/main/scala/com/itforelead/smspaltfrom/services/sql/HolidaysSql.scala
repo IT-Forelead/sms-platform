@@ -48,4 +48,9 @@ object HolidaysSql {
   val deleteSql: Command[HolidayId] =
     sql"""UPDATE holidays SET deleted = true WHERE id = $holidayId""".command
 
+  val selectHolidaysOfToday: Query[Void, Holiday] =
+    sql"""SELECT * FROM holidays 
+          WHERE DATE_PART('day', CURRENT_DATE) = day AND
+           DATE_PART('month', CURRENT_DATE) = month AND deleted = false""".query(decoder)
+
 }

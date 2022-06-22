@@ -17,17 +17,18 @@ object Services {
     val settings      = SystemSettings[F]
     val smsTemplates  = SMSTemplates[F]
     val messages      = Messages[F]
+    val holidays      = Holidays[F]
     val messageBroker = MessageBroker[F](httpClient, brokerConfig)
 
     new Services[F](
       users = Users[F],
       contacts = contacts,
-      holidays = Holidays[F],
+      holidays = holidays,
       messages = messages,
       smsTemplates = smsTemplates,
       systemSettings = settings,
       templateCategories = TemplateCategories[F],
-      congratulator = Congratulator.make[F](contacts, smsTemplates, messages, settings, messageBroker)
+      congratulator = Congratulator.make[F](contacts, holidays, smsTemplates, messages, settings, messageBroker)
     )
   }
 }
