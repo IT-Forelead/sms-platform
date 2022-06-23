@@ -6,6 +6,7 @@ import org.scalacheck.Gen._
 import com.itforelead.smspaltfrom.domain.custom.refinements.{DayOfMonth, EmailAddress, FileName, Password, Tel}
 import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Gender, Month, Role}
 import Generators.{nonEmptyStringGen, numberGen}
+import eu.timepit.refined.types.string.NonEmptyString
 
 import java.time.LocalDateTime
 
@@ -24,6 +25,11 @@ object Arbitraries {
       minute <- Gen.choose(0, 59)
     } yield LocalDateTime.of(year, month, day, hour, minute)
   )
+
+  implicit lazy val arbNes: Arbitrary[NonEmptyString] = Arbitrary(
+    nonEmptyStringGen(4, 22).map(NonEmptyString.unsafeFrom)
+  )
+
   implicit lazy val arbEmail: Arbitrary[EmailAddress] = Arbitrary(
     for {
       s0 <- nonEmptyStringGen(4, 8)

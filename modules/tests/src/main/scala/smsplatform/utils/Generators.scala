@@ -9,7 +9,6 @@ import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain._
 import com.itforelead.smspaltfrom.domain.custom.refinements._
 import com.itforelead.smspaltfrom.domain.types._
-import eu.timepit.refined.scalacheck.string._
 import eu.timepit.refined.types.string.NonEmptyString
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
