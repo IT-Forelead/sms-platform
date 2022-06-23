@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users(
 );
 
 INSERT INTO "users" ("uuid", "name", "email", "gender", "password", "role")
-VALUES ('c1039d34-425b-4f78-9a7f-893f5b4df478', 'Admin', 'saroyadmin@gmail.com', 'male',
+VALUES ('c1039d34-425b-4f78-9a7f-893f5b4df478', 'Admin', 'admin@gmail.com', 'male',
         '$s0$e0801$5JK3Ogs35C2h5htbXQoeEQ==$N7HgNieSnOajn1FuEB7l4PhC6puBSq+e1E8WUaSJcGY=', 'admin');
 
 CREATE TABLE IF NOT EXISTS contacts(

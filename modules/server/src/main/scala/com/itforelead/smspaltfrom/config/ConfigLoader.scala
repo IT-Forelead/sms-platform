@@ -4,10 +4,11 @@ import cats.effect.Async
 import cats.implicits._
 import ciris._
 import ciris.refined.refTypeConfigDecoder
+import com.itforelead.smspaltfrom.domain.AppEnv
 import com.itforelead.smspaltfrom.domain.custom.refinements.UriAddress
 import com.itforelead.smspaltfrom.types._
 import eu.timepit.refined.cats._
-import eu.timepit.refined.types.net.UserPortNumber
+import eu.timepit.refined.types.net.{NonSystemPortNumber, UserPortNumber}
 import eu.timepit.refined.types.numeric.PosInt
 import eu.timepit.refined.types.string.NonEmptyString
 import org.http4s.Uri
@@ -17,7 +18,7 @@ import scala.concurrent.duration.FiniteDuration
 object ConfigLoader {
   def databaseConfig: ConfigValue[Effect, DBConfig] = (
     env("POSTGRES_HOST").as[NonEmptyString],
-    env("POSTGRES_PORT").as[UserPortNumber],
+    env("POSTGRES_PORT").as[NonSystemPortNumber],
     env("POSTGRES_USER").as[NonEmptyString],
     env("POSTGRES_PASSWORD").as[NonEmptyString].secret,
     env("POSTGRES_DATABASE").as[NonEmptyString],
@@ -51,6 +52,7 @@ object ConfigLoader {
   ).parMapN(BrokerConfig.apply)
 
   def load[F[_]: Async]: F[AppConfig] = (
+    env("APP_ENV").as[AppEnv],
     jwtConfig,
     databaseConfig,
     redisConfig,

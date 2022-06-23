@@ -44,4 +44,10 @@ object MessageSql {
   val changeStatusSql: Query[DeliveryStatus ~ MessageId, Message] =
     sql"""UPDATE messages SET delivery_status = $deliveryStatus WHERE id = $messageId RETURNING *""".query(decoder)
 
+//  val selectReport: Query[Void, MessageWithContact] =
+//    sql"""SELECT t.*, tc.name, COUNT(m.*), COUNT(m.*) FILTER (WHERE m.delivery_status = $deliveryStatus) AS delivered FROM sms_templates t
+//                  INNER JOIN messages ON m t.id = m.sms_temp_id
+//                  INNER JOIN template_categories tc ON tc.id = t.template_category_id AND tc.deleted = false
+//                  WHERE t.deleted = false GROUP BY t.id, tc.name
+//                  """.apply(DeliveryStatus.DELIVERED).fragment.query(decoder)
 }
