@@ -22,7 +22,7 @@ jobs:
         uses: cachix/install-nix-action@v13
 
       - name: "Starting up Redis 🐳"
-        run: app/redis.sh
+        run: nix-shell --argstr jdk "${{ matrix.java }}" --run "cd app; bash redis.sh"
 
       - name: "Install Cachix ❄️"
         uses: cachix/cachix-action@v10
