@@ -4,10 +4,11 @@ import cats.effect.std.Supervisor
 import cats.effect.{Async, IO, Resource}
 import cats.implicits._
 import ciris.Secret
-import com.itforelead.smspaltfrom.config.ConfigLoader
+import com.itforelead.smspaltfrom.config.{AppConfig, ConfigLoader}
 import com.itforelead.smspaltfrom.domain.AppEnv.TEST
 import com.itforelead.smspaltfrom.domain.Credentials
 import com.itforelead.smspaltfrom.domain.custom.refinements.{EmailAddress, Password}
+import com.itforelead.smspaltfrom.effects.Background
 import com.itforelead.smspaltfrom.modules.{HttpApi, Security, Services}
 import com.itforelead.smspaltfrom.resources.AppResources
 import dev.profunktor.redis4cats.effect.Log.NoOp.instance
@@ -31,13 +32,24 @@ trait ClientSuite extends IOSuite with Checkers with Container {
   val email: EmailAddress = EmailAddress.unsafeFrom("admin@gmail.com")
   val password: Password  = Password.unsafeFrom("Secret1!")
 
+  def application(config: AppConfig)(implicit ev: Background[IO]): Resource[IO, HttpApp[IO]] =
+    AppResources[IO](config)
+      .evalMap { res =>
+        implicit val session: Resource[IO, Session[IO]] = res.postgres
+
+        val services = Services[IO](config.messageBroker, config.scheduler, res.httpClient)
+        Security[IO](config, services.users, res.redis).map { security =>
+          HttpApi[IO](security, services, res.redis, config.logConfig).httpApp
+        }
+      }
+
   private def httpAppRes: Resource[IO, HttpApp[IO]] = {
     for {
       container <- dbResource
 
       httpApp <- Supervisor[IO].flatMap { implicit sp =>
         Resource.eval(ConfigLoader.load[IO]).flatMap { cfg =>
-          val config =
+          application {
             if (cfg.env == TEST)
               cfg.copy(dbConfig =
                 cfg.dbConfig.copy(
@@ -49,15 +61,7 @@ trait ClientSuite extends IOSuite with Checkers with Container {
                 )
               )
             else cfg
-            AppResources[IO](config)
-              .evalMap { res =>
-                implicit val session: Resource[IO, Session[IO]] = res.postgres
-
-                val services = Services[IO](config.messageBroker, res.httpClient)
-                Security[IO](config, services.users, res.redis).map { security =>
-                  HttpApi[IO](security, services, res.redis, config.logConfig).httpApp
-                }
-              }
+          }
         }
       }
     } yield httpApp

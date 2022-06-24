@@ -3,37 +3,49 @@ package com.itforelead.smspaltfrom.services
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.implicits._
+import com.itforelead.smspaltfrom.config.SchedulerConfig
 import com.itforelead.smspaltfrom.domain.Gender._
 import com.itforelead.smspaltfrom.domain.Message.CreateMessage
 import com.itforelead.smspaltfrom.domain._
 import com.itforelead.smspaltfrom.domain.custom.exception.GenderIncorrect
 import com.itforelead.smspaltfrom.domain.types.{ContactId, TemplateId}
+import com.itforelead.smspaltfrom.effects.Background
 import eu.timepit.refined.auto._
 import org.typelevel.log4cats.Logger
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{LocalDate, LocalDateTime, LocalTime}
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 trait Congratulator[F[_]] {
   def start: F[Unit]
 }
 
 object Congratulator {
-  def make[F[_]: Sync: Logger](
+  def make[F[_]: Sync: Logger: Background](
     contacts: Contacts[F],
     holidays: Holidays[F],
     smsTemplates: SMSTemplates[F],
     messages: Messages[F],
     settings: SystemSettings[F],
-    messageBroker: MessageBroker[F]
+    messageBroker: MessageBroker[F],
+    schedulerConfig: SchedulerConfig
   ): Congratulator[F] =
     new Congratulator[F] {
       override def start: F[Unit] =
-        startSendHolidays >>
-          OptionT(settings.settings)
-            .cataF(
-              Logger[F].debug("Setting not found!"),
-              findAndSend
-            )
+        Background[F].schedule(
+          startSendHolidays >>
+            OptionT(settings.settings)
+              .cataF(
+                Logger[F].debug("Setting not found!"),
+                findAndSend
+              ),
+          fixedTime
+        )
+
+      private def fixedTime: FiniteDuration = {
+        val now = schedulerConfig.startTime.toSecondOfDay - LocalTime.now.toSecondOfDay
+        if (now <= 0) 1.minute else now.seconds
+      }
 
       private def startSendHolidays: F[Unit] =
         for {

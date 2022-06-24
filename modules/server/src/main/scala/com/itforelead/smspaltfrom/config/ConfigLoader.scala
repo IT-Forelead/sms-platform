@@ -13,6 +13,7 @@ import eu.timepit.refined.types.numeric.PosInt
 import eu.timepit.refined.types.string.NonEmptyString
 import org.http4s.Uri
 
+import java.time.LocalTime
 import scala.concurrent.duration.FiniteDuration
 
 object ConfigLoader {
@@ -51,6 +52,11 @@ object ConfigLoader {
     env("MESSAGE_BROKER_ENABLED").as[Boolean]
   ).parMapN(BrokerConfig.apply)
 
+  def scheduler: ConfigValue[Effect, SchedulerConfig] = (
+    env("SCHEDULER_START_TIME").as[LocalTime],
+    env("SCHEDULER_PERIOD").as[FiniteDuration]
+  ).parMapN(SchedulerConfig.apply)
+
   def load[F[_]: Async]: F[AppConfig] = (
     env("APP_ENV").as[AppEnv],
     jwtConfig,
@@ -58,6 +64,7 @@ object ConfigLoader {
     redisConfig,
     httpServerConfig,
     httpLogConfig,
-    messageBroker
+    messageBroker,
+    scheduler
   ).parMapN(AppConfig.apply).load[F]
 }

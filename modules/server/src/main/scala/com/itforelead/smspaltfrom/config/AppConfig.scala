@@ -1,4 +1,5 @@
 package com.itforelead.smspaltfrom.config
+
 import com.itforelead.smspaltfrom.domain.AppEnv
 
 case class AppConfig(
@@ -8,5 +9,6 @@ case class AppConfig(
   redis: RedisConfig,
   serverConfig: HttpServerConfig,
   logConfig: LogConfig,
-  messageBroker: BrokerConfig
+  messageBroker: BrokerConfig,
+  scheduler: SchedulerConfig
 )

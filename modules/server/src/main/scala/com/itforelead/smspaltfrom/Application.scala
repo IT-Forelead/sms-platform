@@ -23,7 +23,7 @@ object Application extends IOApp.Simple {
             .evalMap { res =>
               implicit val session: Resource[IO, Session[IO]] = res.postgres
 
-              val services = Services[IO](cfg.messageBroker, res.httpClient)
+              val services = Services[IO](cfg.messageBroker, cfg.scheduler, res.httpClient)
               services.congratulator.start >>
                 modules.Security[IO](cfg, services.users, res.redis).map { security =>
                   cfg.serverConfig -> modules.HttpApi[IO](security, services, res.redis, cfg.logConfig).httpApp

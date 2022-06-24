@@ -1,16 +1,17 @@
 package com.itforelead.smspaltfrom.modules
 
-import cats.effect.{Async, Resource, Sync}
-import com.itforelead.smspaltfrom.config.BrokerConfig
-import com.itforelead.smspaltfrom.effects.GenUUID
+import cats.effect.{Async, Resource}
+import com.itforelead.smspaltfrom.config.{BrokerConfig, SchedulerConfig}
+import com.itforelead.smspaltfrom.effects.{Background, GenUUID}
 import com.itforelead.smspaltfrom.services._
 import org.http4s.client.Client
 import org.typelevel.log4cats.Logger
 import skunk.Session
 
 object Services {
-  def apply[F[_]: Async: GenUUID: Logger](
+  def apply[F[_]: Async: GenUUID: Logger: Background](
     brokerConfig: BrokerConfig,
+    schedulerConfig: SchedulerConfig,
     httpClient: Client[F]
   )(implicit session: Resource[F, Session[F]]): Services[F] = {
     val contacts      = Contacts[F]
@@ -28,7 +29,8 @@ object Services {
       smsTemplates = smsTemplates,
       systemSettings = settings,
       templateCategories = TemplateCategories[F],
-      congratulator = Congratulator.make[F](contacts, holidays, smsTemplates, messages, settings, messageBroker)
+      congratulator =
+        Congratulator.make[F](contacts, holidays, smsTemplates, messages, settings, messageBroker, schedulerConfig)
     )
   }
 }
