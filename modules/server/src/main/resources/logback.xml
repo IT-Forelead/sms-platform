@@ -26,9 +26,6 @@
 
     <logger name="org.http4s.client.middleware" level="DEBUG"/>
     <logger name="org.http4s.server.middleware" level="DEBUG"/>
-    <logger name="com.itforelead.smspaltfrom" level="DEBUG">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
 
     <root level="INFO">
         <appender-ref ref="ASYNCFILE"/>

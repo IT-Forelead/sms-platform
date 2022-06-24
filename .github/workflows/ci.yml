@@ -30,7 +30,5 @@ jobs:
           name: http4s-server
           signingKey: "${{ secrets.CACHIX_SIGNING_KEY }}"
 
-      - name: "Run with ${{ matrix.java }} 🚀"
-        run: nix-shell --argstr jdk "${{ matrix.java }}" --run "sbt 'test;'"
       - name: "Testing 🤘"
-        run: nix-shell --argstr jdk "${{ matrix.java }}" --run "bash it_test.sh"
+        run: nix-shell --argstr jdk "${{ matrix.java }}" --run "bash it_test.sh; bash test.sh"

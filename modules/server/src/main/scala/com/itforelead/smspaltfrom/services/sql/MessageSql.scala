@@ -1,12 +1,12 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.Message.MessageWithContact
-import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Message}
 import com.itforelead.smspaltfrom.domain.types.{ContactId, MessageId}
+import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Message, MessageReport}
 import com.itforelead.smspaltfrom.services.sql.ContactsSql.contactId
 import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.templateId
 import skunk._
-import skunk.codec.all.timestamp
+import skunk.codec.all.{int4, timestamp}
 import skunk.implicits._
 
 object MessageSql {
@@ -20,6 +20,12 @@ object MessageSql {
   val decoder: Decoder[Message] =
     Columns.map { case id ~ contactId ~ templateId ~ sentDate ~ deliveryStatus =>
       Message(id, contactId, templateId, sentDate, deliveryStatus)
+    }
+
+  val reportDecoder: Decoder[MessageReport] =
+    (SMSTemplateSql.decoder ~ templateCategoryName ~ int4 ~ int4 ~ timestamp).map {
+      case template ~ category ~ total ~ delivered ~ sentDate =>
+        MessageReport(template, category, total, delivered, sentDate)
     }
 
   private val MessageColumns = decoder ~ ContactsSql.decoder ~ SMSTemplateSql.decoder
@@ -44,10 +50,13 @@ object MessageSql {
   val changeStatusSql: Query[DeliveryStatus ~ MessageId, Message] =
     sql"""UPDATE messages SET delivery_status = $deliveryStatus WHERE id = $messageId RETURNING *""".query(decoder)
 
-//  val selectReport: Query[Void, MessageWithContact] =
-//    sql"""SELECT t.*, tc.name, COUNT(m.*), COUNT(m.*) FILTER (WHERE m.delivery_status = $deliveryStatus) AS delivered FROM sms_templates t
-//                  INNER JOIN messages ON m t.id = m.sms_temp_id
-//                  INNER JOIN template_categories tc ON tc.id = t.template_category_id AND tc.deleted = false
-//                  WHERE t.deleted = false GROUP BY t.id, tc.name
-//                  """.apply(DeliveryStatus.DELIVERED).fragment.query(decoder)
+  def selectReport(status: DeliveryStatus): AppliedFragment =
+    sql"""SELECT t.*, tc.name, COUNT(m.*),
+           COUNT(m.*) FILTER (WHERE m.delivery_status = $deliveryStatus) as delivered,
+           MIN(m.sent_date) AS sent_date 
+           FROM sms_templates t
+           INNER JOIN messages m ON t.id = m.sms_temp_id
+           INNER JOIN template_categories tc ON tc.id = t.template_category_id AND tc.deleted = false
+           WHERE t.deleted = false GROUP BY t.id, tc.name
+           """.apply(status)
 }
