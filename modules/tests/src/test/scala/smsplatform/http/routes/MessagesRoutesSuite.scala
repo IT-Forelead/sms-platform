@@ -3,7 +3,6 @@ package smsplatform.http.routes
 import cats.effect.{IO, Sync}
 import com.itforelead.smspaltfrom.Application.logger
 import com.itforelead.smspaltfrom.domain.Message.MessageWithContact
-import com.itforelead.smspaltfrom.domain.types.ContactId
 import com.itforelead.smspaltfrom.domain.{Contact, Message, SMSTemplate}
 import com.itforelead.smspaltfrom.routes.MessageRoutes
 import com.itforelead.smspaltfrom.services.Messages
@@ -20,9 +19,6 @@ object MessagesRoutesSuite extends HttpSuite {
   def messagesForGet[F[_]: Sync](message: Message, contact: Contact, template: SMSTemplate): Messages[F] =
     new MessagesStub[F] {
       override def messages: F[List[MessageWithContact]] =
-        Sync[F].delay(List(MessageWithContact(message, contact, template)))
-
-      override def messagesByContactId(id: ContactId): F[List[MessageWithContact]] =
         Sync[F].delay(List(MessageWithContact(message, contact, template)))
     }
 
@@ -43,24 +39,4 @@ object MessagesRoutesSuite extends HttpSuite {
       } yield res
     }
   }
-
-  test("get messages by contactId") {
-    val gen = for {
-      u  <- userGen
-      m  <- messageGen
-      c  <- contactGen
-      t  <- smsTemplateGen
-      ci <- contactIdGen
-    } yield (u, m, c, t, ci)
-
-    forall(gen) { case (user, message, contact, smsTemplate, contactId) =>
-      for {
-        token <- authToken(user)
-        req    = GET(Uri.unsafeFromString(s"/messages/${contactId.value}")).putHeaders(token)
-        routes = MessageRoutes[IO](messagesForGet(message, contact, smsTemplate)).routes(usersMiddleware)
-        res <- expectHttpStatus(routes, req)(Status.Ok)
-      } yield res
-    }
-  }
-
 }

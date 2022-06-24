@@ -3,7 +3,6 @@ package com.itforelead.smspaltfrom.routes
 import cats.MonadThrow
 import cats.implicits._
 import com.itforelead.smspaltfrom.domain.User
-import com.itforelead.smspaltfrom.domain.types.ContactId
 import com.itforelead.smspaltfrom.services.Messages
 import org.http4s._
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
@@ -19,12 +18,8 @@ final case class MessageRoutes[F[_]: JsonDecoder: MonadThrow](
 
   private[routes] val prefixPath = "/messages"
 
-  private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of {
-    case GET -> Root as _ =>
-      messages.messages.flatMap(Ok(_))
-
-    case GET -> Root / UUIDVar(contactId) as _ =>
-      messages.messagesByContactId(ContactId(contactId)).flatMap(Ok(_))
+  private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of { case GET -> Root as _ =>
+    messages.messages.flatMap(Ok(_))
   }
 
   def routes(authMiddleware: AuthMiddleware[F, User]): HttpRoutes[F] = Router(

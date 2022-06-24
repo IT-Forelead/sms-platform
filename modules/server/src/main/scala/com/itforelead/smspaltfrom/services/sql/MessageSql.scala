@@ -1,7 +1,7 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.Message.MessageWithContact
-import com.itforelead.smspaltfrom.domain.types.{ContactId, MessageId}
+import com.itforelead.smspaltfrom.domain.types.MessageId
 import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Message, MessageReport}
 import com.itforelead.smspaltfrom.services.sql.ContactsSql.contactId
 import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.templateId
@@ -43,9 +43,6 @@ object MessageSql {
           INNER JOIN contacts ON contacts.id = messages.contact_id
           INNER JOIN sms_templates ON sms_templates.id = messages.sms_temp_id
        """.query(decMessageWithContact)
-
-  val selectByContactId: Query[ContactId, MessageWithContact] =
-    sql"""SELECT * FROM messages WHERE contact_id = $contactId""".query(decMessageWithContact)
 
   val changeStatusSql: Query[DeliveryStatus ~ MessageId, Message] =
     sql"""UPDATE messages SET delivery_status = $deliveryStatus WHERE id = $messageId RETURNING *""".query(decoder)
