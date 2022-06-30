@@ -31,21 +31,25 @@ object Congratulator {
     schedulerConfig: SchedulerConfig
   ): Congratulator[F] =
     new Congratulator[F] {
-      override def start: F[Unit] =
-        Background[F].schedule(
-          startSendHolidays >>
-            OptionT(settings.settings)
-              .cataF(
-                Logger[F].debug("Setting not found!"),
-                findAndSend
-              ),
-          fixedTime
-        )
 
-      private def fixedTime: FiniteDuration = {
+      private val fixedTime: FiniteDuration = {
         val now = schedulerConfig.startTime.toSecondOfDay - LocalTime.now.toSecondOfDay
         if (now <= 0) 1.minute else now.seconds
       }
+
+      override def start: F[Unit] =
+        Logger[F].debug(Console.GREEN + s"Conguratulator will start after $fixedTime" + Console.RESET) >>
+          Background[F].schedule(init, fixedTime, schedulerConfig.period)
+
+      def init: F[Unit] =
+        for {
+          _ <- startSendHolidays
+          _ <- OptionT(settings.settings)
+            .cataF(
+              Logger[F].debug("Setting not found!"),
+              findAndSend
+            )
+        } yield ()
 
       private def startSendHolidays: F[Unit] =
         for {
