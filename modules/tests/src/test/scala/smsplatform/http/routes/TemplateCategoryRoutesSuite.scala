@@ -3,8 +3,8 @@ package smsplatform.http.routes
 import cats.effect.{IO, Sync}
 import com.itforelead.smspaltfrom.Application.logger
 import com.itforelead.smspaltfrom.domain.TemplateCategory
-import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
-import com.itforelead.smspaltfrom.domain.types.TemplateCategoryId
+import com.itforelead.smspaltfrom.domain.TemplateCategory.{CreateTemplateCategory, UpdateTemplateCategory}
+import com.itforelead.smspaltfrom.domain.types.{TemplateCategoryId, UserId}
 import com.itforelead.smspaltfrom.routes.{TemplateCategoryRoutes, deriveEntityEncoder}
 import com.itforelead.smspaltfrom.services.TemplateCategories
 import org.http4s.Method._
@@ -18,13 +18,13 @@ import smsplatform.utils.HttpSuite
 object TemplateCategoryRoutesSuite extends HttpSuite {
 
   def TemplateCategories[F[_]: Sync](from: TemplateCategory): TemplateCategories[F] = new TemplateCategoriesStub[F] {
-    override def create(form: CreateTemplateCategory): F[TemplateCategory] = Sync[F].delay(from)
+    override def create(userId: UserId, form: CreateTemplateCategory): F[TemplateCategory] = Sync[F].delay(from)
 
-    override def templateCategories: F[List[TemplateCategory]] = Sync[F].delay(List(from))
+    override def templateCategories(userId: UserId): F[List[TemplateCategory]] = Sync[F].delay(List(from))
 
-    override def update(form: TemplateCategory): F[TemplateCategory] = Sync[F].delay(from)
+    override def update(userId: UserId, form: UpdateTemplateCategory): F[TemplateCategory] = Sync[F].delay(from)
 
-    override def delete(id: TemplateCategoryId): F[Unit] = Sync[F].unit
+    override def delete(id: TemplateCategoryId, userId: UserId): F[Unit] = Sync[F].unit
   }
 
   test("Create Template Category") {
@@ -64,7 +64,7 @@ object TemplateCategoryRoutesSuite extends HttpSuite {
     val gen = for {
       u  <- userGen
       t  <- templateCategoryGen
-      nt <- templateCategoryGen
+      nt <- updateTemplateCategoryGen
     } yield (u, t, nt)
 
     forall(gen) { case (user, category, newCategory) =>

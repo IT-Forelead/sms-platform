@@ -45,6 +45,8 @@ CREATE TABLE IF NOT EXISTS contacts(
 
 CREATE TABLE IF NOT EXISTS template_categories(
     id      UUID PRIMARY KEY,
+    user_id    UUID NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     name    VARCHAR NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT false
 );

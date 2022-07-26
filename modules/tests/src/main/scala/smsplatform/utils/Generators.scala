@@ -4,7 +4,7 @@ import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday}
 import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
 import com.itforelead.smspaltfrom.domain.SystemSetting.{UpdateSetting, UpdateTemplateOfBirthday}
-import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
+import com.itforelead.smspaltfrom.domain.TemplateCategory.{CreateTemplateCategory, UpdateTemplateCategory}
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain._
 import com.itforelead.smspaltfrom.domain.custom.refinements._
@@ -195,9 +195,16 @@ object Generators {
 
   val templateCategoryGen: Gen[TemplateCategory] =
     for {
-      tcid <- templateCategoryIdGen
-      tcn  <- templateCategoryNameGen
-    } yield TemplateCategory(tcid, tcn)
+      i  <- templateCategoryIdGen
+      ui <- userIdGen
+      n  <- templateCategoryNameGen
+    } yield TemplateCategory(i, ui, n)
+
+  val updateTemplateCategoryGen: Gen[UpdateTemplateCategory] =
+    for {
+      i  <- templateCategoryIdGen
+      n  <- templateCategoryNameGen
+    } yield UpdateTemplateCategory(i, n)
 
   val createTemplateCategoryGen: Gen[CreateTemplateCategory] =
     for {
