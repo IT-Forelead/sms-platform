@@ -25,8 +25,16 @@ object UserSQL {
       User(i, n, e, g, r) ~ p
     }
 
+  val decoderWithoutPassword: Decoder[User] =
+    Columns.map { case i ~ n ~ e ~ g ~ p ~ r =>
+      User(i, n, e, g, r)
+    }
+
   val selectUser: Query[EmailAddress, User ~ PasswordHash[SCrypt]] =
     sql"""SELECT * FROM users WHERE email = $email""".query(decoder)
+
+  val select: Query[Void, User] =
+    sql"""SELECT uuid, name, email, gender, role FROM users""".query(decoderWithoutPassword)
 
   val insertUser: Query[UserId ~ CreateUser ~ PasswordHash[SCrypt], User ~ PasswordHash[SCrypt]] =
     sql"""INSERT INTO users VALUES ($encoder) returning *""".query(decoder)

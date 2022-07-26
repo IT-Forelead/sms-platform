@@ -118,13 +118,14 @@ object Generators {
   val contactGen: Gen[Contact] =
     for {
       id  <- contactIdGen
+      ui  <- userIdGen
       cAt <- timestampGen
       fn  <- firstnameGen
       ln  <- lastnameGen
       g   <- genderGen
       b   <- dateGen
       p   <- phoneGen
-    } yield Contact(id, cAt, fn, ln, g, b, p)
+    } yield Contact(id, ui, cAt, fn, ln, g, b, p)
 
   val createContactGen: Gen[CreateContact] =
     for {

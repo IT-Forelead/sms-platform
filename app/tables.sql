@@ -32,6 +32,8 @@ VALUES ('c1039d34-425b-4f78-9a7f-893f5b4df478', 'Admin', 'admin@gmail.com', 'mal
 
 CREATE TABLE IF NOT EXISTS contacts(
     id         UUID PRIMARY KEY,
+    user_id    UUID      NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL,
     first_name VARCHAR   NOT NULL,
     last_name  VARCHAR   NOT NULL,

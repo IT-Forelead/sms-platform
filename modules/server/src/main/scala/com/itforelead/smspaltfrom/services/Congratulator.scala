@@ -43,7 +43,7 @@ object Congratulator {
 
       def init: F[Unit] =
         for {
-          _ <- startSendHolidays
+//          _ <- startSendHolidays
           _ <- OptionT(settings.settings)
             .cataF(
               Logger[F].debug("Setting not found!"),
@@ -51,17 +51,17 @@ object Congratulator {
             )
         } yield ()
 
-      private def startSendHolidays: F[Unit] =
-        for {
-          holidaysList <- holidays.holidaysOfToday
-          contactsList <- contacts.contacts
-          _ <- holidaysList.flatTraverse { holiday =>
-            contactsList.traverse { contact =>
-              prepareTextAndSend(contact)(OptionT(holiday.smsMenId.flatTraverse(smsTemplates.find))) >>
-                prepareTextAndSend(contact)(OptionT(holiday.smsWomenId.flatTraverse(smsTemplates.find)))
-            }
-          }
-        } yield ()
+//      private def startSendHolidays: F[Unit] =
+//        for {
+//          holidaysList <- holidays.holidaysOfToday
+//          contactsList <- contacts.contacts
+//          _ <- holidaysList.flatTraverse { holiday =>
+//            contactsList.traverse { contact =>
+//              prepareTextAndSend(contact)(OptionT(holiday.smsMenId.flatTraverse(smsTemplates.find))) >>
+//                prepareTextAndSend(contact)(OptionT(holiday.smsWomenId.flatTraverse(smsTemplates.find)))
+//            }
+//          }
+//        } yield ()
 
       private def prepareTextAndSend(contact: Contact): OptionT[F, SMSTemplate] => F[Unit] =
         _.map(template => template.id -> prepare(template, contact))
