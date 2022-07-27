@@ -3,8 +3,8 @@ package smsplatform.http.routes
 import cats.effect.{IO, Sync}
 import com.itforelead.smspaltfrom.Application.logger
 import com.itforelead.smspaltfrom.domain.SMSTemplate
-import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, SMSTemplateWithCatName}
-import com.itforelead.smspaltfrom.domain.types.{TemplateCategoryName, TemplateId}
+import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, SMSTemplateWithCatName, UpdateSMSTemplate}
+import com.itforelead.smspaltfrom.domain.types.{TemplateCategoryName, TemplateId, UserId}
 import com.itforelead.smspaltfrom.routes.{SMSTemplateRoutes, deriveEntityEncoder}
 import com.itforelead.smspaltfrom.services.SMSTemplates
 import eu.timepit.refined.types.string.NonEmptyString
@@ -13,17 +13,18 @@ import org.http4s.Status
 import org.http4s.client.dsl.io._
 import org.http4s.implicits.http4sLiteralsSyntax
 import smsplatform.stub_services.SMSTemplatesStub
-import smsplatform.utils.Generators.{createSMSTemplateGen, smsTemplateGen, templateIdGen, userGen}
+import smsplatform.utils.Generators.{createSMSTemplateGen, smsTemplateGen, templateIdGen, updateSMSTemplateGen, userGen}
 import smsplatform.utils.HttpSuite
 
 object SMSTemplateRoutesSuite extends HttpSuite {
 
   def smsTemplates[F[_]: Sync](from: SMSTemplate): SMSTemplates[F] = new SMSTemplatesStub[F] {
-    override def create(form: CreateSMSTemplate): F[SMSTemplate] = Sync[F].delay(from)
-    override def templates: F[List[SMSTemplateWithCatName]] = Sync[F].delay(
+    override def create(userId: UserId, form: CreateSMSTemplate): F[SMSTemplate] = Sync[F].delay(from)
+    override def templates(userId: UserId): F[List[SMSTemplateWithCatName]] = Sync[F].delay(
       List(
         SMSTemplateWithCatName(
           id = from.id,
+          userId = from.userId,
           templateCategoryId = from.templateCategoryId,
           title = from.title,
           text = from.text,
@@ -32,8 +33,8 @@ object SMSTemplateRoutesSuite extends HttpSuite {
         )
       )
     )
-    override def update(form: SMSTemplate): F[SMSTemplate] = Sync[F].delay(from)
-    override def delete(id: TemplateId): F[Unit]           = Sync[F].unit
+    override def update(userId: UserId, form: UpdateSMSTemplate): F[SMSTemplate] = Sync[F].delay(from)
+    override def delete(id: TemplateId, userId: UserId): F[Unit]           = Sync[F].unit
   }
 
   test("create sms template") {
@@ -73,7 +74,7 @@ object SMSTemplateRoutesSuite extends HttpSuite {
     val gen = for {
       u  <- userGen
       s  <- smsTemplateGen
-      us <- smsTemplateGen
+      us <- updateSMSTemplateGen
     } yield (u, s, us)
 
     forall(gen) { case (user, template, newTemplate) =>

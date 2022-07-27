@@ -2,7 +2,7 @@ package com.itforelead.smspaltfrom.routes
 
 import cats.MonadThrow
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
+import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, UpdateSMSTemplate}
 import com.itforelead.smspaltfrom.domain.types.TemplateId
 import com.itforelead.smspaltfrom.domain.{SMSTemplate, User}
 import com.itforelead.smspaltfrom.services.SMSTemplates
@@ -21,22 +21,22 @@ final case class SMSTemplateRoutes[F[_]: JsonDecoder: MonadThrow](
   private[routes] val prefixPath = "/sms-template"
 
   private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of {
-    case aR @ POST -> Root as _ =>
+    case aR @ POST -> Root as user =>
       aR.req.decodeR[CreateSMSTemplate] { form =>
-        templates.create(form).flatMap(Created(_))
+        templates.create(user.id, form).flatMap(Created(_))
       }
 
-    case GET -> Root as _ =>
-      templates.templates.flatMap(Ok(_))
+    case GET -> Root as user =>
+      templates.templates(user.id).flatMap(Ok(_))
 
-    case aR @ PUT -> Root as _ =>
-      aR.req.decodeR[SMSTemplate] { form =>
-        templates.update(form).flatMap(Ok(_))
+    case aR @ PUT -> Root as user =>
+      aR.req.decodeR[UpdateSMSTemplate] { form =>
+        templates.update(user.id, form).flatMap(Ok(_))
       }
 
-    case aR @ DELETE -> Root as _ =>
+    case aR @ DELETE -> Root as user =>
       aR.req.decodeR[TemplateId] { id =>
-        templates.delete(id) >> NoContent()
+        templates.delete(id, user.id) >> NoContent()
       }
   }
 

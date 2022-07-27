@@ -53,6 +53,8 @@ CREATE TABLE IF NOT EXISTS template_categories(
 
 CREATE TABLE IF NOT EXISTS sms_templates(
     id                   UUID PRIMARY KEY,
+    user_id    UUID NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     template_category_id UUID    NOT NULL
         CONSTRAINT fk_template_category_id REFERENCES template_categories (id) ON UPDATE CASCADE ON DELETE CASCADE,
     title                VARCHAR NOT NULL,
