@@ -159,12 +159,13 @@ object Generators {
 
   val systemSettingsGen: Gen[SystemSetting] =
     for {
+      ui  <- userIdGen
       asb <- booleanGen
       ash <- booleanGen
       dth <- booleanGen
       sm  <- option(templateIdGen)
       sw  <- option(templateIdGen)
-    } yield SystemSetting(asb, ash, dth, sm, sw)
+    } yield SystemSetting(ui, asb, ash, dth, sm, sw)
 
   val updateSystemSettingsGen: Gen[UpdateSetting] =
     for {

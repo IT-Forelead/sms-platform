@@ -4,6 +4,7 @@ import cats.effect.{IO, Sync}
 import com.itforelead.smspaltfrom.Application.logger
 import com.itforelead.smspaltfrom.domain.SystemSetting
 import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
+import com.itforelead.smspaltfrom.domain.types.UserId
 import com.itforelead.smspaltfrom.routes.{SystemSettingRoutes, deriveEntityEncoder}
 import com.itforelead.smspaltfrom.services.SystemSettings
 import org.http4s.Method.{GET, PUT}
@@ -17,9 +18,9 @@ import smsplatform.utils.HttpSuite
 object SystemSettingRoutesSuite extends HttpSuite {
 
   def systemSettings[F[_]: Sync](systemSettings: SystemSetting): SystemSettings[F] = new SystemSettingsStub[F] {
-    override def settings: F[Option[SystemSetting]]            = Sync[F].delay(Option(systemSettings))
-    override def update(form: SystemSetting): F[SystemSetting] = Sync[F].delay(systemSettings)
-    override def updateTemplateOfBirthday(form: UpdateTemplateOfBirthday): F[SystemSetting] =
+    override def settings(userId: UserId): F[Option[SystemSetting]]            = Sync[F].delay(Option(systemSettings))
+    override def update(userId: UserId, form: SystemSetting): F[SystemSetting] = Sync[F].delay(systemSettings)
+    override def updateTemplateOfBirthday(userId: UserId, form: UpdateTemplateOfBirthday): F[SystemSetting] =
       Sync[F].delay(systemSettings)
   }
 

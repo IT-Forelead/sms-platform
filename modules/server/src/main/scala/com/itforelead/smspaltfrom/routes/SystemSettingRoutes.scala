@@ -21,17 +21,17 @@ final case class SystemSettingRoutes[F[_]: JsonDecoder: MonadThrow](
 
   private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of {
 
-    case GET -> Root as _ =>
-      systemSettings.settings.flatMap(Ok(_))
+    case GET -> Root as user =>
+      systemSettings.settings(user.id).flatMap(Ok(_))
 
-    case aR @ PUT -> Root as _ =>
+    case aR @ PUT -> Root as user =>
       aR.req.decodeR[SystemSetting] { from =>
-        systemSettings.update(from).flatMap(Ok(_))
+        systemSettings.update(user.id, from).flatMap(Ok(_))
       }
 
-    case aR @ PUT -> Root / "update-template" as _ =>
+    case aR @ PUT -> Root / "update-template" as user =>
       aR.req.decodeR[UpdateTemplateOfBirthday] { from =>
-        systemSettings.updateTemplateOfBirthday(from).flatMap(Ok(_))
+        systemSettings.updateTemplateOfBirthday(user.id, from).flatMap(Ok(_))
       }
 
   }

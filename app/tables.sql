@@ -90,6 +90,8 @@ CREATE TABLE IF NOT EXISTS messages(
 );
 
 CREATE TABLE IF NOT EXISTS system_settings(
+    user_id         UUID NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     auto_send_b  BOOLEAN NOT NULL DEFAULT false,
     auto_send_h  BOOLEAN NOT NULL DEFAULT false,
     dark_mode    BOOLEAN NOT NULL DEFAULT false,

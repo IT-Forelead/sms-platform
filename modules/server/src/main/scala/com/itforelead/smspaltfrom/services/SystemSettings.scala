@@ -3,9 +3,11 @@ package com.itforelead.smspaltfrom.services
 import cats.effect.{Resource, Sync}
 import com.itforelead.smspaltfrom.domain.SystemSetting
 import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
+import com.itforelead.smspaltfrom.domain.types.UserId
 import com.itforelead.smspaltfrom.effects.GenUUID
 import com.itforelead.smspaltfrom.services.sql.SystemSettingSql.{select, updateSql, updateTemplatesSql}
-import skunk.{Session, Void}
+import skunk.Session
+import skunk.implicits.toIdOps
 
 trait SystemSettings[F[_]] {
 
@@ -14,7 +16,7 @@ trait SystemSettings[F[_]] {
     * @return
     *   list of system settings
     */
-  def settings: F[Option[SystemSetting]]
+  def settings(userId: UserId): F[Option[SystemSetting]]
 
   /** Function for update the system settings
     *
@@ -23,7 +25,7 @@ trait SystemSettings[F[_]] {
     * @return
     *   updated system setting
     */
-  def update(settings: SystemSetting): F[SystemSetting]
+  def update(userId: UserId, settings: SystemSetting): F[SystemSetting]
 
   /** Function for update templates of birthday
     *
@@ -32,7 +34,7 @@ trait SystemSettings[F[_]] {
     * @return
     *   updated system setting
     */
-  def updateTemplateOfBirthday(templates: UpdateTemplateOfBirthday): F[SystemSetting]
+  def updateTemplateOfBirthday(userId: UserId, templates: UpdateTemplateOfBirthday): F[SystemSetting]
 
 }
 
@@ -47,8 +49,8 @@ object SystemSettings {
         * @return
         *   list of system settings
         */
-      override def settings: F[Option[SystemSetting]] =
-        prepOptQuery(select, Void)
+      override def settings(userId: UserId): F[Option[SystemSetting]] =
+        prepOptQuery(select, userId)
 
       /** Function for update the system settings
         *
@@ -57,8 +59,8 @@ object SystemSettings {
         * @return
         *   updated system setting
         */
-      override def update(settings: SystemSetting): F[SystemSetting] =
-        prepQueryUnique(updateSql, settings)
+      override def update(userId: UserId, settings: SystemSetting): F[SystemSetting] =
+        prepQueryUnique(updateSql, settings ~ userId)
 
       /** Function for update templates of birthday
         *
@@ -67,7 +69,7 @@ object SystemSettings {
         * @return
         *   updated system setting
         */
-      override def updateTemplateOfBirthday(templates: UpdateTemplateOfBirthday): F[SystemSetting] =
-        prepQueryUnique(updateTemplatesSql, templates)
+      override def updateTemplateOfBirthday(userId: UserId, templates: UpdateTemplateOfBirthday): F[SystemSetting] =
+        prepQueryUnique(updateTemplatesSql, templates ~ userId)
     }
 }
