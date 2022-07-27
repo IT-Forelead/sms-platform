@@ -10,7 +10,6 @@ case class SystemSetting(
   userId: UserId,
   autoSendBirthday: Boolean,
   autoSendHoliday: Boolean,
-  darkTheme: Boolean,
   smsMenId: Option[TemplateId] = None,
   smsWomenId: Option[TemplateId] = None
 )
@@ -19,8 +18,7 @@ object SystemSetting {
   @derive(decoder, encoder, show)
   case class UpdateSetting(
     autoSendBirthday: Boolean,
-    autoSendHoliday: Boolean,
-    darkTheme: Boolean
+    autoSendHoliday: Boolean
   )
 
   @derive(decoder, encoder, show)

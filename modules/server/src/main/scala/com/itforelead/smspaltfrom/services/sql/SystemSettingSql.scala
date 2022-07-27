@@ -11,14 +11,14 @@ import skunk.implicits._
 
 object SystemSettingSql {
 
-  private val Columns = userId ~ bool ~ bool ~ bool ~ templateId.opt ~ templateId.opt
+  private val Columns = userId ~ bool ~ bool ~ templateId.opt ~ templateId.opt
 
   val encoder: Encoder[SystemSetting] =
-    Columns.contramap(c => c.userId ~ c.autoSendBirthday ~ c.autoSendHoliday ~ c.darkTheme ~ c.smsMenId ~ c.smsWomenId)
+    Columns.contramap(c => c.userId ~ c.autoSendBirthday ~ c.autoSendHoliday ~ c.smsMenId ~ c.smsWomenId)
 
   val decoder: Decoder[SystemSetting] =
-    Columns.map { case userId ~ autoSendBirthday ~ autoSendHoliday ~ darkTheme ~ smsMenId ~ smsWomenId =>
-      SystemSetting(userId, autoSendBirthday, autoSendHoliday, darkTheme, smsMenId, smsWomenId)
+    Columns.map { case userId ~ autoSendBirthday ~ autoSendHoliday ~ smsMenId ~ smsWomenId =>
+      SystemSetting(userId, autoSendBirthday, autoSendHoliday, smsMenId, smsWomenId)
     }
 
   val select: Query[UserId, SystemSetting] =
@@ -27,10 +27,9 @@ object SystemSettingSql {
   val updateSql: Query[UpdateSetting ~ UserId, SystemSetting] =
     sql"""UPDATE system_settings
          SET auto_send_b = $bool,
-         auto_send_h = $bool,
-         dark_mode = $bool WHERE user_id = $userId RETURNING *"""
+         auto_send_h = $bool WHERE user_id = $userId RETURNING *"""
       .query(decoder)
-      .contramap[UpdateSetting ~ UserId] { case (s ~ ui) => s.autoSendBirthday ~ s.autoSendHoliday ~ s.darkTheme ~ ui }
+      .contramap[UpdateSetting ~ UserId] { case (s ~ ui) => s.autoSendBirthday ~ s.autoSendHoliday ~ ui }
 
   val updateTemplatesSql: Query[UpdateTemplateOfBirthday ~ UserId, SystemSetting] =
     sql"""UPDATE system_settings SET sms_men_id = ${templateId.opt}, sms_women_id = ${templateId.opt}

@@ -17,12 +17,11 @@ object SettingsSuite extends DBSuite {
       settings1 <- settings.settings(defaultUserId)
       settings2 <- settings.update(defaultUserId,
         UpdateSetting(
-          autoSendBirthday = settings1.fold(false)(_.autoSendBirthday),
-          autoSendHoliday = settings1.fold(false)(_.autoSendHoliday),
-          darkTheme = true
+          autoSendBirthday = true,
+          autoSendHoliday = settings1.fold(false)(_.autoSendHoliday)
         )
       )
-    } yield assert.same(true, settings2.darkTheme)
+    } yield assert.same(true, settings2.autoSendBirthday)
   }
 
   test("Update Template of Birthday") { implicit postgres =>

@@ -166,17 +166,15 @@ object Generators {
       ui  <- userIdGen
       asb <- booleanGen
       ash <- booleanGen
-      dth <- booleanGen
       sm  <- option(templateIdGen)
       sw  <- option(templateIdGen)
-    } yield SystemSetting(ui, asb, ash, dth, sm, sw)
+    } yield SystemSetting(ui, asb, ash, sm, sw)
 
   val updateSystemSettingsGen: Gen[UpdateSetting] =
     for {
       asb <- booleanGen
       ash <- booleanGen
-      dth <- booleanGen
-    } yield UpdateSetting(asb, ash, dth)
+    } yield UpdateSetting(asb, ash)
 
   val updateTemplateOfBirthdayGen: Gen[UpdateTemplateOfBirthday] =
     for {
