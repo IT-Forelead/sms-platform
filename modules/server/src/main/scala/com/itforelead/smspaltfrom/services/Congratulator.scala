@@ -38,18 +38,19 @@ object Congratulator {
       }
 
       override def start: F[Unit] =
-        Logger[F].debug(Console.GREEN + s"Conguratulator will start after $fixedTime" + Console.RESET) >>
-          Background[F].schedule(init, fixedTime, schedulerConfig.period)
+        Logger[F].debug(Console.GREEN + s"Conguratulator will start after $fixedTime" + Console.RESET)
+//          >>
+//          Background[F].schedule(init, fixedTime, schedulerConfig.period)
 
-      def init: F[Unit] =
-        for {
+//      def init: F[Unit] =
+//        for {
 //          _ <- startSendHolidays
-          _ <- OptionT(settings.settings)
-            .cataF(
-              Logger[F].debug("Setting not found!"),
-              findAndSend
-            )
-        } yield ()
+//          _ <- OptionT(settings.settings)
+//            .cataF(
+//              Logger[F].debug("Setting not found!"),
+//              findAndSend
+//            )
+//        } yield ()
 
 //      private def startSendHolidays: F[Unit] =
 //        for {
@@ -63,16 +64,16 @@ object Congratulator {
 //          }
 //        } yield ()
 
-      private def prepareTextAndSend(contact: Contact): OptionT[F, SMSTemplate] => F[Unit] =
-        _.map(template => template.id -> prepare(template, contact))
-          .cataF(
-            Logger[F].debug(s"Has not selected template id for gender [ ${contact.gender} ]"),
-            { case (templateId, text) =>
-              createMessage(contact.id, templateId).flatMap { message =>
-                send(contact, text, message)
-              }
-            }
-          )
+//      private def prepareTextAndSend(contact: Contact): OptionT[F, SMSTemplate] => F[Unit] =
+//        _.map(template => template.id -> prepare(template, contact))
+//          .cataF(
+//            Logger[F].debug(s"Has not selected template id for gender [ ${contact.gender} ]"),
+//            { case (templateId, text) =>
+//              createMessage(contact.id, templateId).flatMap { message =>
+//                send(contact, text, message)
+//              }
+//            }
+//          )
 
       private def retrieveTemplateId(setting: SystemSetting): Gender => Option[TemplateId] = {
         case MALE   => setting.smsMenId
@@ -80,22 +81,22 @@ object Congratulator {
         case ALL    => throw GenderIncorrect(ALL)
       }
 
-      private def findAndSend(setting: SystemSetting): F[Unit] =
-        contacts
-          .findByBirthday(LocalDate.now())
-          .flatMap { contacts =>
-            contacts.traverse { contact =>
-              prepareTextAndSend(contact)(
-                OptionT(retrieveTemplateId(setting)(contact.gender).flatTraverse(smsTemplates.find))
-              )
-            }
-          }
-          .void
+//      private def findAndSend(setting: SystemSetting): F[Unit] =
+//        contacts
+//          .findByBirthday(LocalDate.now())
+//          .flatMap { contacts =>
+//            contacts.traverse { contact =>
+//              prepareTextAndSend(contact)(
+//                OptionT(retrieveTemplateId(setting)(contact.gender).flatTraverse(smsTemplates.find))
+//              )
+//            }
+//          }
+//          .void
 
-      private def createMessage(contactId: ContactId, templateId: TemplateId): F[Message] =
-        Sync[F].delay(LocalDateTime.now()).flatMap { now =>
-          messages.create(CreateMessage(contactId, templateId, now, DeliveryStatus.SENT))
-        }
+//      private def createMessage(contactId: ContactId, templateId: TemplateId): F[Message] =
+//        Sync[F].delay(LocalDateTime.now()).flatMap { now =>
+//          messages.create(CreateMessage(contactId, templateId, now, DeliveryStatus.SENT))
+//        }
 
       private def prepare(template: SMSTemplate, contact: Contact): String =
         template.text.value

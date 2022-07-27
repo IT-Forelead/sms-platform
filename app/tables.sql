@@ -45,15 +45,15 @@ CREATE TABLE IF NOT EXISTS contacts(
 
 CREATE TABLE IF NOT EXISTS template_categories(
     id      UUID PRIMARY KEY,
-    user_id    UUID NOT NULL
+    user_id UUID    NOT NULL
         CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     name    VARCHAR NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS sms_templates(
-    id                   UUID PRIMARY KEY,
-    user_id    UUID NOT NULL
+    id                   UUID    PRIMARY KEY,
+    user_id              UUID    NOT NULL
         CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     template_category_id UUID    NOT NULL
         CONSTRAINT fk_template_category_id REFERENCES template_categories (id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS sms_templates(
 );
 
 CREATE TABLE IF NOT EXISTS holidays(
-    id           UUID PRIMARY KEY,
-    user_id    UUID NOT NULL
+    id           UUID    PRIMARY KEY,
+    user_id      UUID    NOT NULL
         CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     name         VARCHAR NOT NULL,
     day          INT     NOT NULL,
@@ -79,6 +79,8 @@ CREATE TABLE IF NOT EXISTS holidays(
 
 CREATE TABLE IF NOT EXISTS messages(
     id              UUID PRIMARY KEY,
+    user_id         UUID NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     contact_id      UUID            NOT NULL
         CONSTRAINT fk_contact_id REFERENCES contacts (id) ON UPDATE CASCADE ON DELETE CASCADE,
     sms_temp_id     UUID            NOT NULL

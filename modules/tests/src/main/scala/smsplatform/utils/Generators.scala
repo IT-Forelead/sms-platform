@@ -242,11 +242,12 @@ object Generators {
   val messageGen: Gen[Message] =
     for {
       id  <- messageIdGen
+      ui  <- userIdGen
       cId <- contactIdGen
       tId <- templateIdGen
       sd  <- timestampGen
       ds  <- deliveryStatusGen
-    } yield Message(id, cId, tId, sd, ds)
+    } yield Message(id, ui, cId, tId, sd, ds)
 
   val userCredentialGen: Gen[Credentials] =
     for {
