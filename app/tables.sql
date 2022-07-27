@@ -65,6 +65,8 @@ CREATE TABLE IF NOT EXISTS sms_templates(
 
 CREATE TABLE IF NOT EXISTS holidays(
     id           UUID PRIMARY KEY,
+    user_id    UUID NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     name         VARCHAR NOT NULL,
     day          INT     NOT NULL,
     month        MONTH   NOT NULL,

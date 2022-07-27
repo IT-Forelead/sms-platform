@@ -149,12 +149,13 @@ object Generators {
   val holidayGen: Gen[Holiday] =
     for {
       id <- holidayIdGen
+      ui <- userIdGen
       n  <- holidayNameGen
       d  <- dayOfMonthGen
       m  <- monthGen
       sw <- option(templateIdGen)
       sm <- option(templateIdGen)
-    } yield Holiday(id, n, d, m, sw, sm)
+    } yield Holiday(id, ui, n, d, m, sw, sm)
 
   val systemSettingsGen: Gen[SystemSetting] =
     for {
