@@ -2,7 +2,7 @@ package com.itforelead.smspaltfrom.routes
 
 import cats.MonadThrow
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
+import com.itforelead.smspaltfrom.domain.SystemSetting.{UpdateSetting, UpdateTemplateOfBirthday}
 import com.itforelead.smspaltfrom.domain.{SystemSetting, User}
 import com.itforelead.smspaltfrom.services.SystemSettings
 import org.http4s._
@@ -25,7 +25,7 @@ final case class SystemSettingRoutes[F[_]: JsonDecoder: MonadThrow](
       systemSettings.settings(user.id).flatMap(Ok(_))
 
     case aR @ PUT -> Root as user =>
-      aR.req.decodeR[SystemSetting] { from =>
+      aR.req.decodeR[UpdateSetting] { from =>
         systemSettings.update(user.id, from).flatMap(Ok(_))
       }
 

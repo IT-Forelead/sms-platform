@@ -2,7 +2,7 @@ package com.itforelead.smspaltfrom.services
 
 import cats.effect.{Resource, Sync}
 import com.itforelead.smspaltfrom.domain.SystemSetting
-import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
+import com.itforelead.smspaltfrom.domain.SystemSetting.{UpdateSetting, UpdateTemplateOfBirthday}
 import com.itforelead.smspaltfrom.domain.types.UserId
 import com.itforelead.smspaltfrom.effects.GenUUID
 import com.itforelead.smspaltfrom.services.sql.SystemSettingSql.{select, updateSql, updateTemplatesSql}
@@ -25,7 +25,7 @@ trait SystemSettings[F[_]] {
     * @return
     *   updated system setting
     */
-  def update(userId: UserId, settings: SystemSetting): F[SystemSetting]
+  def update(userId: UserId, settings: UpdateSetting): F[SystemSetting]
 
   /** Function for update templates of birthday
     *
@@ -59,7 +59,7 @@ object SystemSettings {
         * @return
         *   updated system setting
         */
-      override def update(userId: UserId, settings: SystemSetting): F[SystemSetting] =
+      override def update(userId: UserId, settings: UpdateSetting): F[SystemSetting] =
         prepQueryUnique(updateSql, settings ~ userId)
 
       /** Function for update templates of birthday

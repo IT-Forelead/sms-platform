@@ -27,7 +27,7 @@ object HolidaysSql {
     sql"""INSERT INTO holidays VALUES ($encoder) RETURNING *""".query(decoder)
 
   val select: Query[UserId, Holiday] =
-    sql"""SELECT * FROM holidays WHERE user_id = $userId deleted = false""".query(decoder)
+    sql"""SELECT * FROM holidays WHERE user_id = $userId AND deleted = false""".query(decoder)
 
   val updateTemplateInHolidaySql: Query[UpdateTemplateInHoliday ~ UserId, Holiday] =
     sql"""UPDATE holidays

@@ -2,9 +2,10 @@ package smsplatform.services
 
 import cats.effect.IO
 import com.itforelead.smspaltfrom.domain.SMSTemplate
+import com.itforelead.smspaltfrom.domain.SMSTemplate.UpdateSMSTemplate
 import com.itforelead.smspaltfrom.services.{SMSTemplates, TemplateCategories}
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createSMSTemplateGen, createTemplateCategoryGen, titleGen}
+import smsplatform.utils.Generators.{createSMSTemplateGen, createTemplateCategoryGen, defaultUserId, titleGen}
 
 object SMSTemplateSuite extends DBSuite {
 
@@ -15,11 +16,11 @@ object SMSTemplateSuite extends DBSuite {
       c <- createTemplateCategoryGen
       t <- createSMSTemplateGen
     } yield (c, t)
-    forall(gen) { case (c, createTemplate) =>
+    forall(gen) { case (createTemplateCategory, createTemplate) =>
       for {
-        templateCategory <- templateCategories.create(c)
-        template1        <- templates.create(createTemplate.copy(templateCategoryId = templateCategory.id))
-        template2        <- templates.templates
+        templateCategory <- templateCategories.create(defaultUserId, createTemplateCategory)
+        template1        <- templates.create(defaultUserId, createTemplate.copy(templateCategoryId = templateCategory.id))
+        template2        <- templates.templates(defaultUserId)
       } yield assert(template2.exists(tc => tc.id == template1.id))
     }
   }
@@ -34,10 +35,10 @@ object SMSTemplateSuite extends DBSuite {
     } yield (t, c, ct)
     forall(gen) { case (createTemplateCategory, createSMSTemplate, title) =>
       for {
-        templateCategory <- templateCategories.create(createTemplateCategory)
-        template1        <- smsTemplates.create(createSMSTemplate.copy(templateCategoryId = templateCategory.id))
-        template2 <- smsTemplates.update(
-          SMSTemplate(
+        templateCategory <- templateCategories.create(defaultUserId, createTemplateCategory)
+        template1        <- smsTemplates.create(defaultUserId, createSMSTemplate.copy(templateCategoryId = templateCategory.id))
+        template2 <- smsTemplates.update(defaultUserId,
+          UpdateSMSTemplate(
             id = template1.id,
             templateCategoryId = template1.templateCategoryId,
             title = title,
@@ -58,10 +59,10 @@ object SMSTemplateSuite extends DBSuite {
     } yield (t, c)
     forall(gen) { case (createTemplateCategory, createSMSTemplate) =>
       for {
-        templateCategory <- templateCategories.create(createTemplateCategory)
-        template1        <- smsTemplates.create(createSMSTemplate.copy(templateCategoryId = templateCategory.id))
-        _                <- smsTemplates.delete(template1.id)
-        template2        <- smsTemplates.templates
+        templateCategory <- templateCategories.create(defaultUserId, createTemplateCategory)
+        template1        <- smsTemplates.create(defaultUserId, createSMSTemplate.copy(templateCategoryId = templateCategory.id))
+        _                <- smsTemplates.delete(template1.id, defaultUserId)
+        template2        <- smsTemplates.templates(defaultUserId)
       } yield assert(!template2.contains(template1))
     }
   }

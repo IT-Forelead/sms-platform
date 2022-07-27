@@ -101,5 +101,5 @@ CREATE TABLE IF NOT EXISTS system_settings(
         CONSTRAINT fk_sms_template_w_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO "system_settings" ("auto_send_b", "auto_send_h", "dark_mode", "sms_men_id", "sms_women_id")
-VALUES (false, false, false, null, null);
+INSERT INTO "system_settings" ("user_id", "auto_send_b", "auto_send_h", "dark_mode", "sms_men_id", "sms_women_id")
+VALUES ('c1039d34-425b-4f78-9a7f-893f5b4df478', false, false, false, null, null);

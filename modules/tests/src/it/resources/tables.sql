@@ -17,8 +17,7 @@ CREATE TYPE MONTH AS ENUM (
     'december'
     );
 
-CREATE TABLE IF NOT EXISTS users
-(
+CREATE TABLE IF NOT EXISTS users(
     uuid     UUID PRIMARY KEY,
     name     VARCHAR        NOT NULL,
     email    VARCHAR UNIQUE NOT NULL,
@@ -31,9 +30,14 @@ INSERT INTO "users" ("uuid", "name", "email", "gender", "password", "role")
 VALUES ('c1039d34-425b-4f78-9a7f-893f5b4df478', 'Admin', 'admin@gmail.com', 'male',
         '$s0$e0801$5JK3Ogs35C2h5htbXQoeEQ==$N7HgNieSnOajn1FuEB7l4PhC6puBSq+e1E8WUaSJcGY=', 'admin');
 
-CREATE TABLE IF NOT EXISTS contacts
-(
+INSERT INTO "users" ("uuid", "name", "email", "gender", "password", "role")
+VALUES ('4b590039-892c-4bbf-bd6f-a12f102f3582', 'User', 'user@gmail.com', 'male',
+        '$s0$e0801$5JK3Ogs35C2h5htbXQoeEQ==$N7HgNieSnOajn1FuEB7l4PhC6puBSq+e1E8WUaSJcGY=', 'user');
+
+CREATE TABLE IF NOT EXISTS contacts(
     id         UUID PRIMARY KEY,
+    user_id    UUID      NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL,
     first_name VARCHAR   NOT NULL,
     last_name  VARCHAR   NOT NULL,
@@ -43,16 +47,18 @@ CREATE TABLE IF NOT EXISTS contacts
     deleted    BOOLEAN   NOT NULL DEFAULT false
 );
 
-CREATE TABLE IF NOT EXISTS template_categories
-(
+CREATE TABLE IF NOT EXISTS template_categories(
     id      UUID PRIMARY KEY,
+    user_id UUID    NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     name    VARCHAR NOT NULL,
     deleted BOOLEAN NOT NULL DEFAULT false
 );
 
-CREATE TABLE IF NOT EXISTS sms_templates
-(
-    id                   UUID PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS sms_templates(
+    id                   UUID    PRIMARY KEY,
+    user_id              UUID    NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     template_category_id UUID    NOT NULL
         CONSTRAINT fk_template_category_id REFERENCES template_categories (id) ON UPDATE CASCADE ON DELETE CASCADE,
     title                VARCHAR NOT NULL,
@@ -61,9 +67,10 @@ CREATE TABLE IF NOT EXISTS sms_templates
     deleted              BOOLEAN NOT NULL DEFAULT false
 );
 
-CREATE TABLE IF NOT EXISTS holidays
-(
-    id           UUID PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS holidays(
+    id           UUID    PRIMARY KEY,
+    user_id      UUID    NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     name         VARCHAR NOT NULL,
     day          INT     NOT NULL,
     month        MONTH   NOT NULL,
@@ -74,9 +81,10 @@ CREATE TABLE IF NOT EXISTS holidays
     deleted      BOOLEAN NOT NULL DEFAULT false
 );
 
-CREATE TABLE IF NOT EXISTS messages
-(
+CREATE TABLE IF NOT EXISTS messages(
     id              UUID PRIMARY KEY,
+    user_id         UUID NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     contact_id      UUID            NOT NULL
         CONSTRAINT fk_contact_id REFERENCES contacts (id) ON UPDATE CASCADE ON DELETE CASCADE,
     sms_temp_id     UUID            NOT NULL
@@ -86,6 +94,8 @@ CREATE TABLE IF NOT EXISTS messages
 );
 
 CREATE TABLE IF NOT EXISTS system_settings(
+    user_id         UUID NOT NULL
+        CONSTRAINT fk_user_id REFERENCES users (uuid) ON UPDATE CASCADE ON DELETE CASCADE,
     auto_send_b  BOOLEAN NOT NULL DEFAULT false,
     auto_send_h  BOOLEAN NOT NULL DEFAULT false,
     dark_mode    BOOLEAN NOT NULL DEFAULT false,
@@ -95,5 +105,8 @@ CREATE TABLE IF NOT EXISTS system_settings(
         CONSTRAINT fk_sms_template_w_id REFERENCES sms_templates (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO "system_settings" ("auto_send_b", "auto_send_h", "dark_mode", "sms_men_id", "sms_women_id")
-VALUES (false, false, false, null, null);
+INSERT INTO "system_settings" ("user_id", "auto_send_b", "auto_send_h", "dark_mode", "sms_men_id", "sms_women_id")
+VALUES ('c1039d34-425b-4f78-9a7f-893f5b4df478', false, false, false, null, null);
+
+INSERT INTO "system_settings" ("user_id", "auto_send_b", "auto_send_h", "dark_mode", "sms_men_id", "sms_women_id")
+VALUES ('4b590039-892c-4bbf-bd6f-a12f102f3582', false, false, false, null, null);

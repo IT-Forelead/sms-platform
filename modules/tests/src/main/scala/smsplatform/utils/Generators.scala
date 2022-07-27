@@ -39,6 +39,10 @@ object Generators {
   def idGen[A](f: UUID => A): Gen[A] =
     Gen.uuid.map(f)
 
+  val defaultAdminId: UserId = UserId(UUID.fromString("76c2c44c-8fbf-4184-9199-19303a042fa0"))
+
+  val defaultUserId: UserId = UserId(UUID.fromString("4b590039-892c-4bbf-bd6f-a12f102f3582"))
+
   val userIdGen: Gen[UserId] =
     idGen(UserId.apply)
 

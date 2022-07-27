@@ -3,10 +3,10 @@ package smsplatform.services
 import cats.effect.IO
 import cats.implicits.catsSyntaxOptionId
 import com.itforelead.smspaltfrom.domain.SystemSetting
-import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
+import com.itforelead.smspaltfrom.domain.SystemSetting.{UpdateSetting, UpdateTemplateOfBirthday}
 import com.itforelead.smspaltfrom.services.{SMSTemplates, SystemSettings, TemplateCategories}
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createSMSTemplateGen, createTemplateCategoryGen}
+import smsplatform.utils.Generators.{createSMSTemplateGen, createTemplateCategoryGen, defaultUserId}
 
 object SettingsSuite extends DBSuite {
 
@@ -14,9 +14,9 @@ object SettingsSuite extends DBSuite {
     val settings = SystemSettings[IO]
 
     for {
-      settings1 <- settings.settings
-      settings2 <- settings.update(
-        SystemSetting(
+      settings1 <- settings.settings(defaultUserId)
+      settings2 <- settings.update(defaultUserId,
+        UpdateSetting(
           autoSendBirthday = settings1.fold(false)(_.autoSendBirthday),
           autoSendHoliday = settings1.fold(false)(_.autoSendHoliday),
           darkTheme = true
@@ -38,10 +38,10 @@ object SettingsSuite extends DBSuite {
 
     forall(gen) { case (createTmplCat, createTemplate1, createTemplate2) =>
       for {
-        tmplCategory <- templateCategories.create(createTmplCat)
-        template1    <- templates.create(createTemplate1.copy(templateCategoryId = tmplCategory.id))
-        template2    <- templates.create(createTemplate2.copy(templateCategoryId = tmplCategory.id))
-        settings1 <- settings.updateTemplateOfBirthday(
+        tmplCategory <- templateCategories.create(defaultUserId, createTmplCat)
+        template1    <- templates.create(defaultUserId, createTemplate1.copy(templateCategoryId = tmplCategory.id))
+        template2    <- templates.create(defaultUserId, createTemplate2.copy(templateCategoryId = tmplCategory.id))
+        settings1 <- settings.updateTemplateOfBirthday(defaultUserId,
           UpdateTemplateOfBirthday(
             smsMenId = template2.id.some,
             smsWomenId = template1.id.some

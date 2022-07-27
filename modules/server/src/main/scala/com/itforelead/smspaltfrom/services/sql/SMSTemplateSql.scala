@@ -48,7 +48,7 @@ object SMSTemplateSql {
              title = $title,
              text = $content,
              gender_access = $gender
-         WHERE id = $templateId AND $userId RETURNING *"""
+         WHERE id = $templateId AND user_id = $userId RETURNING *"""
       .query(decoder)
       .contramap[SMSTemplate](tmpl =>
         tmpl.templateCategoryId ~ tmpl.title ~ tmpl.text ~ tmpl.gender ~ tmpl.id ~ tmpl.userId
