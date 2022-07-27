@@ -52,6 +52,6 @@ object HolidaysSql {
   val selectHolidaysOfToday: Query[UserId, Holiday] =
     sql"""SELECT * FROM holidays
           WHERE DATE_PART('day', CURRENT_DATE) = day AND
-          TO_CHAR(CURRENT_DATE, 'month') = month::text AND user_id = $userId deleted = false""".query(decoder)
+          TO_CHAR(CURRENT_DATE, 'month') = month::text AND user_id = $userId AND deleted = false""".query(decoder)
 
 }
