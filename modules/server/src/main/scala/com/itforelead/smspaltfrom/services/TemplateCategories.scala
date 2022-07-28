@@ -1,18 +1,19 @@
 package com.itforelead.smspaltfrom.services
 
 import cats.effect.{Resource, Sync}
-import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
+import com.itforelead.smspaltfrom.domain.TemplateCategory.{CreateTemplateCategory, UpdateTemplateCategory}
 import com.itforelead.smspaltfrom.domain.{ID, TemplateCategory}
-import com.itforelead.smspaltfrom.domain.types.TemplateCategoryId
+import com.itforelead.smspaltfrom.domain.types.{TemplateCategoryId, UserId}
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk.{Session, Void}
+import skunk.implicits.toIdOps
 import cats.implicits._
 
 trait TemplateCategories[F[_]] {
-  def create(form: CreateTemplateCategory): F[TemplateCategory]
-  def templateCategories: F[List[TemplateCategory]]
-  def update(tmpl: TemplateCategory): F[TemplateCategory]
-  def delete(id: TemplateCategoryId): F[Unit]
+  def create(userId: UserId, form: CreateTemplateCategory): F[TemplateCategory]
+  def templateCategories(userId: UserId): F[List[TemplateCategory]]
+  def update(userId: UserId, tmpl: UpdateTemplateCategory): F[TemplateCategory]
+  def delete(id: TemplateCategoryId, userId: UserId): F[Unit]
 }
 
 object TemplateCategories {
@@ -23,22 +24,23 @@ object TemplateCategories {
 
       import com.itforelead.smspaltfrom.services.sql.TemplateCategorySQL._
 
-      override def create(form: CreateTemplateCategory): F[TemplateCategory] = {
+      override def create(userId: UserId, form: CreateTemplateCategory): F[TemplateCategory] = {
         ID.make[F, TemplateCategoryId].flatMap { id =>
           prepQueryUnique(
             insert,
-            TemplateCategory(id, form.name)
+            TemplateCategory(id, userId, form.name)
           )
         }
       }
 
-      override def templateCategories: F[List[TemplateCategory]] =
-        prepQueryList(select, Void)
+      override def templateCategories(userId: UserId): F[List[TemplateCategory]] =
+        prepQueryList(select, userId)
 
-      override def update(tmpl: TemplateCategory): F[TemplateCategory] =
-        prepQueryUnique(updateSql, tmpl)
+      override def update(userId: UserId, tmpl: UpdateTemplateCategory): F[TemplateCategory] =
+        prepQueryUnique(updateSql, TemplateCategory(tmpl.id, userId, tmpl.name))
 
-      override def delete(id: TemplateCategoryId): F[Unit] =
-        prepCmd(deleteSql, id)
+      override def delete(id: TemplateCategoryId, userId: UserId): F[Unit] = {
+        prepCmd(deleteSql, id ~ userId)
+      }
     }
 }

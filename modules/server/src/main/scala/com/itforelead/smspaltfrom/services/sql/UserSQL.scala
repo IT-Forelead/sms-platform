@@ -15,6 +15,8 @@ object UserSQL {
 
   private val Columns = userId ~ userName ~ email ~ gender ~ passwordHash ~ role
 
+  private val ColumnsWithoutPassword = userId ~ userName ~ email ~ gender ~ role
+
   val encoder: Encoder[UserId ~ CreateUser ~ PasswordHash[SCrypt]] =
     Columns.contramap { case i ~ u ~ p =>
       i ~ u.name ~ u.email ~ u.gender ~ p ~ Role.USER
@@ -25,8 +27,16 @@ object UserSQL {
       User(i, n, e, g, r) ~ p
     }
 
+  val decoderWithoutPassword: Decoder[User] =
+    ColumnsWithoutPassword.map { case i ~ n ~ e ~ g ~ r =>
+      User(i, n, e, g, r)
+    }
+
   val selectUser: Query[EmailAddress, User ~ PasswordHash[SCrypt]] =
     sql"""SELECT * FROM users WHERE email = $email""".query(decoder)
+
+  val select: Query[Void, User] =
+    sql"""SELECT uuid, name, email, gender, role FROM users""".query(decoderWithoutPassword)
 
   val insertUser: Query[UserId ~ CreateUser ~ PasswordHash[SCrypt], User ~ PasswordHash[SCrypt]] =
     sql"""INSERT INTO users VALUES ($encoder) returning *""".query(decoder)

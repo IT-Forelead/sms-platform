@@ -4,7 +4,7 @@ import cats.effect.{IO, Sync}
 import com.itforelead.smspaltfrom.Application.logger
 import com.itforelead.smspaltfrom.domain.Holiday
 import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday}
-import com.itforelead.smspaltfrom.domain.types.HolidayId
+import com.itforelead.smspaltfrom.domain.types.{HolidayId, UserId}
 import com.itforelead.smspaltfrom.routes.{HolidayRoutes, deriveEntityEncoder}
 import com.itforelead.smspaltfrom.services.Holidays
 import org.http4s.Method.{DELETE, GET, POST, PUT}
@@ -18,10 +18,10 @@ import smsplatform.utils.HttpSuite
 object HolidayRoutesSuite extends HttpSuite {
 
   def holidays[F[_]: Sync](holiday: Holiday): Holidays[F] = new HolidaysStub[F] {
-    override def create(form: CreateHoliday): F[Holiday] = Sync[F].delay(holiday)
-    override def holidays: F[List[Holiday]]              = Sync[F].delay(List(holiday))
-    override def update(form: UpdateHoliday): F[Holiday] = Sync[F].delay(holiday)
-    override def delete(id: HolidayId): F[Unit]          = Sync[F].unit
+    override def create(userId: UserId, form: CreateHoliday): F[Holiday] = Sync[F].delay(holiday)
+    override def holidays(userId: UserId): F[List[Holiday]]              = Sync[F].delay(List(holiday))
+    override def update(userId: UserId, form: UpdateHoliday): F[Holiday] = Sync[F].delay(holiday)
+    override def delete(id: HolidayId, userId: UserId): F[Unit]          = Sync[F].unit
   }
 
   test("create holiday") {

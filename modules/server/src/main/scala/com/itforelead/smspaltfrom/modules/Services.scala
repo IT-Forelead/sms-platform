@@ -14,6 +14,7 @@ object Services {
     schedulerConfig: SchedulerConfig,
     httpClient: Client[F]
   )(implicit session: Resource[F, Session[F]]): Services[F] = {
+    val users         = Users[F]
     val contacts      = Contacts[F]
     val settings      = SystemSettings[F]
     val smsTemplates  = SMSTemplates[F]
@@ -22,15 +23,15 @@ object Services {
     val messageBroker = MessageBroker[F](httpClient, brokerConfig)
 
     new Services[F](
-      users = Users[F],
+      users = users,
       contacts = contacts,
       holidays = holidays,
       messages = messages,
       smsTemplates = smsTemplates,
       systemSettings = settings,
       templateCategories = TemplateCategories[F],
-      congratulator =
-        Congratulator.make[F](contacts, holidays, smsTemplates, messages, settings, messageBroker, schedulerConfig)
+      congratulator = Congratulator
+        .make[F](users, contacts, holidays, smsTemplates, messages, settings, messageBroker, schedulerConfig)
     )
   }
 }

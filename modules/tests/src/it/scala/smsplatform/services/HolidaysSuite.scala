@@ -5,7 +5,7 @@ import cats.implicits.catsSyntaxOptionId
 import com.itforelead.smspaltfrom.domain.Holiday.{UpdateHoliday, UpdateTemplateInHoliday}
 import com.itforelead.smspaltfrom.services.{Holidays, SMSTemplates, TemplateCategories}
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createHolidayGen, createSMSTemplateGen, createTemplateCategoryGen, holidayNameGen}
+import smsplatform.utils.Generators.{createHolidayGen, createSMSTemplateGen, createTemplateCategoryGen, defaultUserId, holidayNameGen}
 
 object HolidaysSuite extends DBSuite {
 
@@ -13,8 +13,8 @@ object HolidaysSuite extends DBSuite {
     val holidays = Holidays[IO]
     forall(createHolidayGen) { createHoliday =>
       for {
-        holiday1 <- holidays.create(createHoliday)
-        holiday2 <- holidays.holidays
+        holiday1 <- holidays.create(defaultUserId, createHoliday)
+        holiday2 <- holidays.holidays(defaultUserId)
       } yield assert(holiday2.contains(holiday1))
     }
   }
@@ -28,8 +28,8 @@ object HolidaysSuite extends DBSuite {
     } yield (c, t)
     forall(gen) { case (createHoliday, name) =>
       for {
-        holiday1 <- holidays.create(createHoliday)
-        holiday2 <- holidays.update(
+        holiday1 <- holidays.create(defaultUserId, createHoliday)
+        holiday2 <- holidays.update(defaultUserId,
           UpdateHoliday(
             id = holiday1.id,
             name = name,
@@ -55,11 +55,11 @@ object HolidaysSuite extends DBSuite {
 
     forall(gen) { case (createHoliday, createTmplCat, createTemplate1, createTemplate2) =>
       for {
-        holiday1     <- holidays.create(createHoliday)
-        tmplCategory <- templateCategories.create(createTmplCat)
-        template1    <- templates.create(createTemplate1.copy(templateCategoryId = tmplCategory.id))
-        template2    <- templates.create(createTemplate2.copy(templateCategoryId = tmplCategory.id))
-        holiday2 <- holidays.updateTemplateInHoliday(
+        holiday1     <- holidays.create(defaultUserId, createHoliday)
+        tmplCategory <- templateCategories.create(defaultUserId, createTmplCat)
+        template1    <- templates.create(defaultUserId, createTemplate1.copy(templateCategoryId = tmplCategory.id))
+        template2    <- templates.create(defaultUserId, createTemplate2.copy(templateCategoryId = tmplCategory.id))
+        holiday2 <- holidays.updateTemplateInHoliday(defaultUserId,
           UpdateTemplateInHoliday(
             id = holiday1.id,
             smsWomenId = template1.id.some,
@@ -74,9 +74,9 @@ object HolidaysSuite extends DBSuite {
     val holidays = Holidays[IO]
     forall(createHolidayGen) { createHoliday =>
       for {
-        holiday1 <- holidays.create(createHoliday)
-        _        <- holidays.delete(holiday1.id)
-        holiday3 <- holidays.holidays
+        holiday1 <- holidays.create(defaultUserId, createHoliday)
+        _        <- holidays.delete(holiday1.id, defaultUserId)
+        holiday3 <- holidays.holidays(defaultUserId)
       } yield assert(!holiday3.contains(holiday1))
     }
   }

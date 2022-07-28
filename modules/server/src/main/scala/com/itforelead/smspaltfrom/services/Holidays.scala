@@ -4,9 +4,10 @@ import cats.effect.{Resource, Sync}
 import cats.implicits._
 import com.itforelead.smspaltfrom.domain.{Holiday, ID}
 import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday, UpdateTemplateInHoliday}
-import com.itforelead.smspaltfrom.domain.types.HolidayId
+import com.itforelead.smspaltfrom.domain.types.{HolidayId, UserId}
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk._
+import skunk.implicits.toIdOps
 
 trait Holidays[F[_]] {
 
@@ -16,13 +17,13 @@ trait Holidays[F[_]] {
     * @return
     *   created holiday
     */
-  def create(form: CreateHoliday): F[Holiday]
+  def create(userId: UserId, form: CreateHoliday): F[Holiday]
 
   /** Function for get all holidays
     * @return
     *   list of holidays
     */
-  def holidays: F[List[Holiday]]
+  def holidays(userId: UserId): F[List[Holiday]]
 
   /** Function for update holiday
     * @param holiday
@@ -30,7 +31,7 @@ trait Holidays[F[_]] {
     * @return
     *   updated holiday
     */
-  def update(holiday: UpdateHoliday): F[Holiday]
+  def update(userId: UserId, holiday: UpdateHoliday): F[Holiday]
 
   /** Function for update holiday
     * @param holiday
@@ -38,7 +39,7 @@ trait Holidays[F[_]] {
     * @return
     *   updated templateId of holiday
     */
-  def updateTemplateInHoliday(holiday: UpdateTemplateInHoliday): F[Holiday]
+  def updateTemplateInHoliday(userId: UserId, holiday: UpdateTemplateInHoliday): F[Holiday]
 
   /** Function for delete holiday
     * @param id
@@ -46,12 +47,12 @@ trait Holidays[F[_]] {
     * @return
     *   unit
     */
-  def delete(id: HolidayId): F[Unit]
+  def delete(id: HolidayId, userId: UserId): F[Unit]
 
   /** @return
     *   Today's holidays
     */
-  def holidaysOfToday: F[List[Holiday]]
+  def holidaysOfToday(userId: UserId): F[List[Holiday]]
 }
 
 object Holidays {
@@ -76,12 +77,12 @@ object Holidays {
         * @return
         *   created holiday
         */
-      def create(form: CreateHoliday): F[Holiday] = {
+      def create(userId: UserId, form: CreateHoliday): F[Holiday] = {
         for {
           id <- ID.make[F, HolidayId]
           holiday <- prepQueryUnique(
             insert,
-            Holiday(id, form.name, form.day, form.month)
+            Holiday(id, userId, form.name, form.day, form.month)
           )
         } yield holiday
       }
@@ -90,8 +91,8 @@ object Holidays {
         * @return
         *   list of holidays
         */
-      override def holidays: F[List[Holiday]] =
-        prepQueryList(select, Void)
+      override def holidays(userId: UserId): F[List[Holiday]] =
+        prepQueryList(select, userId)
 
       /** Function for update holiday
         * @param holiday
@@ -99,8 +100,8 @@ object Holidays {
         * @return
         *   updated holiday
         */
-      override def update(holiday: UpdateHoliday): F[Holiday] =
-        prepQueryUnique(updateSql, holiday)
+      override def update(userId: UserId, holiday: UpdateHoliday): F[Holiday] =
+        prepQueryUnique(updateSql, holiday ~ userId)
 
       /** Function for update holiday
         * @param holiday
@@ -108,8 +109,8 @@ object Holidays {
         * @return
         *   updated templateId of holiday
         */
-      override def updateTemplateInHoliday(holiday: UpdateTemplateInHoliday): F[Holiday] =
-        prepQueryUnique(updateTemplateInHolidaySql, holiday)
+      override def updateTemplateInHoliday(userId: UserId, holiday: UpdateTemplateInHoliday): F[Holiday] =
+        prepQueryUnique(updateTemplateInHolidaySql, holiday ~ userId)
 
       /** Function for delete holiday
         * @param id
@@ -117,10 +118,10 @@ object Holidays {
         * @return
         *   unit
         */
-      override def delete(id: HolidayId): F[Unit] =
-        prepCmd(deleteSql, id)
+      override def delete(id: HolidayId, userId: UserId): F[Unit] =
+        prepCmd(deleteSql, id ~ userId)
 
-      override def holidaysOfToday: F[List[Holiday]] =
-        prepQueryAll(selectHolidaysOfToday)
+      override def holidaysOfToday(userId: UserId): F[List[Holiday]] =
+        prepQueryList(selectHolidaysOfToday, userId)
     }
 }

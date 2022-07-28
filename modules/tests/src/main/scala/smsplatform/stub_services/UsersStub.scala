@@ -9,5 +9,6 @@ import com.itforelead.smspaltfrom.services.Users
 
 class UsersStub[F[_]] extends Users[F] {
   override def find(email: EmailAddress): F[Option[UserWithPassword]]                 = ???
+  override def get: F[List[User]] = ???
   override def create(userParam: CreateUser, password: PasswordHash[SCrypt]): F[User] = ???
 }

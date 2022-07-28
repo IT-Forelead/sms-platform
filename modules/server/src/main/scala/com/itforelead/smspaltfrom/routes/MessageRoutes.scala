@@ -18,8 +18,8 @@ final case class MessageRoutes[F[_]: JsonDecoder: MonadThrow](
 
   private[routes] val prefixPath = "/messages"
 
-  private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of { case GET -> Root as _ =>
-    messages.messages.flatMap(Ok(_))
+  private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of { case GET -> Root as user =>
+    messages.messages(user.id).flatMap(Ok(_))
   }
 
   def routes(authMiddleware: AuthMiddleware[F, User]): HttpRoutes[F] = Router(

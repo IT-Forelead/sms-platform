@@ -1,10 +1,11 @@
 package smsplatform.services
 
 import cats.effect.IO
+import com.itforelead.smspaltfrom.domain.TemplateCategory.UpdateTemplateCategory
 import com.itforelead.smspaltfrom.domain.{Holiday, TemplateCategory}
 import com.itforelead.smspaltfrom.services.{Holidays, TemplateCategories}
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createHolidayGen, createTemplateCategoryGen, holidayNameGen, templateCategoryNameGen}
+import smsplatform.utils.Generators.{createHolidayGen, createTemplateCategoryGen, defaultUserId, holidayNameGen, templateCategoryNameGen}
 
 object TemplateCategorySuite extends DBSuite {
 
@@ -12,8 +13,8 @@ object TemplateCategorySuite extends DBSuite {
     val templateCategories = TemplateCategories[IO]
     forall(createTemplateCategoryGen) { createTemplateCategory =>
       for {
-        tmplcat1 <- templateCategories.create(createTemplateCategory)
-        tmplcat2 <- templateCategories.templateCategories
+        tmplcat1 <- templateCategories.create(defaultUserId, createTemplateCategory)
+        tmplcat2 <- templateCategories.templateCategories(defaultUserId)
       } yield assert(tmplcat2.contains(tmplcat1))
     }
   }
@@ -26,9 +27,9 @@ object TemplateCategorySuite extends DBSuite {
     } yield (c, t)
     forall(gen) { case (createTemplateCategory, name) =>
       for {
-        tmplcat1 <- templateCategories.create(createTemplateCategory)
-        tmplcat2 <- templateCategories.update(
-          TemplateCategory(
+        tmplcat1 <- templateCategories.create(defaultUserId, createTemplateCategory)
+        tmplcat2 <- templateCategories.update(defaultUserId,
+          UpdateTemplateCategory(
             id = tmplcat1.id,
             name = name
           )
@@ -41,9 +42,9 @@ object TemplateCategorySuite extends DBSuite {
     val templateCategories = TemplateCategories[IO]
     forall(createTemplateCategoryGen) { createTemplateCategory =>
       for {
-        tmplcat1 <- templateCategories.create(createTemplateCategory)
-        _        <- templateCategories.delete(tmplcat1.id)
-        tmplcat3 <- templateCategories.templateCategories
+        tmplcat1 <- templateCategories.create(defaultUserId, createTemplateCategory)
+        _        <- templateCategories.delete(tmplcat1.id, defaultUserId)
+        tmplcat3 <- templateCategories.templateCategories(defaultUserId)
       } yield assert(!tmplcat3.contains(tmplcat1))
     }
   }

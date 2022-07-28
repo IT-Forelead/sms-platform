@@ -18,6 +18,7 @@ import com.itforelead.smspaltfrom.services.sql.UserSQL._
 
 trait Users[F[_]] {
   def find(email: EmailAddress): F[Option[UserWithPassword]]
+  def get: F[List[User]]
   def create(userParam: CreateUser, password: PasswordHash[SCrypt]): F[User]
 }
 
@@ -30,6 +31,9 @@ object Users {
         OptionT(prepOptQuery(selectUser, email)).map { case user ~ p =>
           UserWithPassword(user, p)
         }.value
+
+      override def get: F[List[User]] =
+        prepQueryList(select, Void)
 
       def create(userParam: CreateUser, password: PasswordHash[SCrypt]): F[User] =
         ID.make[F, UserId]

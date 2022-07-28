@@ -1,38 +1,40 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.SystemSetting
-import com.itforelead.smspaltfrom.domain.SystemSetting.UpdateTemplateOfBirthday
+import com.itforelead.smspaltfrom.domain.SystemSetting.{UpdateSetting, UpdateTemplateOfBirthday}
+import com.itforelead.smspaltfrom.domain.types.UserId
 import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.templateId
+import com.itforelead.smspaltfrom.services.sql.UserSQL.userId
 import skunk._
 import skunk.codec.all.bool
 import skunk.implicits._
 
 object SystemSettingSql {
 
-  private val Columns = bool ~ bool ~ bool ~ templateId.opt ~ templateId.opt
+  private val Columns = userId ~ bool ~ bool ~ templateId.opt ~ templateId.opt
 
   val encoder: Encoder[SystemSetting] =
-    Columns.contramap(c => c.autoSendBirthday ~ c.autoSendHoliday ~ c.darkTheme ~ c.smsMenId ~ c.smsWomenId)
+    Columns.contramap(c => c.userId ~ c.autoSendBirthday ~ c.autoSendHoliday ~ c.smsMenId ~ c.smsWomenId)
 
   val decoder: Decoder[SystemSetting] =
-    Columns.map { case autoSendBirthday ~ autoSendHoliday ~ darkTheme ~ smsMenId ~ smsWomenId =>
-      SystemSetting(autoSendBirthday, autoSendHoliday, darkTheme, smsMenId, smsWomenId)
+    Columns.map { case userId ~ autoSendBirthday ~ autoSendHoliday ~ smsMenId ~ smsWomenId =>
+      SystemSetting(userId, autoSendBirthday, autoSendHoliday, smsMenId, smsWomenId)
     }
 
-  val select: Query[Void, SystemSetting] =
-    sql"""SELECT * FROM system_settings LIMIT 1""".query(decoder)
+  val select: Query[UserId, SystemSetting] =
+    sql"""SELECT * FROM system_settings WHERE user_id = $userId LIMIT 1""".query(decoder)
 
-  val updateSql: Query[SystemSetting, SystemSetting] =
+  val updateSql: Query[UpdateSetting ~ UserId, SystemSetting] =
     sql"""UPDATE system_settings
          SET auto_send_b = $bool,
-         auto_send_h = $bool,
-         dark_mode = $bool RETURNING *"""
+         auto_send_h = $bool WHERE user_id = $userId RETURNING *"""
       .query(decoder)
-      .contramap[SystemSetting](s => s.autoSendBirthday ~ s.autoSendHoliday ~ s.darkTheme)
+      .contramap[UpdateSetting ~ UserId] { case (s ~ ui) => s.autoSendBirthday ~ s.autoSendHoliday ~ ui }
 
-  val updateTemplatesSql: Query[UpdateTemplateOfBirthday, SystemSetting] =
-    sql"""UPDATE system_settings SET sms_men_id = ${templateId.opt}, sms_women_id = ${templateId.opt} RETURNING *"""
+  val updateTemplatesSql: Query[UpdateTemplateOfBirthday ~ UserId, SystemSetting] =
+    sql"""UPDATE system_settings SET sms_men_id = ${templateId.opt}, sms_women_id = ${templateId.opt}
+          WHERE user_id = $userId RETURNING *"""
       .query(decoder)
-      .contramap[UpdateTemplateOfBirthday](s => s.smsMenId ~ s.smsWomenId)
+      .contramap[UpdateTemplateOfBirthday ~ UserId] { case (s ~ ui) => s.smsMenId ~ s.smsWomenId ~ ui }
 
 }

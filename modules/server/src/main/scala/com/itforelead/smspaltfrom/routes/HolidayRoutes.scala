@@ -21,27 +21,27 @@ final case class HolidayRoutes[F[_]: JsonDecoder: MonadThrow](
   private[routes] val prefixPath = "/holiday"
 
   private[this] val httpRoutes: AuthedRoutes[User, F] = AuthedRoutes.of {
-    case aR @ POST -> Root as _ =>
+    case aR @ POST -> Root as user =>
       aR.req.decodeR[CreateHoliday] { form =>
-        holidays.create(form).flatMap(Created(_))
+        holidays.create(user.id, form).flatMap(Created(_))
       }
 
-    case GET -> Root as _ =>
-      holidays.holidays.flatMap(Ok(_))
+    case GET -> Root as user =>
+      holidays.holidays(user.id).flatMap(Ok(_))
 
-    case aR @ PUT -> Root as _ =>
+    case aR @ PUT -> Root as user =>
       aR.req.decodeR[UpdateHoliday] { from =>
-        holidays.update(from).flatMap(Ok(_))
+        holidays.update(user.id, from).flatMap(Ok(_))
       }
 
-    case aR @ PUT -> Root / "update-template" as _ =>
+    case aR @ PUT -> Root / "update-template" as user =>
       aR.req.decodeR[UpdateTemplateInHoliday] { from =>
-        holidays.updateTemplateInHoliday(from).flatMap(Ok(_))
+        holidays.updateTemplateInHoliday(user.id, from).flatMap(Ok(_))
       }
 
-    case aR @ DELETE -> Root as _ =>
+    case aR @ DELETE -> Root as user =>
       aR.req.decodeR[HolidayId] { id =>
-        holidays.delete(id) >> NoContent()
+        holidays.delete(id, user.id) >> NoContent()
       }
   }
 

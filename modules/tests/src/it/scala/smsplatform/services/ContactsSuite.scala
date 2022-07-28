@@ -5,7 +5,7 @@ import com.itforelead.smspaltfrom.domain.Contact.UpdateContact
 import com.itforelead.smspaltfrom.services.Contacts
 import eu.timepit.refined.cats.refTypeShow
 import smsplatform.utils.DBSuite
-import smsplatform.utils.Generators.{createContactGen, phoneGen}
+import smsplatform.utils.Generators.{createContactGen, defaultUserId, phoneGen}
 
 object ContactsSuite extends DBSuite {
 
@@ -13,8 +13,8 @@ object ContactsSuite extends DBSuite {
     val contacts = Contacts[IO]
     forall(createContactGen) { createContact =>
       for {
-        contact1 <- contacts.create(createContact)
-        contact2 <- contacts.contacts
+        contact1 <- contacts.create(defaultUserId, createContact)
+        contact2 <- contacts.contacts(defaultUserId)
       } yield assert(contact2.contains(contact1))
     }
   }
@@ -27,8 +27,8 @@ object ContactsSuite extends DBSuite {
     } yield (c, t)
     forall(gen) { case (createContact, tel) =>
       for {
-        contact1 <- contacts.create(createContact)
-        contact2 <- contacts.update(
+        contact1 <- contacts.create(defaultUserId, createContact)
+        contact2 <- contacts.update(defaultUserId,
           UpdateContact(
             id = contact1.id,
             firstName = contact1.firstName,
@@ -46,9 +46,9 @@ object ContactsSuite extends DBSuite {
     val contacts = Contacts[IO]
     forall(createContactGen) { createContact =>
       for {
-        contact1 <- contacts.create(createContact)
-        _ <- contacts.delete(contact1.id)
-        contact3 <- contacts.contacts
+        contact1 <- contacts.create(defaultUserId, createContact)
+        _ <- contacts.delete(contact1.id, defaultUserId)
+        contact3 <- contacts.contacts(defaultUserId)
       } yield assert(!contact3.contains(contact1))
     }
   }
@@ -57,7 +57,7 @@ object ContactsSuite extends DBSuite {
     val contacts = Contacts[IO]
     forall(createContactGen) { createContact =>
       for {
-        contact1 <- contacts.create(createContact)
+        contact1 <- contacts.create(defaultUserId, createContact)
         contact2 <- contacts.findByBirthday(contact1.birthday)
       } yield assert(contact2.nonEmpty)
     }

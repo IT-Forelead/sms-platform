@@ -2,18 +2,19 @@ package com.itforelead.smspaltfrom.services
 
 import cats.effect.{Resource, Sync}
 import cats.implicits._
-import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, SMSTemplateWithCatName}
-import com.itforelead.smspaltfrom.domain.types.TemplateId
+import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, SMSTemplateWithCatName, UpdateSMSTemplate}
+import com.itforelead.smspaltfrom.domain.types.{TemplateId, UserId}
 import com.itforelead.smspaltfrom.domain.{ID, SMSTemplate}
 import com.itforelead.smspaltfrom.effects.GenUUID
 import skunk.Session
+import skunk.implicits.toIdOps
 
 trait SMSTemplates[F[_]] {
-  def create(form: CreateSMSTemplate): F[SMSTemplate]
+  def create(userId: UserId, form: CreateSMSTemplate): F[SMSTemplate]
   def find(templateId: TemplateId): F[Option[SMSTemplate]]
-  def templates: F[List[SMSTemplateWithCatName]]
-  def update(tmpl: SMSTemplate): F[SMSTemplate]
-  def delete(id: TemplateId): F[Unit]
+  def templates(userId: UserId): F[List[SMSTemplateWithCatName]]
+  def update(userId: UserId, tmpl: UpdateSMSTemplate): F[SMSTemplate]
+  def delete(id: TemplateId, userId: UserId): F[Unit]
 }
 
 object SMSTemplates {
@@ -24,24 +25,27 @@ object SMSTemplates {
 
       import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql._
 
-      override def create(form: CreateSMSTemplate): F[SMSTemplate] =
+      override def create(userId: UserId, form: CreateSMSTemplate): F[SMSTemplate] =
         ID.make[F, TemplateId].flatMap { id =>
           prepQueryUnique(
             insert,
-            SMSTemplate(id, form.templateCategoryId, form.title, form.text, form.gender)
+            SMSTemplate(id, userId, form.templateCategoryId, form.title, form.text, form.gender)
           )
         }
 
       override def find(templateId: TemplateId): F[Option[SMSTemplate]] =
         prepOptQuery(findById, templateId)
 
-      override def templates: F[List[SMSTemplateWithCatName]] =
-        prepQueryAll(select)
+      override def templates(userId: UserId): F[List[SMSTemplateWithCatName]] =
+        prepQueryList(select, userId)
 
-      override def update(tmpl: SMSTemplate): F[SMSTemplate] =
-        prepQueryUnique(updateSql, tmpl)
+      override def update(userId: UserId, tmpl: UpdateSMSTemplate): F[SMSTemplate] =
+        prepQueryUnique(
+          updateSql,
+          SMSTemplate(tmpl.id, userId, tmpl.templateCategoryId, tmpl.title, tmpl.text, tmpl.gender)
+        )
 
-      override def delete(id: TemplateId): F[Unit] =
-        prepCmd(deleteSql, id)
+      override def delete(id: TemplateId, userId: UserId): F[Unit] =
+        prepCmd(deleteSql, id ~ userId)
     }
 }

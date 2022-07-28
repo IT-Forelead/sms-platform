@@ -8,6 +8,7 @@ import derevo.derive
 @derive(decoder, encoder, show)
 case class SMSTemplate(
   id: TemplateId,
+  userId: UserId,
   templateCategoryId: TemplateCategoryId,
   title: Title,
   text: Content,
@@ -24,8 +25,18 @@ object SMSTemplate {
   )
 
   @derive(decoder, encoder, show)
+  case class UpdateSMSTemplate(
+    id: TemplateId,
+    templateCategoryId: TemplateCategoryId,
+    title: Title,
+    text: Content,
+    gender: Gender
+  )
+
+  @derive(decoder, encoder, show)
   case class SMSTemplateWithCatName(
     id: TemplateId,
+    userId: UserId,
     templateCategoryId: TemplateCategoryId,
     title: Title,
     text: Content,

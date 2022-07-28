@@ -2,9 +2,9 @@ package smsplatform.utils
 
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
 import com.itforelead.smspaltfrom.domain.Holiday.{CreateHoliday, UpdateHoliday}
-import com.itforelead.smspaltfrom.domain.SMSTemplate.CreateSMSTemplate
+import com.itforelead.smspaltfrom.domain.SMSTemplate.{CreateSMSTemplate, UpdateSMSTemplate}
 import com.itforelead.smspaltfrom.domain.SystemSetting.{UpdateSetting, UpdateTemplateOfBirthday}
-import com.itforelead.smspaltfrom.domain.TemplateCategory.CreateTemplateCategory
+import com.itforelead.smspaltfrom.domain.TemplateCategory.{CreateTemplateCategory, UpdateTemplateCategory}
 import com.itforelead.smspaltfrom.domain.User._
 import com.itforelead.smspaltfrom.domain._
 import com.itforelead.smspaltfrom.domain.custom.refinements._
@@ -38,6 +38,10 @@ object Generators {
 
   def idGen[A](f: UUID => A): Gen[A] =
     Gen.uuid.map(f)
+
+  val defaultAdminId: UserId = UserId(UUID.fromString("76c2c44c-8fbf-4184-9199-19303a042fa0"))
+
+  val defaultUserId: UserId = UserId(UUID.fromString("4b590039-892c-4bbf-bd6f-a12f102f3582"))
 
   val userIdGen: Gen[UserId] =
     idGen(UserId.apply)
@@ -118,13 +122,14 @@ object Generators {
   val contactGen: Gen[Contact] =
     for {
       id  <- contactIdGen
+      ui  <- userIdGen
       cAt <- timestampGen
       fn  <- firstnameGen
       ln  <- lastnameGen
       g   <- genderGen
       b   <- dateGen
       p   <- phoneGen
-    } yield Contact(id, cAt, fn, ln, g, b, p)
+    } yield Contact(id, ui, cAt, fn, ln, g, b, p)
 
   val createContactGen: Gen[CreateContact] =
     for {
@@ -148,28 +153,28 @@ object Generators {
   val holidayGen: Gen[Holiday] =
     for {
       id <- holidayIdGen
+      ui <- userIdGen
       n  <- holidayNameGen
       d  <- dayOfMonthGen
       m  <- monthGen
       sw <- option(templateIdGen)
       sm <- option(templateIdGen)
-    } yield Holiday(id, n, d, m, sw, sm)
+    } yield Holiday(id, ui, n, d, m, sw, sm)
 
   val systemSettingsGen: Gen[SystemSetting] =
     for {
+      ui  <- userIdGen
       asb <- booleanGen
       ash <- booleanGen
-      dth <- booleanGen
       sm  <- option(templateIdGen)
       sw  <- option(templateIdGen)
-    } yield SystemSetting(asb, ash, dth, sm, sw)
+    } yield SystemSetting(ui, asb, ash, sm, sw)
 
   val updateSystemSettingsGen: Gen[UpdateSetting] =
     for {
       asb <- booleanGen
       ash <- booleanGen
-      dth <- booleanGen
-    } yield UpdateSetting(asb, ash, dth)
+    } yield UpdateSetting(asb, ash)
 
   val updateTemplateOfBirthdayGen: Gen[UpdateTemplateOfBirthday] =
     for {
@@ -194,9 +199,16 @@ object Generators {
 
   val templateCategoryGen: Gen[TemplateCategory] =
     for {
-      tcid <- templateCategoryIdGen
-      tcn  <- templateCategoryNameGen
-    } yield TemplateCategory(tcid, tcn)
+      i  <- templateCategoryIdGen
+      ui <- userIdGen
+      n  <- templateCategoryNameGen
+    } yield TemplateCategory(i, ui, n)
+
+  val updateTemplateCategoryGen: Gen[UpdateTemplateCategory] =
+    for {
+      i  <- templateCategoryIdGen
+      n  <- templateCategoryNameGen
+    } yield UpdateTemplateCategory(i, n)
 
   val createTemplateCategoryGen: Gen[CreateTemplateCategory] =
     for {
@@ -206,11 +218,21 @@ object Generators {
   val smsTemplateGen: Gen[SMSTemplate] =
     for {
       id   <- templateIdGen
+      ui   <- userIdGen
       tcid <- templateCategoryIdGen
       t    <- titleGen
       c    <- contentGen
       g    <- genderGen
-    } yield SMSTemplate(id, tcid, t, c, g)
+    } yield SMSTemplate(id, ui, tcid, t, c, g)
+
+  val updateSMSTemplateGen: Gen[UpdateSMSTemplate] =
+    for {
+      id   <- templateIdGen
+      tcid <- templateCategoryIdGen
+      t    <- titleGen
+      c    <- contentGen
+      g    <- genderGen
+    } yield UpdateSMSTemplate(id, tcid, t, c, g)
 
   val createSMSTemplateGen: Gen[CreateSMSTemplate] =
     for {
@@ -223,11 +245,12 @@ object Generators {
   val messageGen: Gen[Message] =
     for {
       id  <- messageIdGen
+      ui  <- userIdGen
       cId <- contactIdGen
       tId <- templateIdGen
       sd  <- timestampGen
       ds  <- deliveryStatusGen
-    } yield Message(id, cId, tId, sd, ds)
+    } yield Message(id, ui, cId, tId, sd, ds)
 
   val userCredentialGen: Gen[Credentials] =
     for {

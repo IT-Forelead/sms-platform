@@ -1,10 +1,11 @@
 package com.itforelead.smspaltfrom.services.sql
 
 import com.itforelead.smspaltfrom.domain.Message.MessageWithContact
-import com.itforelead.smspaltfrom.domain.types.MessageId
+import com.itforelead.smspaltfrom.domain.types.{MessageId, UserId}
 import com.itforelead.smspaltfrom.domain.{DeliveryStatus, Message, MessageReport}
 import com.itforelead.smspaltfrom.services.sql.ContactsSql.contactId
 import com.itforelead.smspaltfrom.services.sql.SMSTemplateSql.templateId
+import com.itforelead.smspaltfrom.services.sql.UserSQL.userId
 import skunk._
 import skunk.codec.all.{int4, timestamp}
 import skunk.implicits._
@@ -12,14 +13,14 @@ import skunk.implicits._
 object MessageSql {
   val messageId: Codec[MessageId] = identity[MessageId]
 
-  private val Columns = messageId ~ contactId ~ templateId ~ timestamp ~ deliveryStatus
+  private val Columns = messageId ~ userId ~ contactId ~ templateId ~ timestamp ~ deliveryStatus
 
   val encoder: Encoder[Message] =
-    Columns.contramap(m => m.id ~ m.contactId ~ m.templateId ~ m.sentDate ~ m.deliveryStatus)
+    Columns.contramap(m => m.id ~ m.userId ~ m.contactId ~ m.templateId ~ m.sentDate ~ m.deliveryStatus)
 
   val decoder: Decoder[Message] =
-    Columns.map { case id ~ contactId ~ templateId ~ sentDate ~ deliveryStatus =>
-      Message(id, contactId, templateId, sentDate, deliveryStatus)
+    Columns.map { case id ~ userId ~ contactId ~ templateId ~ sentDate ~ deliveryStatus =>
+      Message(id, userId, contactId, templateId, sentDate, deliveryStatus)
     }
 
   val reportDecoder: Decoder[MessageReport] =
@@ -38,10 +39,11 @@ object MessageSql {
   val insert: Query[Message, Message] =
     sql"""INSERT INTO messages VALUES ($encoder) RETURNING *""".query(decoder)
 
-  val select: Query[Void, MessageWithContact] =
+  val select: Query[UserId, MessageWithContact] =
     sql"""SELECT messages.*, contacts.*, sms_templates.* FROM messages
           INNER JOIN contacts ON contacts.id = messages.contact_id
           INNER JOIN sms_templates ON sms_templates.id = messages.sms_temp_id
+          WHERE messages.user_id = $userId
        """.query(decMessageWithContact)
 
   val changeStatusSql: Query[DeliveryStatus ~ MessageId, Message] =

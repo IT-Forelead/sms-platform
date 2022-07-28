@@ -3,6 +3,7 @@ package smsplatform.http.routes
 import cats.effect.{IO, Sync}
 import com.itforelead.smspaltfrom.Application.logger
 import com.itforelead.smspaltfrom.domain.Message.MessageWithContact
+import com.itforelead.smspaltfrom.domain.types.UserId
 import com.itforelead.smspaltfrom.domain.{Contact, Message, SMSTemplate}
 import com.itforelead.smspaltfrom.routes.MessageRoutes
 import com.itforelead.smspaltfrom.services.Messages
@@ -18,7 +19,7 @@ object MessagesRoutesSuite extends HttpSuite {
 
   def messagesForGet[F[_]: Sync](message: Message, contact: Contact, template: SMSTemplate): Messages[F] =
     new MessagesStub[F] {
-      override def messages: F[List[MessageWithContact]] =
+      override def messages(userId: UserId): F[List[MessageWithContact]] =
         Sync[F].delay(List(MessageWithContact(message, contact, template)))
     }
 

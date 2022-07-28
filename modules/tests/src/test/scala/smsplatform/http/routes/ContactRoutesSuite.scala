@@ -4,7 +4,7 @@ import cats.effect.{IO, Sync}
 import com.itforelead.smspaltfrom.Application.logger
 import com.itforelead.smspaltfrom.domain.Contact
 import com.itforelead.smspaltfrom.domain.Contact.{CreateContact, UpdateContact}
-import com.itforelead.smspaltfrom.domain.types.ContactId
+import com.itforelead.smspaltfrom.domain.types.{ContactId, UserId}
 import com.itforelead.smspaltfrom.routes.{ContactRoutes, deriveEntityEncoder}
 import com.itforelead.smspaltfrom.services.Contacts
 import org.http4s.Method.{DELETE, GET, POST, PUT}
@@ -18,10 +18,10 @@ import smsplatform.utils.HttpSuite
 object ContactRoutesSuite extends HttpSuite {
 
   def contacts[F[_]: Sync](contact: Contact): Contacts[F] = new ContactsStub[F] {
-    override def create(form: CreateContact): F[Contact] = Sync[F].delay(contact)
-    override def contacts: F[List[Contact]]              = Sync[F].delay(List(contact))
-    override def update(form: UpdateContact): F[Contact] = Sync[F].delay(contact)
-    override def delete(id: ContactId): F[Unit]          = Sync[F].unit
+    override def create(userId: UserId, form: CreateContact): F[Contact] = Sync[F].delay(contact)
+    override def contacts(userId: UserId): F[List[Contact]]              = Sync[F].delay(List(contact))
+    override def update(userId: UserId, form: UpdateContact): F[Contact] = Sync[F].delay(contact)
+    override def delete(id: ContactId, userId: UserId): F[Unit]          = Sync[F].unit
   }
 
   test("create contact") {
